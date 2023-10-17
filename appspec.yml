@@ -1,31 +1,31 @@
 version: 0.0
 os: linux
 files:
-  - source: /source-directory
-    destination: /destination-directory
+  - source: /scripts/
+    destination: /var/myapp/scripts/
 permissions:
-  - object: /destination-directory/scripts/install_dependencies.sh
+  - object: /var/myapp/scripts/install_dependencies.sh
     mode: 755
-  - object: /destination-directory/scripts/setup_configuration.sh
+  - object: /var/myapp/scripts/setup_configuration.sh
     mode: 755
-  - object: /destination-directory/scripts/start_server.sh
+  - object: /var/myapp/scripts/start_server.sh
     mode: 755
-  - object: /destination-directory/scripts/validate_service.sh
+  - object: /var/myapp/scripts/validate_service.sh
     mode: 755
 hooks:
   BeforeInstall:
-    - location: scripts/install_dependencies.sh
+    - location: /var/myapp/scripts/install_dependencies.sh
       timeout: 300
       runas: root
   AfterInstall:
-    - location: scripts/setup_configuration.sh
+    - location: /var/myapp/scripts/setup_configuration.sh
       timeout: 300
       runas: root
   ApplicationStart:
-    - location: scripts/start_server.sh
+    - location: /var/myapp/scripts/start_server.sh
       timeout: 300
       runas: root
   ValidateService:
-    - location: scripts/validate_service.sh
+    - location: /var/myapp/scripts/validate_service.sh
       timeout: 300
       runas: root
