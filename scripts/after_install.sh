@@ -1,6 +1,6 @@
 #!/bin/bash
 # Navigate to the project directory
-cd /home/ec2-user/ChecksAndBalances/WebApp
+# cd /home/ec2-user/ChecksAndBalances/WebApp
 # Install project dependencies
 # npm install
 # npm install express --save
@@ -9,7 +9,10 @@ cd /home/ec2-user/ChecksAndBalances/WebApp
 # npm install cors
 
 cd /home/ec2-user/ChecksAndBalances/WebApp/frontend
-npm install
-# npm install -g create-react-app
-# npm install -g nodemon
-# npm install react-router-dom
+
+pm2 kill
+
+npm ci
+npm install -g create-react-app
+npm install -g nodemon
+npm install react-router-dom
