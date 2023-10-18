@@ -2,14 +2,14 @@
 # Navigate to the project directory
 cd /home/ec2-user/ChecksAndBalances/WebApp
 # Install project dependencies
-npm install
-npm install express --save
-npm install body-parser
-npm install mongodb
-npm install cors
+# npm install
+# npm install express --save
+# npm install body-parser
+# npm install mongodb
+# npm install cors
 
 cd /home/ec2-user/ChecksAndBalances/WebApp/frontend
 npm install
-npm install -g create-react-app
-npm install -g nodemon
-npm install react-router-dom
+# npm install -g create-react-app
+# npm install -g nodemon
+# npm install react-router-dom
