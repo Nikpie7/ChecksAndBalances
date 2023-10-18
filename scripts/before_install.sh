@@ -1,7 +1,7 @@
 #!/bin/bash
 # Update the system
-sudo apt-get update -y
+sudo yum update -y
 # Install Node.js
-sudo apt-get install -y nodejs npm
+sudo yum install -y nodejs npm
 # Install MongoDB
-sudo apt-get install -y mongodb
+sudo yum install -y mongodb
