@@ -13,5 +13,4 @@ npm install
 npm install -g create-react-app
 npm install -g nodemon
 npm install react-router-dom
-# Build the React app
-npm run build
+
