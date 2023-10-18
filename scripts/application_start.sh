@@ -1,5 +1,5 @@
 #!/bin/bash
 # Navigate to the project directory
-cd /var/www/my-app
+cd /home/ec2-user/ChecksAndBalances/WebApp/frontend
 # Start the Node.js server
 npm start
