@@ -13,3 +13,6 @@ npm install
 npm install -g create-react-app
 npm install -g nodemon
 npm install react-router-dom
+npm install pm2 -g
+
+pm2 kill
