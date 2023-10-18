@@ -2,15 +2,12 @@ version: 0.0
 os: linux
 files:
   - source: /
-    destination: /home/ec2-user/ChecksAndBalances/WebApp/frontend
+    destination: /var/www/my-app
 hooks:
-  # ApplicationStop:
-  # DownloadBundle:
   BeforeInstall:
     - location: scripts/before_install.sh
       timeout: 300
       runas: root
-  # Install:
   AfterInstall:
     - location: scripts/after_install.sh
       timeout: 300
@@ -19,4 +16,3 @@ hooks:
     - location: scripts/application_start.sh
       timeout: 300
       runas: root
-  # ValidateService:

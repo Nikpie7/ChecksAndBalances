@@ -1,8 +1,7 @@
 #!/bin/bash
-echo 'run after_install.sh: ' >> /home/ec2-user/ChecksAndBalances/deploy.log
-
-echo 'cd /home/ec2-user/ChecksAndBalances/WebApp/frontend' >> /home/ec2-user/ChecksAndBalances/deploy.log
-cd /home/ec2-user/ChecksAndBalances/WebApp/frontend >> /home/ec2-user/ChecksAndBalances/deploy.log
-
-echo 'npm install' >> /home/ec2-user/ChecksAndBalances/deploy.log 
-npm install >> /home/ec2-user/ChecksAndBalances/deploy.log
+# Navigate to the project directory
+cd /var/www/my-app
+# Install project dependencies
+npm install
+# Build the React app
+npm run build
