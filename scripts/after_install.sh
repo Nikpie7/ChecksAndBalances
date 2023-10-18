@@ -8,10 +8,8 @@ npm install body-parser
 npm install mongodb
 npm install cors
 
-cd /frontend
+cd /home/ec2-user/ChecksAndBalances/WebApp/frontend
 npm install
 npm install -g create-react-app
 npm install -g nodemon
 npm install react-router-dom
-
-npm run build
