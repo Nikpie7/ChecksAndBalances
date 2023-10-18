@@ -1,4 +1,6 @@
 #!/bin/bash
+cd /home/ec2-user/ChecksAndBalances/WebApp/frontend >> /home/ec2-user/ChecksAndBalances/deploy.log
+pm2 kill >> /home/ec2-user/ChecksAndBalances/deploy.log
 
 # Define the project directory
 PROJECT_DIR="/home/ec2-user/ChecksAndBalances/WebApp"
