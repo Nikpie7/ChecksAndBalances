@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const path = require('path');
 const PORT = process.env.PORT || 5001;
+require('dotenv').config();
 
 const app = express();
 var cardList = 
@@ -216,8 +217,8 @@ app.get('/*', function(req, res) {
 })
 
 const { MongoClient, ServerApiVersion } = require('mongodb');
-// const uri = process.env.TEST_MONGODB_URI;
-const uri = "mongodb+srv://APIMan2:Password12345678@cluster0.d4aglbi.mongodb.net/?retryWrites=true&w=majority";
+const uri = process.env.TEST_MONGODB_URI;
+//const uri = "mongodb+srv://APIMan2:Password12345678@cluster0.d4aglbi.mongodb.net/?retryWrites=true&w=majority";
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
   serverApi: {
