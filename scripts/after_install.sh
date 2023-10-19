@@ -15,3 +15,5 @@ pm2 kill
 npm ci
 npm run build
 
+echo "export TEST_MONGODB_URI=${TEST_MONGODB_URI}" >> /etc/environment
+
