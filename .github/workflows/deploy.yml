@@ -22,6 +22,7 @@ jobs:
     - name: Set env variables
       env:
         TEST_URI: ${{ secrets.MONGODB_TEST_ULI }}
+      run: echo "Enviroment variables set."
     
       # Step 4
     - name: Create CodeDeploy Deployment
