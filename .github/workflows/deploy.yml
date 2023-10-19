@@ -17,8 +17,13 @@ jobs:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-2
-
+        
       # Step 3
+    - name: Create .env file
+      run: |
+        echo MONGODB_URI=${{ secrets.MONGODB_URI }} > .env
+
+      # Step 4
     - name: Create CodeDeploy Deployment
       id: deploy
       run: |
