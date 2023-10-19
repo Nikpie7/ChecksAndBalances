@@ -3,8 +3,6 @@ os: linux
 files:
   - source: /
     destination: /home/ec2-user/ChecksAndBalances
-  - source: secrets.env
-    destination: /home/ec2-user/ChecksAndBalances/secrets.env
 hooks:
   BeforeInstall:
     - location: scripts/before_install.sh
