@@ -1,5 +1,7 @@
 //import React from 'react';
 import React, { useState } from 'react';
+const baseURL = '/api';
+// const baseURL = 'http://localhost:5001/api';
 
 function Login()
 {
@@ -17,7 +19,7 @@ function Login()
         //alert(js);
         try
         {    
-            const response = await fetch('http://localhost:5001/api/login',
+            const response = await fetch(`${baseURL}/login`,
                 {method:'POST',body:js,headers:{'Content-Type': 'application/json'}});
 
             var res = JSON.parse(await response.text());

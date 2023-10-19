@@ -1,6 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const path = require('path');
+const PORT = process.env.PORT || 5001;
 
 const app = express();
 var cardList = 
@@ -108,6 +110,7 @@ var cardList =
 
 app.use(cors());
 app.use(bodyParser.json());
+app.use(express.static('dist'));
 
 app.use((req, res, next) => 
 {
@@ -204,6 +207,13 @@ app.post('/api/searchcards', async (req, res, next) =>
   res.status(200).json(ret);
 });
 
+app.get('/*', function(req, res) {
+  res.sendFile(path.join(__dirname, '/dist/index.html'), function(err) {
+    if (err) {
+      res.status(500).send(err)
+    }
+  })
+})
 
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const uri = "mongodb+srv://APIMan2:Password12345678@cluster0.d4aglbi.mongodb.net/?retryWrites=true&w=majority";
@@ -230,4 +240,6 @@ async function run() {
 run().catch(console.dir);
 
 
-app.listen(5001); // start Node + Express server on port 5000
+app.listen(PORT, () => {
+  console.log(`Server listening on port ${PORT}`)
+}); // start Node + Express server on port 5000

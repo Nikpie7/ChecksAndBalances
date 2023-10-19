@@ -1,5 +1,7 @@
 //import React from 'react';
 import React, { useState } from 'react';
+const baseURL = '/api';
+// const baseURL = 'http://localhost:5001/api';
 
 function CardUI()
 {
@@ -25,7 +27,7 @@ function CardUI()
 
         try
         {
-            const response = await fetch('http://localhost:5001/api/addcard',
+            const response = await fetch(`${baseURL}/addcard`,
             {method:'POST',body:js,headers:{'Content-Type': 'application/json'}});
 
             var txt = await response.text();
@@ -57,7 +59,7 @@ function CardUI()
 
         try
         {
-            const response = await fetch('http://localhost:5001/api/searchcards',
+            const response = await fetch(`${baseURL}/searchcards`,
             {method:'POST',body:js,headers:{'Content-Type': 'application/json'}});
 
             var txt = await response.text();
