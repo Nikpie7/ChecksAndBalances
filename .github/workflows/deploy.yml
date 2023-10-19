@@ -19,10 +19,9 @@ jobs:
         aws-region: us-east-2
     
       # Step 3
-    - name: Set env variables
-      env:
-        TEST_URI: ${{ secrets.MONGODB_TEST_ULI }}
-      run: echo "Enviroment variables set."
+    - name: Prepare secrets for deployment
+      run: |
+        echo "TEST_URI=${{ secrets.MONGODB_TEST_ULI }}" > secrets.env
     
       # Step 4
     - name: Create CodeDeploy Deployment
