@@ -15,4 +15,6 @@ pm2 kill
 npm ci
 npm run build
 
+cp /home/ec2-user/.env /home/ec2-user/ChecksAndBalances/WebApp/.env
+
 
