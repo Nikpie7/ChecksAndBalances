@@ -7,7 +7,7 @@ const path = require('path');
 const PORT = process.env.PORT || 5001;
 
 const app = express();
-var cardList = 
+var cardList =
 [
   'Roy Campanella',
   'Paul Molitor',
@@ -114,7 +114,7 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static('dist'));
 
-app.use((req, res, next) => 
+app.use((req, res, next) =>
 {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader(
@@ -132,7 +132,7 @@ app.post('/api/addcard', async (req, res, next) =>
 {
   // incoming: userId, color
   // outgoing: error
-	
+
   const { userId, card } = req.body;
 
   const newCard = {Card:card,UserId:userId};
@@ -155,16 +155,16 @@ app.post('/api/addcard', async (req, res, next) =>
 });
 
 
-app.post('/api/login', async (req, res, next) => 
+app.post('/api/login', async (req, res, next) =>
 {
   // incoming: login, password
-  // outgoing: id, firstName, lastName, error
-	
+  // outgoing: id, FirstName, LastName, Email, Verified, Address, ZipCode, error
+
  var error = '';
 
   const { login, password } = req.body;
 
-  const db = client.db('COP4331Cards');
+  const db = client.db('POOSBigProject');
   //console.log(db);
   const results = await db.collection('Users').find({Login:login,Password:password}).toArray();
   //console.log(results);
@@ -172,20 +172,55 @@ app.post('/api/login', async (req, res, next) =>
   var id = -1;
   var fn = '';
   var ln = '';
+  var em = '';
+  var vf = '';
+  var ad = '';
+  var zc = '';
 
   if( results.length > 0 )
   {
     id = results[0].UserId;
     fn = results[0].FirstName;
     ln = results[0].LastName;
+    em = results[0].Email;
+    vf = results[0].Verified;
+    ad = results[0].Address;
+    zc = results[0].ZipCode;
   }
 
-  var ret = { id:id, firstName:fn, lastName:ln, error:''};
+  var ret = { id:id, firstName:fn, lastName:ln, email: em, verified: vf, address: ad, zipCode: zc, error:''};
+  res.status(200).json(ret);
+});
+
+app.post('/api/register', async (req, res, next) =>
+{
+  // incoming: login, password, email, firstName, lastName, address, zipCode
+  // outgoing: id, error
+
+  const { firstName, lastName, login, email, password, address, zipCode } = req.body;
+
+  const newUser = {FirstName: firstName, LastName: lastName, Login: login, Email: email, Password: password, Address: address, Verified: false, ZipCode: zipCode};
+  var error = '';
+
+  try
+  {
+    const db = client.db('POOSBigProject');
+    const result = db.collection('Users').insertOne(newUser);
+  }
+  catch(e)
+  {
+    error = e.toString();
+  }
+
+  //cardList.push( card );
+
+  var ret = { error: error };
   res.status(200).json(ret);
 });
 
 
-app.post('/api/searchcards', async (req, res, next) => 
+
+app.post('/api/searchcards', async (req, res, next) =>
 {
   // incoming: userId, search
   // outgoing: results[], error
@@ -195,16 +230,16 @@ app.post('/api/searchcards', async (req, res, next) =>
   const { userId, search } = req.body;
 
   var _search = search.trim();
-  
+
   const db = client.db('COP4331Cards');
   const results = await db.collection('Cards').find({"Card":{$regex:_search+'.*', $options:'i'}}).toArray();
-  
+
   var _ret = [];
   for( var i=0; i<results.length; i++ )
   {
     _ret.push( results[i].Card );
   }
-  
+
   var ret = {results:_ret, error:error};
   res.status(200).json(ret);
 });
@@ -218,7 +253,7 @@ app.get('/*', function(req, res) {
 })
 
 const { MongoClient, ServerApiVersion } = require('mongodb');
-const uri = process.env.TEST_MONGODB_URI;
+const uri = process.env.MONGODB_URI;
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
   serverApi: {
