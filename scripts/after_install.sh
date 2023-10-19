@@ -11,4 +11,7 @@
 
 cd /home/ec2-user/ChecksAndBalances/WebApp
 pm2 kill
+
 npm ci
+npm run build
+

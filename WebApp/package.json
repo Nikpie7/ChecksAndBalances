@@ -7,7 +7,6 @@
         "test": "echo \"Error: no test specified\" && exit 1",
         "start": "node server.js",
         "dev": "nodemon server.js",
-        "deploy": "rm -rf dist && cd ./frontend/ && npm run build && cp -r build ../dist && cd .. && fly deploy",
         "build": "rm -rf dist && cd ./frontend/ && npm run build && cp -r build ../dist && cd .."
     },
     "author": "",
