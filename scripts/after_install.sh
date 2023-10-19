@@ -2,13 +2,13 @@
 # Navigate to the project directory
 
 
-cd /home/ec2-user/ChecksAndBalances/WebApp/frontend
+# cd /home/ec2-user/ChecksAndBalances/WebApp/frontend
 
-pm2 kill
 
-npm install
+
+# npm ci
 
 
 cd /home/ec2-user/ChecksAndBalances/WebApp
-
-npm install
+pm2 kill
+npm ci
