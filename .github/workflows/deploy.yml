@@ -19,6 +19,11 @@ jobs:
         aws-region: us-east-2
     
       # Step 3
+    - name: Set env variables
+        env:
+            TEST_URI: ${{ MONGODB_TEST_ULI }}
+    
+      # Step 4
     - name: Create CodeDeploy Deployment
       id: deploy
       run: |
