@@ -157,17 +157,18 @@ app.post('/api/addcard', async (req, res, next) =>
 
 app.post('/api/login', async (req, res, next) =>
 {
-  // incoming: login, password
+  // incoming: username, password
   // outgoing: id, FirstName, LastName, Email, Verified, Address, ZipCode, error
 
  var error = '';
 
-  const { login, password } = req.body;
+  const { username, password } = req.body;
+  // console.log(username, password);
 
   const db = client.db('POOSBigProject');
   //console.log(db);
-  const results = await db.collection('Users').find({Login:login,Password:password}).toArray();
-  //console.log(results);
+  const results = await db.collection('Users').find({ $and: [{ Login: username }, { Password: password }] }).toArray();
+  // console.log(results);
 
   var id = -1;
   var fn = '';
@@ -179,7 +180,7 @@ app.post('/api/login', async (req, res, next) =>
 
   if( results.length > 0 )
   {
-    id = results[0].UserId;
+    id = results[0]._id.toString();
     fn = results[0].FirstName;
     ln = results[0].LastName;
     em = results[0].Email;
@@ -187,19 +188,19 @@ app.post('/api/login', async (req, res, next) =>
     ad = results[0].Address;
     zc = results[0].ZipCode;
   }
-
+  
   var ret = { id:id, firstName:fn, lastName:ln, email: em, verified: vf, address: ad, zipCode: zc, error:''};
   res.status(200).json(ret);
 });
 
 app.post('/api/register', async (req, res, next) =>
 {
-  // incoming: login, password, email, firstName, lastName, address, zipCode
+  // incoming: username, password, email, firstName, lastName, address, zipCode
   // outgoing: id, error
 
-  const { firstName, lastName, login, email, password, address, zipCode } = req.body;
+  const { firstName, lastName, username, email, password, address, zipCode } = req.body;
 
-  const newUser = {FirstName: firstName, LastName: lastName, Login: login, Email: email, Password: password, Address: address, Verified: false, ZipCode: zipCode};
+  const newUser = {FirstName: firstName, LastName: lastName, Login: username, Email: email, Password: password, Address: address, Verified: false, ZipCode: zipCode};
   var error = '';
 
   try
@@ -264,7 +265,7 @@ const client = new MongoClient(uri, {
 });
 async function run() {
   try {
-    // Connect the client to the server	(optional starting in v4.7)
+    // Connect the client to the server	(optional starting in v4.7
     await client.connect();
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });

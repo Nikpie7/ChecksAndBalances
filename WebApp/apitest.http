@@ -1,0 +1,57 @@
+POST http://localhost:5001/api/login
+content-type: application/json
+
+{
+    "username": "RickL",
+    "password": "COP4331"
+}
+###
+POST http://localhost:5001/api/register
+content-type: application/json
+
+{
+    "username": "RickL",
+    "password": "COP4331",
+    "email": "Richard.Leinecker@ucf.edu",
+    "firstName": "Rick",
+    "lastName": "Leinecker",
+    "address": "4000 Central Florida Blvd, Orlando, FL",
+    "zipCode": "32816"
+}
+###
+POST http://localhost:5001/api/login HTTP/1.1
+content-type: application/json
+
+{
+    "username": "username",
+    "password": "password"
+}
+###
+POST http://localhost:5001/api/register
+content-type: application/json
+
+{
+    "username": "username",
+    "password": "password",
+    "email": "Username.Password@ucf.edu",
+    "firstName": "Username",
+    "lastName": "Password",
+    "address": "4000 Central Florida Blvd, Orlando, FL",
+    "zipCode": "32816"
+}
+###
+POST http://localhost:5001/api/login
+content-type: application/json
+
+{
+    "username": "fhadsjkfdsjklfdasjof",
+    "password": "dhfodshfudsahfiup"
+}
+###
+POST http://localhost:5001/api/login
+content-type: application/json
+
+{
+    "username": "gWash89",
+    "password": "firstPresident"
+}
