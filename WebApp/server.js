@@ -234,7 +234,7 @@ app.post('/api/register', async (req, res, next) =>
 app.post('/api/getReps', async (req, res, next) =>
 {
   // incoming: address
-  // outgoing: headOfState, legislatorUpperBody, legislatorLowerBody
+  // outgoing: President, Senator1, Senator2, Representative
   
         .then(function(response) {
                 // Handle the results here (response.result has the parsed body).
