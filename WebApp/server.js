@@ -5,6 +5,9 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const path = require('path');
 const PORT = process.env.PORT || 5001;
+// Loading the Google API Client Library
+// Uncomment line 10 when ready for Google Testing
+//gapi.load('client', init);
 
 const app = express();
 var cardList =
@@ -128,6 +131,13 @@ app.use((req, res, next) =>
   next();
 });
 
+function loadClient(){
+    gapi.client.setApiKey("YOUR_API_KEY");
+    return gapi.client.load("https://civicinfo.googleapis.com/$discovery/rest?version=v2")
+        .then(function() { console.log("GAPI client loaded for API"); },
+              function(err) { console.error("Error loading GAPI client for API", err); });
+}
+
 app.post('/api/addcard', async (req, res, next) =>
 {
   // incoming: userId, color
@@ -219,6 +229,60 @@ app.post('/api/register', async (req, res, next) =>
   res.status(200).json(ret);
 });
 
+// Note: Get Nikolai to make an env variable for Google API Key
+// Note: This is the endpoint we're using to get representative data for locations
+app.post('/api/getReps', async (req, res, next) =>
+{
+  // incoming: address
+  // outgoing: headOfState, legislatorUpperBody, legislatorLowerBody
+  
+        .then(function(response) {
+                // Handle the results here (response.result has the parsed body).
+                console.log("Response", response);
+              },
+              function(err) { console.error("Execute error", err); });
+  
+  var error = '';
+
+  const { address } = req.body;
+  // console.log(username, password);
+
+  const db = client.db('POOSBigProject');
+  //console.log(db);
+  const results = await gapi.client.civicinfo.representatives.representativeInfoByAddress({
+      "address": address,
+      "includeOffices": true,
+      "roles": [
+        "headOfState",
+        "legislatorUpperBody",
+        "legislatorLowerBody"
+      ]
+    })
+  // console.log(results);
+
+  var id = -1;
+  var fn = '';
+  var ln = '';
+  var em = '';
+  var vf = '';
+  var ad = '';
+  var zc = '';
+
+  // I have no idea how to capture this thing's output, though.
+  if( results.length > 0 )
+  {
+    id = results[0]._id.toString();
+    fn = results[0].FirstName;
+    ln = results[0].LastName;
+    em = results[0].Email;
+    vf = results[0].Verified;
+    ad = results[0].Address;
+    zc = results[0].ZipCode;
+  }
+  
+  var ret = { id:id, firstName:fn, lastName:ln, email: em, verified: vf, address: ad, zipCode: zc, error:''};
+  res.status(200).json(ret);
+});
 
 
 app.post('/api/searchcards', async (req, res, next) =>
