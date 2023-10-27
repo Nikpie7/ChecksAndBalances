@@ -260,27 +260,22 @@ app.post('/api/getReps', async (req, res, next) =>
     })
   // console.log(results);
 
-  var id = -1;
-  var fn = '';
-  var ln = '';
-  var em = '';
-  var vf = '';
-  var ad = '';
-  var zc = '';
+  var pres = '';
+  var sen1 = '';
+  var sen2 = '';
+  var rep = '';
 
-  // I have no idea how to capture this thing's output, though.
+
+  // I have no idea how to capture this thing's output, though. This might be on the right track?
   if( results.length > 0 )
   {
-    id = results[0]._id.toString();
-    fn = results[0].FirstName;
-    ln = results[0].LastName;
-    em = results[0].Email;
-    vf = results[0].Verified;
-    ad = results[0].Address;
-    zc = results[0].ZipCode;
+    pres = results[0].officials[0].name;
+    sen1 = results[0].officials[1].name;
+    sen2 = results[0].officials[2].name;
+    rep = results[0].officials[3].name;
   }
   
-  var ret = { id:id, firstName:fn, lastName:ln, email: em, verified: vf, address: ad, zipCode: zc, error:''};
+  var ret = { President:pres, Senator1:sen1, Senator2:sen2, Representative: rep};
   res.status(200).json(ret);
 });
 
