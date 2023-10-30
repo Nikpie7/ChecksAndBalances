@@ -5,9 +5,6 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const path = require('path');
 const PORT = process.env.PORT || 5001;
-// Loading the Google API Client Library
-// Uncomment line 10 when ready for Google Testing
-//gapi.load('client', init);
 
 const app = express();
 var cardList =
@@ -131,13 +128,6 @@ app.use((req, res, next) =>
   next();
 });
 
-function loadClient(){
-    gapi.client.setApiKey("YOUR_API_KEY");
-    return gapi.client.load("https://civicinfo.googleapis.com/$discovery/rest?version=v2")
-        .then(function() { console.log("GAPI client loaded for API"); },
-              function(err) { console.error("Error loading GAPI client for API", err); });
-}
-
 app.post('/api/addcard', async (req, res, next) =>
 {
   // incoming: userId, color
@@ -228,57 +218,6 @@ app.post('/api/register', async (req, res, next) =>
   var ret = { error: error };
   res.status(200).json(ret);
 });
-
-// Note: Get Nikolai to make an env variable for Google API Key
-// Note: This is the endpoint we're using to get representative data for locations
-app.post('/api/getReps', async (req, res, next) =>
-{
-  // incoming: address
-  // outgoing: President, Senator1, Senator2, Representative
-  
-        .then(function(response) {
-                // Handle the results here (response.result has the parsed body).
-                console.log("Response", response);
-              },
-              function(err) { console.error("Execute error", err); });
-  
-  var error = '';
-
-  const { address } = req.body;
-  // console.log(username, password);
-
-  const db = client.db('POOSBigProject');
-  //console.log(db);
-  const results = await gapi.client.civicinfo.representatives.representativeInfoByAddress({
-      "address": address,
-      "includeOffices": true,
-      "roles": [
-        "headOfState",
-        "legislatorUpperBody",
-        "legislatorLowerBody"
-      ]
-    })
-  // console.log(results);
-
-  var pres = '';
-  var sen1 = '';
-  var sen2 = '';
-  var rep = '';
-
-
-  // I have no idea how to capture this thing's output, though. This might be on the right track?
-  if( results.length > 0 )
-  {
-    pres = results[0].officials[0].name;
-    sen1 = results[0].officials[1].name;
-    sen2 = results[0].officials[2].name;
-    rep = results[0].officials[3].name;
-  }
-  
-  var ret = { President:pres, Senator1:sen1, Senator2:sen2, Representative: rep};
-  res.status(200).json(ret);
-});
-
 
 app.post('/api/searchcards', async (req, res, next) =>
 {
