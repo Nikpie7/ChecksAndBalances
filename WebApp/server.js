@@ -156,6 +156,8 @@ app.post('/api/addcard', async (req, res, next) =>
 });
 
 app.post('/api/getReps', async (req, res, next) => {
+  // Incoming: Address
+  // Outgoing: President, Senator1, Senator2, Representative
   try {
     const { address } = req.body;
     const apiKey = process.env.GOOGLE_KEY;
@@ -185,6 +187,38 @@ app.post('/api/getReps', async (req, res, next) => {
   } catch (error) {
     console.error("Error:", error.message);
     res.status(500).send(error.message);
+  }
+});
+
+app.get('/api/getBills', async(req, res, next) => {
+  //Incoming: billType
+  //Outgoing: The Motherlode of bills
+  const API_KEY = processes.env.CONGRESS_KEY;
+  const { billType } = req.body;
+
+  if (!billType)
+  {
+    return res.status(400).json({ error: 'Missing bill_type parameter'});
+  }
+
+  try {
+    const response = await axios.get('https://api.congress.gov/v3/bill/117/s',
+    {
+      params: {
+        congress: 117,
+        format: 'json',
+        billType: billType,
+        api_key: API_KEY,
+      },
+      headers: {
+        accept: 'application/json',
+      }
+    });
+    
+    res.json(response.data);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to retrieve bill data '});
   }
 });
 
