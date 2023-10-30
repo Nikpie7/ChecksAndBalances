@@ -168,8 +168,19 @@ app.post('/api/getReps', async (req, res, next) => {
         key: apiKey,
       }
     });
+    var pres = '';
+    var sen1 = '';
+    var sen2 = '';
+    var rep = '';
 
-    res.json(response.data);
+    pres = response.data.officials[0].name;
+    sen1 = response.data.officials[2].name;
+    sen2 = response.data.officials[3].name;
+    rep = response.data.officials[4].name;
+
+    var ret = {President:pres, Senator1:sen1, Senator2:sen2, Representative:rep};
+    res.status(200).json(ret);
+    //res.json(response.data);
   } catch (error) {
     console.error("Error:", error.message);
     res.status(500).send(error.message);
