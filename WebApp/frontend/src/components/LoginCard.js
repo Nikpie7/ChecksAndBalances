@@ -32,7 +32,7 @@ const LoginCard = ({className}) => {
   return (
     <div className={`w-[30rem] p-8 shadow-lg bg-white rounded-xl ${className}`}>
       <h2 className="font-semibold text-2xl">
-        Sign in to Checks & Balances
+        Sign in to Checks & Balances (TEST TEST TEST!)
       </h2>
       <hr className="h-px my-4 bg-gray-200 border-0 dark:bg-gray-300" />
       <form className="mt-4" onSubmit={handleFormSubmit}>
