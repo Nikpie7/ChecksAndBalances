@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const path = require('path');
 const PORT = process.env.PORT || 5001;
-// Hello World!
+const axios = require('axios');
 const app = express();
 var cardList =
 [
@@ -154,6 +154,27 @@ app.post('/api/addcard', async (req, res, next) =>
   res.status(200).json(ret);
 });
 
+app.post('/api/getReps', async (req, res, next) => {
+  try {
+    const { address } = req.body;
+    const apiKey = process.env.GOOGLE_KEY;
+
+    const response = await axios.get('https://civicinfo.googleapis.com/civicinfo/v2/representatives', {
+      params: {
+        address,
+        includeOffices: true,
+        levels: ["country"],
+        roles: ["headOfState", "legislatorUpperBody", "legislatorLowerBody"],
+        key: apiKey,
+      }
+    });
+
+    res.json(response.data);
+  } catch (error) {
+    console.error("Error:", error.message);
+    res.status(500).send(error.message);
+  }
+});
 
 app.post('/api/login', async (req, res, next) =>
 {
