@@ -193,7 +193,7 @@ app.post('/api/getReps', async (req, res, next) => {
 app.get('/api/getBills', async(req, res, next) => {
   //Incoming: billType
   //Outgoing: The Motherlode of bills
-  const API_KEY = processes.env.CONGRESS_KEY;
+  const API_KEY = process.env.CONGRESS_KEY;
   const { billType } = req.body;
 
   if (!billType)
