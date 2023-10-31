@@ -37,6 +37,24 @@
   }
 }
 
+@keyframes panImage {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
+
+.panBackground {
+  animation: panImage 20s infinite alternate; /* Adjust 30s to control the speed of the panning */
+  background-image: url('./assets/loginBackground.webp'); /* Path to your image */
+  background-size: 200% auto;
+  background-repeat: no-repeat;
+}
+
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
