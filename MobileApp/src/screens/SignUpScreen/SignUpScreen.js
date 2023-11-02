@@ -3,10 +3,9 @@ import React, {useState} from 'react';
 import {View, Text, StyleSheet, ScrollView} from 'react-native';
 import CustomInput from '../../components/CustomInput';
 import CustomButton from '../../components/CustomButton';
+import { useNavigation } from '@react-navigation/native';
 
-const onSignUpPressed = () => {
-  console.warn('Sign Up');
-};
+
 
 const SignUpScreen = () => {
     const [username, setUsername] = useState('');
@@ -17,6 +16,16 @@ const SignUpScreen = () => {
     const [lastName, setLastName] = useState('');
     const [streetAddress, setStreetAddress] = useState('');
     const [zipCode, setZipCode] = useState('');
+
+    const navigation = useNavigation();
+
+    const onSignUpPressed = () => {
+        //send data to server
+      
+        //redirect to log in screen
+        console.warn("Successfully Added Account!");
+        navigation.navigate('SignIn');
+      };
 
     return(
         <View style={styles.root}>

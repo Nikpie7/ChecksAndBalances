@@ -18,6 +18,7 @@ const SignInScreen = () => {
         //Validate the user
 
         //then go to home page
+        console.warn("Successfully Logged In!");
         navigation.navigate('Home');
     }
 
