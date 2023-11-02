@@ -2,6 +2,7 @@ import React from 'react';
 import {SafeAreaView,StyleSheet,Text,useColorScheme,} from 'react-native';
 import SignInScreen from './src/screens/SignInScreen';
 import UserProfileScreen from './src/screens/UserProfileScreen';
+import SignUpScreen from './src/screens/SignUpScreen';
 
 const App = () => {
   return (
