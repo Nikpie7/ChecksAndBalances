@@ -4,37 +4,30 @@ import {View, Text, Image, StyleSheet, useWindowDimensions} from 'react-native'
 import Logo from '../../../assets/images/logo.png';
 import CustomInput from '../../components/CustomInput';
 import CustomButton from '../../components/CustomButton';
-<<<<<<< HEAD
+import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
+
 const baseUrl = process.env.NODE_ENV === 'development'
   ? 'http://localhost:5001'
   : 'http://checksnbalances.us';
-=======
-import { useNavigation } from '@react-navigation/native';
->>>>>>> 63e796fa1037eec0bf077b4d8f5f24fb937213e1
-
-
 
 const SignInScreen = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
     const {height} = useWindowDimensions();
-<<<<<<< HEAD
-
-    const handleSubmit = async () => {
-        if (username === '' || password === '') {
-            alert('All fields are required');
-            return;
-        }
-        await axios.post('${baseUrl}/api/login', {username, password});
-        alert('Sign up successful');
-    };
-=======
     const navigation = useNavigation();
 
     const onLogInPressed = () => {
         //Validate the user
+        const handleSubmit = async () => {
+            if (username === '' || password === '') {
+                alert('All fields are required');
+                return;
+            }
+            await axios.post('${baseUrl}/api/login', {username, password});
+            alert('Sign in successful');
+        };
 
         //then go to home page
         console.warn("Successfully Logged In!");
@@ -46,7 +39,6 @@ const SignInScreen = () => {
         navigation.navigate('SignUp');
     }
 
->>>>>>> 63e796fa1037eec0bf077b4d8f5f24fb937213e1
     return(
         <View style={styles.root}>
             <Image source={Logo} style={[styles.logo, {height: height * 0.3}]} resizeMode="contain"/>

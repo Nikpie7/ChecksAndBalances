@@ -4,7 +4,7 @@ import {View, Text, StyleSheet, ScrollView} from 'react-native';
 import CustomInput from '../../components/CustomInput';
 import CustomButton from '../../components/CustomButton';
 import { useNavigation } from '@react-navigation/native';
-
+import axios from 'axios';
 
 
 const SignUpScreen = () => {
@@ -17,22 +17,31 @@ const SignUpScreen = () => {
     const [streetAddress, setStreetAddress] = useState('');
     const [zipCode, setZipCode] = useState('');
 
-<<<<<<< HEAD
-    return (
-=======
     const navigation = useNavigation();
 
     const onSignUpPressed = () => {
         //send data to server
-      
+        const handleSubmit = async () => {
+            if (username === '' || email === '' || password === '' || passwordRepeat === ''
+                || firstName === '' || lastName === '' || streetAddress === '' || zipCode === '') {
+                alert('All fields are required');
+                return;
+            }
+            if (password !== passwordRepeat) {
+                alert('Password must match password confirmation');
+            }
+            await axios.post('${baseUrl}/api/login', {username, email, password, passwordRepeat,
+                                                      firstName, lastName, streetAddress, zipCode});
+            alert('Sign up successful');
+        };
         //redirect to log in screen
         console.warn("Successfully Added Account!");
         navigation.navigate('SignIn');
       };
 
     return(
->>>>>>> c2cdced7b21542b914145c0767c211c096d6e9c6
         <View style={styles.root}>
+        
             <CustomInput placeholder="Username" value={username} setValue={setUsername}/>
             <CustomInput placeholder="Password" value={password} setValue={setPassword} secure={true}/>
             <CustomInput placeholder="Confirm Password" value={passwordRepeat} setValue={setPasswordRepeat} secure={true}/>
