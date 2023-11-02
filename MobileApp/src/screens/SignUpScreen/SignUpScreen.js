@@ -1,15 +1,12 @@
-import React, { useState } from 'react'
+/* eslint-disable prettier/prettier */
+import React, {useState} from 'react';
 import {View, Text, StyleSheet, ScrollView} from 'react-native';
 import CustomInput from '../../components/CustomInput';
 import CustomButton from '../../components/CustomButton';
 
-const onLogInPressed = () => {
-    console.warn("Log in");
-}
-
 const onSignUpPressed = () => {
-    console.warn("Sign Up");
-}
+  console.warn('Sign Up');
+};
 
 const SignUpScreen = () => {
     const [username, setUsername] = useState('');
@@ -23,7 +20,6 @@ const SignUpScreen = () => {
 
     return(
         <View style={styles.root}>
-            <Image source={Logo} style={[styles.logo, {height: height * 0.3}]} resizeMode="contain"/>
         
             <CustomInput placeholder="Username" value={username} setValue={setUsername}/>
             <CustomInput placeholder="Password" value={password} setValue={setPassword} secure={true}/>
