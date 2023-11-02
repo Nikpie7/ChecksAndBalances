@@ -25,8 +25,11 @@ const SignInScreen = () => {
                 alert('All fields are required');
                 return;
             }
-            await axios.post('${baseUrl}/api/login', {username, password});
-            alert('Sign in successful');
+            const resp = await axios.post('${baseUrl}/api/login', {username, password});
+            if(resp.data.error)
+                alert(resp.data.error);
+            else
+                alert('Sign in successful');
         };
 
         //then go to home page

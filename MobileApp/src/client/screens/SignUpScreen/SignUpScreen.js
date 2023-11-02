@@ -30,9 +30,12 @@ const SignUpScreen = () => {
             if (password !== passwordRepeat) {
                 alert('Password must match password confirmation');
             }
-            await axios.post('${baseUrl}/api/login', {username, email, password, passwordRepeat,
+            const resp = await axios.post('${baseUrl}/api/login', {username, email, password, passwordRepeat,
                                                       firstName, lastName, streetAddress, zipCode});
-            alert('Sign up successful');
+            if(resp.data.error)
+                alert(resp.data.error);
+            else
+                alert('Sign up successful');
         };
         //redirect to log in screen
         console.warn("Successfully Added Account!");
