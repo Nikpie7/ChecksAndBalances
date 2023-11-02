@@ -1,23 +1,16 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
 import React from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  useColorScheme,
-} from 'react-native';
+import {SafeAreaView,StyleSheet,Text,useColorScheme,} from 'react-native';
+import SignInScreen from './src/screens/SignInScreen';
+import UserProfileScreen from './src/screens/UserProfileScreen';
 
-function App() {
-
+const App = () => {
   return (
     <SafeAreaView style={styles.root}>
-      
+      {/* 
+      <SignInScreen/>
+      <UserProfileScreen/> 
+      For a temporary measure, you can uncomment a certain screen to see it.
+      */}
     </SafeAreaView>
   );
 }
