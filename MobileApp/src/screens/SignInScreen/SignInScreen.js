@@ -3,20 +3,29 @@ import {View, Text, Image, StyleSheet, useWindowDimensions} from 'react-native'
 import Logo from '../../../assets/images/logo.png';
 import CustomInput from '../../components/CustomInput';
 import CustomButton from '../../components/CustomButton';
+import { useNavigation } from '@react-navigation/native';
 
-const onLogInPressed = () => {
-    console.warn("Log in");
-}
 
-const onSignUpPressed = () => {
-    console.warn("Sign Up");
-}
 
 const SignInScreen = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
     const {height} = useWindowDimensions();
+    const navigation = useNavigation();
+
+    const onLogInPressed = () => {
+        //Validate the user
+
+        //then go to home page
+        navigation.navigate('Home');
+    }
+
+    const onSignUpPressed = () => {
+        //go to sign up screen
+        navigation.navigate('SignUp');
+    }
+
     return(
         <View style={styles.root}>
             <Image source={Logo} style={[styles.logo, {height: height * 0.3}]} resizeMode="contain"/>
