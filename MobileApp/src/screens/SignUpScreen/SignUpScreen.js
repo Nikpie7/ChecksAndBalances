@@ -18,9 +18,8 @@ const SignUpScreen = () => {
     const [streetAddress, setStreetAddress] = useState('');
     const [zipCode, setZipCode] = useState('');
 
-    return(
+    return (
         <View style={styles.root}>
-        
             <CustomInput placeholder="Username" value={username} setValue={setUsername}/>
             <CustomInput placeholder="Password" value={password} setValue={setPassword} secure={true}/>
             <CustomInput placeholder="Confirm Password" value={passwordRepeat} setValue={setPasswordRepeat} secure={true}/>

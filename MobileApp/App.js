@@ -10,6 +10,7 @@ const App = () => {
       {/* 
       <SignInScreen/>
       <UserProfileScreen/> 
+      <SignUpScreen/>
       For a temporary measure, you can uncomment a certain screen to see it.
       */}
     </SafeAreaView>
