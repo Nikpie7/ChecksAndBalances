@@ -14,12 +14,6 @@ const App = () => {
   return (
     <SafeAreaView style={styles.root}>
       <Navigation/>
-      {/* 
-      <SignInScreen/>
-      <UserProfileScreen/> 
-      For a temporary measure, you can uncomment a certain screen to see it.
-      */
-    }
     </SafeAreaView>
   );
 }

@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import React, { useState } from 'react'
 import {View, Text, Image, StyleSheet, useWindowDimensions} from 'react-native'
 import Logo from '../../../../assets/images/logo.png';
@@ -6,10 +5,6 @@ import CustomInput from '../../components/CustomInput';
 import CustomButton from '../../components/CustomButton';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
-
-const baseUrl = process.env.NODE_ENV === 'development'
-  ? 'http://localhost:5001'
-  : 'http://checksnbalances.us';
 
 const SignInScreen = () => {
     const [username, setUsername] = useState('');
@@ -19,22 +14,34 @@ const SignInScreen = () => {
     const navigation = useNavigation();
 
     const onLogInPressed = () => {
+        bodyVariable = JSON.stringify({"username": username,"password": password,})
+        
+        console.log(bodyVariable);
         //Validate the user
-        const handleSubmit = async () => {
-            if (username === '' || password === '') {
-                alert('All fields are required');
-                return;
+        fetch('https://checksnbalances.us/api/login', {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: bodyVariable,
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            if(data.id !== 0 && data.id !== -1){
+                //then go to home page
+                console.warn("Successfully Logged In!");
+                navigation.navigate('Home');
             }
-            const resp = await axios.post('${baseUrl}/api/login', {username, password});
-            if(resp.data.error)
-                alert(resp.data.error);
-            else
-                alert('Sign in successful');
-        };
-
-        //then go to home page
-        console.warn("Successfully Logged In!");
-        navigation.navigate('Home');
+            else{
+                console.warn("Incorrect User or Pass");
+            }
+        })
+        .catch(error => {
+        console.error(error);
+        });
+       
     }
 
     const onSignUpPressed = () => {
