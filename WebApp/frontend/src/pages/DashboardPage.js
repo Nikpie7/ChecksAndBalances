@@ -1,6 +1,8 @@
 import React from 'react';
 
 import NavBar from '../components/NavBar.js';
+import LegistlationTable from '../components/LegislationTable.js';
+import SideBar from '../components/SideBar.js'
 
 const DashboardPage = () =>
 {
@@ -9,10 +11,14 @@ const DashboardPage = () =>
       <div>
         <NavBar />
         {/* SideBar */}
-        <div></div>
+        <div>
+          <SideBar />
+        </div>
 
         {/* LegislationTable */}
-        <div></div>
+        <div>
+          <LegistlationTable />
+        </div>
         
       </div>
     );
