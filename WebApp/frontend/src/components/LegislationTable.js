@@ -1,27 +1,16 @@
 import { render } from "@testing-library/react";
 import { React, useState } from "react";
 
-// Test data
-const legislationList = [
-  {
-    legislation: "Legislation 1",
-    proposer: "Politician 1",
-  },
-  {
-    legislation: "Legislation 2",
-    proposer: "Politician 2",
-  },
-  {
-    legislation: "Legislation 3",
-    proposer: "Politician 3",
-  },
-];
+import legislativeBills from "./legislationListTestData";
+import "./LegislationTable.css";
+
+
 
 const LegistlationTable = () => {
   return (
     <div>
       {/* LegistlationList */}
-      <LegistlationList data={legislationList} />
+      <LegistlationList data={legislativeBills} />
     </div>
   );
 };
@@ -32,15 +21,20 @@ const LegistlationList = (props) => {
   // Render the row for each piece of legislation.
   const renderLegislationRow = (legislationObj, index) => {
     return (
-      <li key={index}>
-        <h1>{legislationObj.legislation}</h1>
-        <h2>{legislationObj.proposer}</h2>
-      </li>
+      <div id="legislationList-row"
+      class="grid grid-flow-row shadow-2xl p-4 m-8 rounded-lg hover:scale-105 duration-300">
+        <li key={index}>
+          {/* Mobile = Bill name + short description
+              Web = Bill Name + short description + committee*/}
+          <h1>{legislationObj.billName}</h1>
+          <h2>{legislationObj.committee}</h2>
+        </li>
+      </div>
     );
   };
 
   return (
-    <div>
+    <div class="grid justify-center md:justify-normal">
       <ul>
         {data.map((legislationObj, index) =>
           // Create rows.

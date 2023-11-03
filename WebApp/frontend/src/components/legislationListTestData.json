@@ -1,0 +1,134 @@
+[
+    {
+      "billName": "Bill 1",
+      "committee": "House Judiciary Committee",
+      "congress": 117,
+      "billSummary": "This bill aims to reform the criminal justice system."
+    },
+    {
+      "billName": "Bill 2",
+      "committee": "Senate Finance Committee",
+      "congress": 116,
+      "billSummary": "A bill to address tax reform and economic growth."
+    },
+    {
+      "billName": "Bill 3",
+      "committee": "House Education Committee",
+      "congress": 118,
+      "billSummary": "An education funding and policy reform bill."
+    },
+    {
+      "billName": "Bill 4",
+      "committee": "Senate Health Committee",
+      "congress": 116,
+      "billSummary": "Legislation to improve healthcare access and affordability."
+    },
+    {
+      "billName": "Bill 5",
+      "committee": "House Energy Committee",
+      "congress": 117,
+      "billSummary": "A renewable energy promotion bill."
+    },
+    {
+      "billName": "Bill 6",
+      "committee": "Senate Foreign Relations Committee",
+      "congress": 116,
+      "billSummary": "A bill addressing international diplomacy and trade relations."
+    },
+    {
+      "billName": "Bill 7",
+      "committee": "House Ways and Means Committee",
+      "congress": 118,
+      "billSummary": "A tax reform and revenue generation bill."
+    },
+    {
+      "billName": "Bill 8",
+      "committee": "Senate Education Committee",
+      "congress": 117,
+      "billSummary": "An education policy and funding reform bill."
+    },
+    {
+      "billName": "Bill 9",
+      "committee": "House Health Committee",
+      "congress": 119,
+      "billSummary": "Legislation to improve healthcare access and affordability."
+    },
+    {
+      "billName": "Bill 10",
+      "committee": "Senate Judiciary Committee",
+      "congress": 118,
+      "billSummary": "A criminal justice reform bill."
+    },
+    {
+      "billName": "Bill 11",
+      "committee": "House Transportation Committee",
+      "congress": 118,
+      "billSummary": "An infrastructure investment bill for better transportation."
+    },
+    {
+      "billName": "Bill 12",
+      "committee": "Senate Energy Committee",
+      "congress": 116,
+      "billSummary": "Legislation to promote clean and renewable energy sources."
+    },
+    {
+      "billName": "Bill 13",
+      "committee": "House Agriculture Committee",
+      "congress": 117,
+      "billSummary": "An agricultural policy bill to support farmers."
+    },
+    {
+      "billName": "Bill 14",
+      "committee": "Senate Foreign Relations Committee",
+      "congress": 119,
+      "billSummary": "A bill addressing international diplomacy and relations."
+    },
+    {
+      "billName": "Bill 15",
+      "committee": "House Judiciary Committee",
+      "congress": 118,
+      "billSummary": "This bill aims to reform the criminal justice system."
+    },
+    {
+      "billName": "Bill 16",
+      "committee": "Senate Finance Committee",
+      "congress": 116,
+      "billSummary": "A bill to address tax reform and economic growth."
+    },
+    {
+      "billName": "Bill 45",
+      "committee": "House Ways and Means Committee",
+      "congress": 117,
+      "billSummary": "A tax reform and revenue generation bill."
+    },
+    {
+      "billName": "Bill 46",
+      "committee": "Senate Education Committee",
+      "congress": 118,
+      "billSummary": "An education policy and funding reform bill."
+    },
+    {
+      "billName": "Bill 47",
+      "committee": "House Transportation Committee",
+      "congress": 117,
+      "billSummary": "An infrastructure investment bill for better transportation."
+    },
+    {
+      "billName": "Bill 48",
+      "committee": "Senate Energy Committee",
+      "congress": 119,
+      "billSummary": "Legislation to promote clean and renewable energy sources."
+    },
+    {
+      "billName": "Bill 49",
+      "committee": "House Agriculture Committee",
+      "congress": 118,
+      "billSummary": "An agricultural policy bill to support farmers."
+    },
+    {
+      "billName": "Bill 50",
+      "committee": "Senate Foreign Relations Committee",
+      "congress": 117,
+      "billSummary": "A bill addressing international diplomacy and relations."
+    }
+  ]
