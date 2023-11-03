@@ -46,6 +46,27 @@
   }
 }
 
+  /* Firefox */
+  * {
+    scrollbar-width: auto;
+    scrollbar-color: #081E3B #ffffff;
+  }
+
+  /* Chrome, Edge, and Safari */
+  *::-webkit-scrollbar {
+    width: 16px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: #ffffff;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background-color: #081E3B;
+    border-radius: 10px;
+    border: 3px solid #ffffff;
+  }
+
 
 .panBackground {
   animation: panImage 20s infinite alternate; /* Adjust 30s to control the speed of the panning */
