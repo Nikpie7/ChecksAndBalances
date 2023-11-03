@@ -1,10 +1,11 @@
 /* eslint-disable prettier/prettier */
 import React, {useState} from 'react';
-import {View, Text, StyleSheet, ScrollView} from 'react-native';
+import {View, Text, Image, StyleSheet, ScrollView, useWindowDimensions} from 'react-native';
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import CustomInput from '../../components/CustomInput';
 import CustomButton from '../../components/CustomButton';
+import Logo from '../../../../assets/images/logo.png';
 import { useNavigation } from '@react-navigation/native';
-import axios from 'axios';
 
 
 const SignUpScreen = () => {
@@ -17,44 +18,73 @@ const SignUpScreen = () => {
     const [streetAddress, setStreetAddress] = useState('');
     const [zipCode, setZipCode] = useState('');
 
+    const {height} = useWindowDimensions();
     const navigation = useNavigation();
 
     const onSignUpPressed = () => {
-        //send data to server
-        const handleSubmit = async () => {
-            if (username === '' || email === '' || password === '' || passwordRepeat === ''
-                || firstName === '' || lastName === '' || streetAddress === '' || zipCode === '') {
-                alert('All fields are required');
-                return;
+        //validation
+        if(username !== "" && email !== "" && password !== "" 
+        && passwordRepeat !== "" && firstName !== "" && lastName != ""
+        && streetAddress !== "" && zipCode !== ""){
+            if(password === passwordRepeat){
+                //gather up all fields
+                bodyVariable = JSON.stringify({
+                    "username": username,
+                    "password": password,
+                    "email": email,
+                    "firstName": firstName,
+                    "lastName": lastName,
+                    "address": streetAddress,
+                    "zipCode": zipCode,
+                })
+                console.log(bodyVariable);
+
+                //send data to server
+                fetch('https://checksnbalances.us/api/register', {
+                    method: 'POST',
+                    headers: {
+                        Accept: 'application/json',
+                        'Content-Type': 'application/json',
+                    },
+                    body: bodyVariable,
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    if(data.error == ""){
+                        //redirect to log in screen
+                        console.warn("Registration Complete! Log in...");
+                        navigation.navigate('SignIn');
+                    }
+                    else{
+                        console.warn("You done messed up");
+                    }
+                })
+                .catch(error => {
+                console.error(error);
+                });
             }
-            if (password !== passwordRepeat) {
-                alert('Password must match password confirmation');
-            }
-            const resp = await axios.post('${baseUrl}/api/login', {username, email, password, passwordRepeat,
-                                                      firstName, lastName, streetAddress, zipCode});
-            if(resp.data.error)
-                alert(resp.data.error);
-            else
-                alert('Sign up successful');
-        };
-        //redirect to log in screen
-        console.warn("Successfully Added Account!");
-        navigation.navigate('SignIn');
-      };
+            else{console.warn("Password and Confirm Password do not match!");}
+        }
+        else{console.warn("Please fill out all fields!");}
+    };
 
     return(
-        <View style={styles.root}>
-        
-            <CustomInput placeholder="Username" value={username} setValue={setUsername}/>
-            <CustomInput placeholder="Password" value={password} setValue={setPassword} secure={true}/>
-            <CustomInput placeholder="Confirm Password" value={passwordRepeat} setValue={setPasswordRepeat} secure={true}/>
-            <CustomInput placeholder="Email" value={email} setValue={setEmail}/>
-            <CustomInput placeholder="Your First Name" value={firstName} setValue={setFirstName}/>
-            <CustomInput placeholder="Your Last Name" value={lastName} setValue={setLastName}/>
-            <CustomInput placeholder="123 Main Street, Orlando, FL" value={streetAddress} setValue={setStreetAddress}/>
-            <CustomInput placeholder="12345" value={zipCode} setValue={setZipCode}/>
-            <CustomButton text="Register" onPress={onSignUpPressed} type="primary"/>
-        </View>
+        <KeyboardAwareScrollView contentContainerStyle={styles.container}>
+            <View style={styles.root}>
+                <Image source={Logo} style={[styles.logo, {height: height * 0.3}]} resizeMode="contain"/>
+
+                <CustomInput placeholder="Username" value={username} setValue={setUsername}/>
+                <CustomInput placeholder="Password" value={password} setValue={setPassword} secure={true}/>
+                <CustomInput placeholder="Confirm Password" value={passwordRepeat} setValue={setPasswordRepeat} secure={true}/>
+                <CustomInput placeholder="Email" value={email} setValue={setEmail}/>
+                <CustomInput placeholder="Your First Name" value={firstName} setValue={setFirstName}/>
+                <CustomInput placeholder="Your Last Name" value={lastName} setValue={setLastName}/>
+                <CustomInput placeholder="123 Main Street, Orlando, FL" value={streetAddress} setValue={setStreetAddress}/>
+                <CustomInput placeholder="12345" value={zipCode} setValue={setZipCode}/>
+                <CustomButton text="Register" onPress={onSignUpPressed} type="primary"/>
+            </View>
+        </KeyboardAwareScrollView>
     );
 };
 
@@ -66,7 +96,11 @@ const styles = StyleSheet.create({
     logo: {
         width: '70%',
         maxWidth: 300,
-        maxHeight: 200,
+        maxHeight: 100,
+    },
+    container: {
+        flex: 1,
+        justifyContent: 'center'
     },
 });
 
