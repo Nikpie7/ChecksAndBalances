@@ -11,10 +11,10 @@ const CustomInput = ({value, setValue, placeholder, secure}) => {
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: '#04ACD950',
+        backgroundColor: '#04ACD975',
         width: '100%',
 
-        borderColor:"grey",
+        borderColor:"black",
         borderWidth: 1,
         borderRadius: 5,
 

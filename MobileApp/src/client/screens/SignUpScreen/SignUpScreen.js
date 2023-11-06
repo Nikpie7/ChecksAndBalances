@@ -5,6 +5,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import CustomInput from '../../components/CustomInput';
 import CustomButton from '../../components/CustomButton';
 import Logo from '../../../../assets/images/logo.png';
+import Background from '../../../../assets/images/background.png';
 import { useNavigation } from '@react-navigation/native';
 
 
@@ -72,6 +73,7 @@ const SignUpScreen = () => {
     return(
         <KeyboardAwareScrollView contentContainerStyle={styles.container}>
             <View style={styles.root}>
+            <Image source={Background} style={[styles.background]} resizeMode="cover"/>
                 <Image source={Logo} style={[styles.logo, {height: height * 0.3}]} resizeMode="contain"/>
 
                 <CustomInput placeholder="Username" value={username} setValue={setUsername}/>
@@ -89,6 +91,11 @@ const SignUpScreen = () => {
 };
 
 const styles = StyleSheet.create({
+    background:{
+        position: 'absolute',
+        maxWidth: 500,
+        maxHeight: 900,
+    },
     root:{
         alignItems: 'center',
         padding: 20,

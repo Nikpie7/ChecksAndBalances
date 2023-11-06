@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
 import {View, Text, Image, StyleSheet, useWindowDimensions} from 'react-native'
 import Logo from '../../../../assets/images/logo.png';
+import Background from '../../../../assets/images/background.png';
 import CustomInput from '../../components/CustomInput';
 import CustomButton from '../../components/CustomButton';
 import { useNavigation } from '@react-navigation/native';
-import axios from 'axios';
 
 const SignInScreen = () => {
     const [username, setUsername] = useState('');
@@ -51,6 +51,7 @@ const SignInScreen = () => {
 
     return(
         <View style={styles.root}>
+            <Image source={Background} style={[styles.background]} resizeMode="cover"/>
             <Image source={Logo} style={[styles.logo, {height: height * 0.3}]} resizeMode="contain"/>
         
             <CustomInput placeholder="Username" value={username} setValue={setUsername}/>
@@ -62,6 +63,11 @@ const SignInScreen = () => {
 };
 
 const styles = StyleSheet.create({
+    background:{
+        position: 'absolute',
+        maxWidth: 500,
+        maxHeight: 900,
+    },
     root:{
         alignItems: 'center',
         padding: 20,

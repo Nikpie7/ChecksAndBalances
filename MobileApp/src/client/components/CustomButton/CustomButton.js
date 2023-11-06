@@ -20,14 +20,14 @@ const styles = StyleSheet.create({
     },
 
     container_primary: {
-        backgroundColor: '#04ACD950',
+        backgroundColor: '#04ACD9DD',
     },
 
     container_small: {
     },
 
     text_small: {
-        color: "gray",
+        color: "black",
     },
 
     text: {
