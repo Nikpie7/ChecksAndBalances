@@ -155,6 +155,64 @@ app.post('/api/addcard', async (req, res, next) =>
   res.status(200).json(ret);
 });
 
+app.get('/api/getVotesSenate', async (req, res, next) => {
+  const API_KEY = 'celRz6ypa6JuFoqCsYBelBwS5HxkGTHbcTMQGo8V';
+
+  try {
+    
+    const response = await axios.get('https://api.propublica.org/congress/v1/senate/votes/recent.json', {
+      headers: {
+        'X-API-Key': API_KEY,
+      },
+    });
+
+    res.json(response.data);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to retrieve roll call vote data' });
+  }
+});
+
+app.get('/api/getVotesHouse', async (req, res, next) => {
+  const API_KEY = 'celRz6ypa6JuFoqCsYBelBwS5HxkGTHbcTMQGo8V';
+
+  try {
+    
+    const response = await axios.get('https://api.propublica.org/house/v1/house/votes/recent.json', {
+      headers: {
+        'X-API-Key': API_KEY,
+      },
+    });
+
+    res.json(response.data);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to retrieve roll call vote data' });
+  }
+});
+
+app.get('/api/getVotesMember', async (req, res, next) => {
+  const API_KEY = 'celRz6ypa6JuFoqCsYBelBwS5HxkGTHbcTMQGo8V';
+  const { memberID } = req.body;
+
+  let initText = 'https://api.propublica.org/congress/v1/members'
+  let finalText = initText.concat("/", memberID)
+
+  try {
+    
+    const response = await axios.get(finalText, {
+      headers: {
+        'X-API-Key': API_KEY,
+      },
+    });
+
+    res.json(response.data);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to retrieve roll call vote data' });
+  }
+});
+
 app.get('/api/getBillSubjects', async(req, res, next) => {
   const API_KEY = '1bFnnjNn8xkUuTvnhjdLO2URpY5eK3dTYkhpoBaQ';
   const { congress, billType, billNumber } = req.body;
