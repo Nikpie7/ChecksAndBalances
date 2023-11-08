@@ -5,7 +5,6 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const path = require('path');
 const PORT = process.env.PORT || 5001;
-//Hello World 2!
 const axios = require('axios');
 const app = express();
 
@@ -52,6 +51,393 @@ app.post('/api/addcard', async (req, res, next) =>
   var ret = { error: error };
   res.status(200).json(ret);
 });
+
+app.get('/api/getVotesSenate', async (req, res, next) => {
+  const API_KEY = process.env.PRO_KEY;
+
+  try {
+    
+    const response = await axios.get('https://api.propublica.org/congress/v1/senate/votes/recent.json', {
+      headers: {
+        'X-API-Key': API_KEY,
+      },
+    });
+
+    res.json(response.data);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to retrieve roll call vote data' });
+  }
+});
+
+app.get('/api/getVotesHouse', async (req, res, next) => {
+  const API_KEY = process.env.PRO_KEY;
+
+  try {
+    
+    const response = await axios.get('https://api.propublica.org/house/v1/house/votes/recent.json', {
+      headers: {
+        'X-API-Key': API_KEY,
+      },
+    });
+
+    res.json(response.data);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to retrieve roll call vote data' });
+  }
+});
+
+app.get('/api/getVotesMember', async (req, res, next) => {
+  const API_KEY = process.env.PRO_KEY;
+  const { memberID } = req.body;
+
+  let initText = 'https://api.propublica.org/congress/v1/members'
+  let finalText = initText.concat("/", memberID)
+
+  try {
+    
+    const response = await axios.get(finalText, {
+      headers: {
+        'X-API-Key': API_KEY,
+      },
+    });
+
+    res.json(response.data);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to retrieve roll call vote data' });
+  }
+});
+
+app.get('/api/getBillSubjects', async(req, res, next) => {
+  const API_KEY = process.env.CONGRESS_KEY;
+  const { congress, billType, billNumber } = req.body;
+  // Takes Congress number, the type of bill, and the number of the specific bill
+  // Returns list of legislative subjects of bill.
+  if (!billType)
+  {
+    return res.status(400).json({ error: 'Missing bill_type parameter'});
+  }
+
+  try {
+
+    //const response = await axios.get('https://api.congress.gov/v3/bill/117/hr?format=json&offset=0&limit=112&api_key=1bFnnjNn8xkUuTvnhjdLO2URpY5eK3dTYkhpoBaQ');
+    let initText = 'https://api.congress.gov/v3/bill';
+    let test1 = initText.concat("/", congress);
+    let test2 = test1.concat("/", billType);
+    let test3 = test2.concat("/", billNumber);
+    let finalText = test3.concat("/", "subjects");
+
+    const response = await axios.get(finalText,
+    {
+      params: {
+        format: 'json',
+        api_key: API_KEY,
+      },
+      headers: {
+        accept: 'application/json',
+      }
+    });
+
+
+    // const response = await axios.get('https://api.congress.gov/v3/bill/{congress}/{billType}',
+    // {
+    //   params: {
+    //     congress: 117,
+    //     billType: billType,
+    //     api_key: API_KEY,
+    //   },
+    // });
+
+    res.json(response.data);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to retrieve bill data '});
+  }
+})
+
+app.get('/api/getBillAmendments', async(req, res, next) => {
+  const API_KEY = process.env.CONGRESS_KEY;
+  const { congress, billType, billNumber } = req.body;
+  // Takes Congress number, the type of bill, and the number of the specific bill
+  // Returns list of amendments to a bill
+  if (!billType)
+  {
+    return res.status(400).json({ error: 'Missing bill_type parameter'});
+  }
+
+  try {
+
+    //const response = await axios.get('https://api.congress.gov/v3/bill/117/hr?format=json&offset=0&limit=112&api_key=1bFnnjNn8xkUuTvnhjdLO2URpY5eK3dTYkhpoBaQ');
+    let initText = 'https://api.congress.gov/v3/bill';
+    let test1 = initText.concat("/", congress);
+    let test2 = test1.concat("/", billType);
+    let test3 = test2.concat("/", billNumber);
+    let finalText = test3.concat("/", "amendments");
+
+    const response = await axios.get(finalText,
+    {
+      params: {
+        format: 'json',
+        api_key: API_KEY,
+      },
+      headers: {
+        accept: 'application/json',
+      }
+    });
+
+
+    // const response = await axios.get('https://api.congress.gov/v3/bill/{congress}/{billType}',
+    // {
+    //   params: {
+    //     congress: 117,
+    //     billType: billType,
+    //     api_key: API_KEY,
+    //   },
+    // });
+
+    res.json(response.data);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to retrieve bill data '});
+  }
+})
+
+app.get('/api/getBillRelatedBills', async(req, res, next) => {
+  const API_KEY = process.env.CONGRESS_KEY;
+  const { congress, billType, billNumber } = req.body;
+  // Takes Congress number, the type of bill, and the number of the specific bill
+  // Returns a list of related bills.
+  if (!billType)
+  {
+    return res.status(400).json({ error: 'Missing bill_type parameter'});
+  }
+
+  try {
+
+    //const response = await axios.get('https://api.congress.gov/v3/bill/117/hr?format=json&offset=0&limit=112&api_key=1bFnnjNn8xkUuTvnhjdLO2URpY5eK3dTYkhpoBaQ');
+    let initText = 'https://api.congress.gov/v3/bill';
+    let test1 = initText.concat("/", congress);
+    let test2 = test1.concat("/", billType);
+    let test3 = test2.concat("/", billNumber);
+    let finalText = test3.concat("/", "relatedbills");
+
+    const response = await axios.get(finalText,
+    {
+      params: {
+        format: 'json',
+        api_key: API_KEY,
+      },
+      headers: {
+        accept: 'application/json',
+      }
+    });
+
+
+    // const response = await axios.get('https://api.congress.gov/v3/bill/{congress}/{billType}',
+    // {
+    //   params: {
+    //     congress: 117,
+    //     billType: billType,
+    //     api_key: API_KEY,
+    //   },
+    // });
+
+    res.json(response.data);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to retrieve bill data '});
+  }
+})
+
+app.get('/api/getBillSummaries', async(req, res, next) => {
+  const API_KEY = process.env.CONGRESS_KEY;
+  const { congress, billType, billNumber } = req.body;
+  // Takes Congress number, the type of bill, and the number of the specific bill
+  // Returns a list of bill summaries
+  if (!billType)
+  {
+    return res.status(400).json({ error: 'Missing bill_type parameter'});
+  }
+
+  try {
+
+    //const response = await axios.get('https://api.congress.gov/v3/bill/117/hr?format=json&offset=0&limit=112&api_key=1bFnnjNn8xkUuTvnhjdLO2URpY5eK3dTYkhpoBaQ');
+    let initText = 'https://api.congress.gov/v3/bill';
+    let test1 = initText.concat("/", congress);
+    let test2 = test1.concat("/", billType);
+    let test3 = test2.concat("/", billNumber);
+    let finalText = test3.concat("/", "summaries");
+
+    const response = await axios.get(finalText,
+    {
+      params: {
+        format: 'json',
+        api_key: API_KEY,
+      },
+      headers: {
+        accept: 'application/json',
+      }
+    });
+
+
+    // const response = await axios.get('https://api.congress.gov/v3/bill/{congress}/{billType}',
+    // {
+    //   params: {
+    //     congress: 117,
+    //     billType: billType,
+    //     api_key: API_KEY,
+    //   },
+    // });
+
+    res.json(response.data);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to retrieve bill data '});
+  }
+})
+
+app.get('/api/getBillCosponsors', async(req, res, next) => {
+  const API_KEY = process.env.CONGRESS_KEY;
+  const { congress, billType, billNumber } = req.body;
+  // Takes Congress number, the type of bill, and the number of the specific bill
+  // Returns a list of bill cosponsors.
+  if (!billType)
+  {
+    return res.status(400).json({ error: 'Missing bill_type parameter'});
+  }
+
+  try {
+
+    //const response = await axios.get('https://api.congress.gov/v3/bill/117/hr?format=json&offset=0&limit=112&api_key=1bFnnjNn8xkUuTvnhjdLO2URpY5eK3dTYkhpoBaQ');
+    let initText = 'https://api.congress.gov/v3/bill';
+    let test1 = initText.concat("/", congress);
+    let test2 = test1.concat("/", billType);
+    let test3 = test2.concat("/", billNumber);
+    let finalText = test3.concat("/", "cosponsors");
+
+    const response = await axios.get(finalText,
+    {
+      params: {
+        format: 'json',
+        api_key: API_KEY,
+      },
+      headers: {
+        accept: 'application/json',
+      }
+    });
+
+
+    // const response = await axios.get('https://api.congress.gov/v3/bill/{congress}/{billType}',
+    // {
+    //   params: {
+    //     congress: 117,
+    //     billType: billType,
+    //     api_key: API_KEY,
+    //   },
+    // });
+
+    res.json(response.data);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to retrieve bill data '});
+  }
+})
+
+app.get('/api/getBillActions', async(req, res, next) => {
+  const API_KEY = process.env.CONGRESS_KEY;
+  const { congress, billType, billNumber } = req.body;
+  // Takes Congress number, the type of bill, and the number of the specific bill
+  // Returns a list of actions taken on a bill.
+  if (!billType)
+  {
+    return res.status(400).json({ error: 'Missing bill_type parameter'});
+  }
+
+  try {
+
+    //const response = await axios.get('https://api.congress.gov/v3/bill/117/hr?format=json&offset=0&limit=112&api_key=1bFnnjNn8xkUuTvnhjdLO2URpY5eK3dTYkhpoBaQ');
+    let initText = 'https://api.congress.gov/v3/bill';
+    let test1 = initText.concat("/", congress);
+    let test2 = test1.concat("/", billType);
+    let test3 = test2.concat("/", billNumber);
+    let finalText = test3.concat("/", "actions");
+
+    const response = await axios.get(finalText,
+    {
+      params: {
+        format: 'json',
+        api_key: API_KEY,
+      },
+      headers: {
+        accept: 'application/json',
+      }
+    });
+
+
+    // const response = await axios.get('https://api.congress.gov/v3/bill/{congress}/{billType}',
+    // {
+    //   params: {
+    //     congress: 117,
+    //     billType: billType,
+    //     api_key: API_KEY,
+    //   },
+    // });
+
+    res.json(response.data);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to retrieve bill data '});
+  }
+})
+
+app.get('/api/getBillCommittees', async(req, res, next) => {
+  const API_KEY = process.env.CONGRESS_KEY;
+  const { congress, billType, billNumber } = req.body;
+  // Takes Congress number, the type of bill, and the number of the specific bill
+  // Returns a list of committees tied to a bill
+  if (!billType)
+  {
+    return res.status(400).json({ error: 'Missing bill_type parameter'});
+  }
+
+  try {
+
+    //const response = await axios.get('https://api.congress.gov/v3/bill/117/hr?format=json&offset=0&limit=112&api_key=1bFnnjNn8xkUuTvnhjdLO2URpY5eK3dTYkhpoBaQ');
+    let initText = 'https://api.congress.gov/v3/bill';
+    let test1 = initText.concat("/", congress);
+    let test2 = test1.concat("/", billType);
+    let test3 = test2.concat("/", billNumber);
+    let finalText = test3.concat("/", "committees");
+
+    const response = await axios.get(finalText,
+    {
+      params: {
+        format: 'json',
+        api_key: API_KEY,
+      },
+      headers: {
+        accept: 'application/json',
+      }
+    });
+
+
+    // const response = await axios.get('https://api.congress.gov/v3/bill/{congress}/{billType}',
+    // {
+    //   params: {
+    //     congress: 117,
+    //     billType: billType,
+    //     api_key: API_KEY,
+    //   },
+    // });
+
+    res.json(response.data);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to retrieve bill data '});
+  }
+})
 
 app.post('/api/getReps', async (req, res, next) => {
   // Incoming: Address
