@@ -29,6 +29,47 @@ const defaultInterests = [
   {"InterestName": "Health", "value": false}
 ];
 
+// Intrests CRUDs
+
+// Read Interests
+app.get('/api/readInterests', async (req, res) => {
+    try {
+        const { userId } = req.body;
+        const db = client.db('POOSBigProject');
+        const user = await db.collection('Users').findById(userId);
+
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        res.json({ interests: user.interests });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Update/Delete intersts (takes in userID and full array of new interests)
+app.put('/api/updateInterests', async (req, res) => {
+    try {
+        const { userId, interests } = req.body;
+        const db = client.db('POOSBigProject');
+
+        // Find the user in the Users collection by userId and update their interessts
+        const user = await db.collection('Users').findOneAndUpdate(
+            { _id: userId },
+            { $set: { Interests: interests }},
+        );
+
+        if (!user.value) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        res.json({ interests: user.value.Interests });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 app.use((req, res, next) =>
 {
   res.setHeader('Access-Control-Allow-Origin', '*');
