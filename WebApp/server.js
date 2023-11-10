@@ -12,6 +12,23 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static('dist'));
 
+const defaultInterests = [
+  {"InterestName": "Agriculture", "value": false},
+  {"InterestName": "Spending", "value": false},
+  {"InterestName": "Military & National Defense", "value": false},
+  {"InterestName": "Veterans", "value": false},
+  {"InterestName": "Taxation", "value": false},
+  {"InterestName": "Finance", "value": false},
+  {"InterestName": "Education", "value": false},
+  {"InterestName": "Labor", "value": false},
+  {"InterestName": "Energy", "value": false},
+  {"InterestName": "Science & Technology", "value": false},
+  {"InterestName": "Governmental Reform", "value": false},
+  {"InterestName": "Foreign Affairs", "value": false},
+  {"InterestName": "Infrastructure", "value": false},
+  {"InterestName": "Health", "value": false}
+];
+
 app.use((req, res, next) =>
 {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -608,8 +625,8 @@ app.post('/api/register', async (req, res, next) =>
   // outgoing: id, error
 
   const { firstName, lastName, username, email, password, address, zipCode } = req.body;
-
-  const newUser = {FirstName: firstName, LastName: lastName, Login: username, Email: email, Password: password, Address: address, Verified: false, ZipCode: zipCode};
+  
+  const newUser = {FirstName: firstName, LastName: lastName, Login: username, Email: email, Password: password, Address: address, Verified: false, ZipCode: zipCode, Interests: defaultInterests};
   var error = '';
 
   try
