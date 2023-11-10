@@ -55,3 +55,22 @@ content-type: application/json
     "username": "gWash89",
     "password": "firstPresident"
 }
+
+###
+POST https://checksnbalances.us/api/getSenByState
+content-type: application/json
+
+{
+    "state": "FL"
+}
+###
+POST https://checksnbalances.us/api/login
+content-type: application/json
+
+{
+    "username": "gWash89",
+    "password": "firstPresident"
+}
+###
+GET https://checksnbalances.us/api/api/getVotesSenate
+content-type: application/json
