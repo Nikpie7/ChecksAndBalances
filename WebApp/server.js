@@ -12,6 +12,24 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static('dist'));
 
+var interestList =
+[
+  ['Agriculture', 'hsag00', 'ssaf00'],
+  ['Spending', 'hsap00', 'ssap00', 'hsbu00', 'ssbu00'],
+  ['Military & National Defense', 'hsas00', 'ssas00', 'hlig00', 'sslin00', 'hshm00', 'ssga00'],
+  ['Veterans', 'hsvr00', 'ssva00'],
+  ['Taxation', 'hswm00'],
+  ['Finance', 'ssbk00', 'ssfi00', 'hsba00'],
+  ['Education', 'hsed00'],
+  ['Labor', 'hsed00', 'hssm00', 'sssb00'],
+  ['Energy', 'sseg00', 'hsif00', 'hsii00'],
+  ['Science & Technology', 'sscm00', 'hssy00'],
+  ['Governmental Reform', 'hsso00', 'slet00', 'slia00', 'hsha00', 'hsgo00', 'hsju00', 'ssju00', 'ssra00'],
+  ['Foreign Affairs', 'hsfa00', 'ssfr00'],
+  ['Infrastructure', 'ssev00', 'hspw00'],
+  ['Health', 'sshr00', 'spag00', 'scnc00']
+];
+
 const defaultInterests = [
   {"InterestName": "Agriculture", "value": false},
   {"InterestName": "Spending", "value": false},
