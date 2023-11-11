@@ -84,6 +84,57 @@ app.use((req, res, next) =>
   next();
 });
 
+app.get('/api/getBillsByInterest', async(req, res, next) => {
+  const API_KEY = process.env.CONGRESS_KEY;
+  const { interest } = req.body;
+  const ourIndex = 0;
+  // Takes Congress number, the type of bill, and the number of the specific bill
+  // Returns list of bill numbers.
+
+  try {
+    let bigArray = [];
+    for (let k = 0; k < interestList.length; k++)
+    {
+      let ourIndex = 0;
+      if (interest === interestList[k][0])
+      {
+        for (let i = 1; i < interestList[k].length; i++)
+        {
+          let chamber = "house";
+          if (interestList[k][i].includes('ss') || interestList[k][i].includes('sc') || interestList[k][i].includes('sp') || interestList[k][i].includes('sl'))
+          {
+            chamber = "senate";
+          }
+          let initText = 'https://api.congress.gov/v3/committee';
+          let test1 = initText.concat("/", chamber);
+          let test2 = test1.concat("/", interestList[k][i]);
+          let finalText = test2.concat("/", "bills");
+          const response = await axios.get(finalText,
+          {
+            params: {
+              format: 'json',
+              limit: 20,
+              api_key: API_KEY,
+            },
+            headers: {
+              accept: 'application/json',
+            }
+          });
+          let temp = response.data['committee-bills'];
+          for (let j = 0; j < 20; j++)
+          {
+            bigArray = bigArray.concat(temp.bills[j].number);
+          }
+        }
+      }
+    }
+    res.json(bigArray);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to retrieve bill data '});
+  }
+})
+
 app.post('/api/addcard', async (req, res, next) =>
 {
   // incoming: userId, color
