@@ -66,6 +66,61 @@ app.get('/api/readInterests', async (req, res) => {
     }
 });
 
+// THIS IS THE ENDPOINT YOU USE TO GET A VOTE
+app.get('/api/getBillVote', async (req, res, next) => {
+  // Only works for most recent congress with this implementation
+  // Takes one input, billName, with a string as its field (example: H.R.4820)
+  const API_KEY = process.env.PRO_KEY;
+  const { billName } = req.body;
+  try {
+    let myOffset = 0;
+    let mostRecent = 0;
+    const response1 = await axios.get("https://api.propublica.org/congress/v1/both/votes/recent.json", {
+      params: {
+        offset: myOffset,
+        format: 'json',
+      },
+      headers: {
+        'X-API-Key': API_KEY,
+      }
+    });
+    mostRecent = response1.data.results.votes[0].roll_call;
+
+    for (let i = mostRecent; i >= 0; i = i - 20)
+    {
+      console.log("We iterated. Yippee");
+      const response2 = await axios.get("https://api.propublica.org/congress/v1/both/votes/recent.json", {
+        params: {
+          offset: myOffset,
+          format: 'json',
+        },
+        headers: {
+          'X-API-Key': API_KEY,
+        }
+      });
+      console.log(myOffset);
+      myOffset = myOffset + 20;
+      for (let k = 0; k < 20; k++)
+      {
+        //Bug Testing Code For Future Use
+        //console.log(response2.data.results.votes[k].bill.number)
+        
+        if (response2.data.results.votes[k].bill.number === billName)
+        {
+          let ret = response2.data.results.votes[k]
+          return res.status(500).json(ret);
+        }
+      }
+    }
+  }
+  catch
+  {
+    res.status(500).json({ error: 'Failed to retrieve roll call vote data' });
+  }
+  //let initText = 'https://api.propublica.org/congress/v1/members'
+  //let finalText = initText.concat("/", memberID)
+});
+
 // Update/Delete intersts (takes in userID and full array of new interests)
 app.put('/api/updateInterests', async (req, res) => {
     try {
