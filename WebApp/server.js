@@ -157,6 +157,96 @@ app.use((req, res, next) =>
   next();
 });
 
+app.get('/api/getMemberID', async(req, res, next) => {
+  const API_KEY = process.env.CONGRESS_KEY;
+  const { name } = req.body;
+  let memberID = '';
+  // This name should be given as "Leahy, Patrick J." or as "Kelly, Mark"
+  let bigList = [];
+  // Takes Congress member name, returns their member ID
+  // Returns list of amendments to a bill
+  try {
+    let responseList = await axios.get('https://api.congress.gov/v3/member', {
+      params: {
+        format: 'json',
+        limit: 250,
+        api_key: API_KEY,
+      }
+    })
+
+    let responseList2 = await axios.get('https://api.congress.gov/v3/member', {
+      params: {
+        format: 'json',
+        offset: 250,
+        limit: 250,
+        api_key: API_KEY,
+      }
+    })
+
+    let responseList3 = await axios.get('https://api.congress.gov/v3/member', {
+      params: {
+        format: 'json',
+        offset: 500,
+        limit: 35,
+        api_key: API_KEY,
+      }
+    })
+    responseList.data.members = responseList.data.members.concat(responseList2.data.members);
+    responseList.data.members = responseList.data.members.concat(responseList3.data.members);
+    responseList.data.members.sort((a,b) => {return a.name - b.name});
+    for (let iterator = 0; iterator < responseList.data.members.length; iterator++)
+    {
+      if (responseList.data.members[iterator].name.includes(name))
+      {
+        memberID = responseList.data.members[iterator].bioguideId;
+        break;
+      }
+    }
+    res.status(200).json(memberID);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to retrieve bill data '});
+  }
+});
+
+app.get('/api/getSponsoredBills', async(req, res, next) => {
+  const API_KEY = process.env.CONGRESS_KEY;
+  const { memberID, offset } = req.body;
+  // Takes memberID from getMemberID endpoint, as well as an offset to load older legislation
+  try{
+    let initText = 'https://api.congress.gov/v3/member';
+    let intermediateText = initText.concat("/", memberID);
+    let finalText = intermediateText.concat("/sponsored-legislation");
+
+    let bigArray = [];
+    const response = await axios.get(finalText,
+    {
+      params: {
+        format: 'json',
+        offset: offset,
+        limit: 20,
+        api_key: API_KEY,
+      },
+      headers: {
+        accept: 'application/json',
+      }
+    });
+    for (let i = 0; i < response.data.sponsoredLegislation.length; i++)
+    {
+      if (response.data.sponsoredLegislation[i].number == null)
+      {
+        continue;
+      }
+      bigArray = bigArray.concat(response.data.sponsoredLegislation[i].number);
+    }
+    res.status(200).json(bigArray);
+  }
+  catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to retrieve bill data '});
+  }
+});
+
 app.get('/api/getBillsByInterest', async(req, res, next) => {
   const API_KEY = process.env.CONGRESS_KEY;
   const { interest } = req.body;
