@@ -54,7 +54,9 @@ app.get('/api/readInterests', async (req, res) => {
     try {
         const { userId } = req.body;
         const db = client.db('POOSBigProject');
-        const user = await db.collection('Users').findById(userId);
+        // const user = await db.collection('Users').findById(userId);
+        const user = await db.collection('Users').find({ _id: userID }).toArray();
+
 
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
