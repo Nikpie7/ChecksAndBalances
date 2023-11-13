@@ -55,7 +55,7 @@ app.get('/api/readInterests', async (req, res) => {
         const { userId } = req.body;
         const db = client.db('POOSBigProject');
         // const user = await db.collection('Users').findById(userId);
-        const user = await db.collection('Users').find({ _id: userID }).toArray();
+        const user = await db.collection('Users').find({ _id: userId }).toArray();
 
 
         if (!user) {
