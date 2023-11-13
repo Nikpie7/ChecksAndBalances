@@ -62,9 +62,9 @@ app.get('/api/readInterests', async (req, res) => {
             return res.status(404).json({ error: 'User not found' });
         }
 
-        res.json({ interests: user.interests });
+        res.json({ Interests: user.Interests });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: "Interests Not Found" });
     }
 });
 
