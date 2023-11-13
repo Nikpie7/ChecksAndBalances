@@ -135,7 +135,7 @@ app.post('/api/updateInterests', async (req, res) => {
         );
 
         // Check if the user object exists and has a value property
-        if (!user || !user.value) {
+        if (!user) {
             return res.status(404).json({ error: 'User not found' });
         }
 
