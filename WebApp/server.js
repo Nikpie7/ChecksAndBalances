@@ -127,13 +127,15 @@ app.post('/api/updateInterests', async (req, res) => {
         const { userId, interests } = req.body;
         const db = client.db('POOSBigProject');
 
-        // Find the user in the Users collection by userId and update their interessts
+        // Find the user in the Users collection by userId and update their interests
         const user = await db.collection('Users').findOneAndUpdate(
             { _id: userId },
             { $set: { Interests: interests }},
+            { returnDocument: 'after' } // Return the updated document
         );
 
-        if (!user.value) {
+        // Check if the user object exists and has a value property
+        if (!user || !user.value) {
             return res.status(404).json({ error: 'User not found' });
         }
 
@@ -142,6 +144,7 @@ app.post('/api/updateInterests', async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
+
 
 app.use((req, res, next) =>
 {
