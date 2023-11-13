@@ -132,7 +132,7 @@ app.post('/api/updateInterests', async (req, res) => {
 
         // Find the user in the Users collection by userId and update their interests
         const user = await db.collection('Users').findOneAndUpdate(
-            { _id: userId },
+            { _id: new ObjectId(userId)},
             { $set: { Interests: interests }},
             { returnDocument: 'after' } // Return the updated document
         );
