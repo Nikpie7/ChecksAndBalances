@@ -134,7 +134,7 @@ app.post('/api/updateInterests', async (req, res) => {
         const user = await db.collection('Users').findOneAndUpdate(
             { _id: new ObjectId(userId)},
             { $set: { Interests: interests }},
-            { returnDocument: 'after' } // Return the updated document
+            // { returnDocument: 'after' } // Return the updated document
         );
 
         // Check if the user object exists and has a value property
