@@ -255,7 +255,7 @@ app.get('/api/getSponsoredBills', async(req, res, next) => {
 
 app.get('/api/getBillsByInterest', async(req, res, next) => {
   const API_KEY = process.env.CONGRESS_KEY;
-  const { interest } = req.body;
+  const { interest, limit, offset } = req.body;
   const ourIndex = 0;
   // Takes Congress number, the type of bill, and the number of the specific bill
   // Returns list of bill numbers.
@@ -282,7 +282,8 @@ app.get('/api/getBillsByInterest', async(req, res, next) => {
           {
             params: {
               format: 'json',
-              limit: 20,
+              offset: offset,
+              limit: limit,
               api_key: API_KEY,
             },
             headers: {
