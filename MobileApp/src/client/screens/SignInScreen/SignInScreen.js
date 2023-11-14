@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import * as Keychain from 'react-native-keychain';
 import {View, Text, Image, StyleSheet, useWindowDimensions, TextInput, TouchableOpacity, ScrollView} from 'react-native'
 import Logo from '../../../../assets/images/logo.png';
 import Background from '../../../../assets/images/background.png';
@@ -30,7 +31,14 @@ const SignInScreen = () => {
             if(data.id !== 0 && data.id !== -1){
                 //then go to home page
                 console.warn("Successfully Logged In!");
-                navigation.navigate('Home');
+                
+                Keychain.setGenericPassword(username, password).then(() => {
+                    console.log("Credentials saved successfully!")
+                    navigation.navigate('Dashboard');
+                })
+                .catch(error => {
+                    console.error("Failed to save credentials", error);
+                });
             }
             else{
                 console.warn("Incorrect User or Pass");
