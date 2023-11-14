@@ -1,9 +1,7 @@
 import React, { useState } from 'react'
-import {View, Text, Image, StyleSheet, useWindowDimensions} from 'react-native'
+import {View, Text, Image, StyleSheet, useWindowDimensions, TextInput, TouchableOpacity, ScrollView} from 'react-native'
 import Logo from '../../../../assets/images/logo.png';
 import Background from '../../../../assets/images/background.png';
-import CustomInput from '../../components/CustomInput';
-import CustomButton from '../../components/CustomButton';
 import { useNavigation } from '@react-navigation/native';
 
 const SignInScreen = () => {
@@ -50,32 +48,94 @@ const SignInScreen = () => {
     }
 
     return(
-        <View style={styles.root}>
-            <Image source={Background} style={[styles.background]} resizeMode="cover"/>
-            <Image source={Logo} style={[styles.logo, {height: height * 0.3}]} resizeMode="contain"/>
-        
-            <CustomInput placeholder="Username" value={username} setValue={setUsername}/>
-            <CustomInput placeholder="Password" value={password} setValue={setPassword} secure={true}/>
-            <CustomButton text="Log In" onPress={onLogInPressed} type="primary"/>
-            <CustomButton text="No Account? Sign Up" onPress={onSignUpPressed} type="small"/>
+        <View style={styles.container}>
+            <View style={styles.background}>
+                <Image source={Background} resizeMode="cover" />
+            </View>
+            <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+                <View style={styles.logoContainer}>
+                    <Image source={Logo} style={styles.logo} resizeMode="contain" />
+                </View>
+                <View style={styles.inputContainer}>
+                    <View style={styles.whiteBox}>
+                        <TextInput style={styles.input} placeholder="Username" value={username} onChangeText={setUsername}/>
+                        <TextInput style={styles.input} placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry/>
+                        
+                        <TouchableOpacity onPress={onLogInPressed} style={styles.button}>
+                            <Text style={styles.buttonText}>Log In</Text>
+                        </TouchableOpacity>
+                        
+                        <TouchableOpacity onPress={onSignUpPressed} style={styles.noAccountContainer}>
+                            <Text style={styles.signUpText}>No Account? Sign Up</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </ScrollView>
         </View>
     );
 };
 
 const styles = StyleSheet.create({
-    background:{
-        position: 'absolute',
-        maxWidth: 500,
-        maxHeight: 900,
+    container: {
+        flex: 1,
+        backgroundColor: 'white',
+        position: 'relative',
     },
-    root:{
+    background: {
+        position: 'absolute',
+        top: 0,
+        right: 0,
+        left: 0,
+        bottom: 0,
+        width: '100%',
+        height: '100%',
+    },
+    logoContainer: {
+        flex: 1,
+        top: '10%',
         alignItems: 'center',
-        padding: 20,
     },
     logo: {
         width: '70%',
-        maxWidth: 300,
-        maxHeight: 200,
+        alignSelf: 'center',
+    },
+    inputContainer: {
+        flex: 1,
+        padding: 20,
+        bottom: '15%',
+        marginTop: '15%',
+    },
+    whiteBox: {
+        backgroundColor: 'white',
+        borderRadius: 10,
+        elevation: 5,
+        padding: 20,
+    },
+    input: {
+        padding: 10,
+        marginBottom: 10,
+        borderRadius: 10,
+        borderWidth: 1,
+        borderColor: '#ccc',
+    },
+    button: {
+        backgroundColor: '#04ACD9DD',
+        padding: 15,
+        borderRadius: 10,
+        marginTop: 10,
+    },
+    buttonText: {
+        color: 'white',
+        fontWeight: 'bold',
+        textAlign: 'center',
+    },
+    noAccountContainer: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        marginTop: 10,
+    },
+    signUpText: {
+        color: 'black',
     },
 });
 
