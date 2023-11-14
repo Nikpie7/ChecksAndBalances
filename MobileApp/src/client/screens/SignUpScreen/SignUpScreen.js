@@ -1,9 +1,6 @@
 /* eslint-disable prettier/prettier */
 import React, {useState} from 'react';
-import {View, Text, Image, StyleSheet, ScrollView, useWindowDimensions} from 'react-native';
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import CustomInput from '../../components/CustomInput';
-import CustomButton from '../../components/CustomButton';
+import {View, Text, Image, StyleSheet, TextInput, TouchableOpacity, ScrollView, useWindowDimensions} from 'react-native';
 import Logo from '../../../../assets/images/logo.png';
 import Background from '../../../../assets/images/background.png';
 import { useNavigation } from '@react-navigation/native';
@@ -71,43 +68,87 @@ const SignUpScreen = () => {
     };
 
     return(
-        <KeyboardAwareScrollView contentContainerStyle={styles.container}>
-            <View style={styles.root}>
-            <Image source={Background} style={[styles.background]} resizeMode="cover"/>
-                <Image source={Logo} style={[styles.logo, {height: height * 0.3}]} resizeMode="contain"/>
-
-                <CustomInput placeholder="Username" value={username} setValue={setUsername}/>
-                <CustomInput placeholder="Password" value={password} setValue={setPassword} secure={true}/>
-                <CustomInput placeholder="Confirm Password" value={passwordRepeat} setValue={setPasswordRepeat} secure={true}/>
-                <CustomInput placeholder="Email" value={email} setValue={setEmail}/>
-                <CustomInput placeholder="Your First Name" value={firstName} setValue={setFirstName}/>
-                <CustomInput placeholder="Your Last Name" value={lastName} setValue={setLastName}/>
-                <CustomInput placeholder="123 Main Street, Orlando, FL" value={streetAddress} setValue={setStreetAddress}/>
-                <CustomInput placeholder="12345" value={zipCode} setValue={setZipCode}/>
-                <CustomButton text="Register" onPress={onSignUpPressed} type="primary"/>
+        <View style={styles.container}>
+            <View style={styles.background}>
+                <Image source={Background} resizeMode="cover" />
             </View>
-        </KeyboardAwareScrollView>
+            <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+                <View style={styles.logoContainer}>
+                    <Image source={Logo} style={styles.logo} resizeMode="contain" />
+                </View>
+                <View style={styles.inputContainer}>
+                    <View style={styles.whiteBox}>
+                        <TextInput style={styles.input} placeholder="Username" value={username} onChangeText={setUsername}/>
+                        <TextInput style={styles.input} placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry/>
+                        <TextInput style={styles.input} placeholder="Confirm Password" value={passwordRepeat} onChangeText={setPasswordRepeat} secure={true}/>
+                        <TextInput style={styles.input} placeholder="Email" value={email} onChangeText={setEmail}/>
+                        <TextInput style={styles.input} placeholder="First Name" value={firstName} onChangeText={setFirstName}/>
+                        <TextInput style={styles.input} placeholder="Last Name" value={lastName} onChangeText={setLastName}/>
+                        <TextInput style={styles.input} placeholder="123 Main Street, Orlando, FL" value={streetAddress} onChangeText={setStreetAddress}/>
+                        <TextInput style={styles.input} placeholder="12345" value={zipCode} onChangeText={setZipCode}/>
+                        
+                        <TouchableOpacity onPress={onSignUpPressed} style={styles.button}>
+                            <Text style={styles.buttonText}>Register</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </ScrollView>
+        </View>
     );
 };
 
 const styles = StyleSheet.create({
-    background:{
-        position: 'absolute',
-        maxWidth: 500,
-        maxHeight: 900,
+    container: {
+        flex: 1,
+        backgroundColor: 'white',
+        position: 'relative',
     },
-    root:{
+    background: {
+        position: 'absolute',
+        top: 0,
+        right: 0,
+        left: 0,
+        bottom: 0,
+        width: '100%',
+        height: '100%',
+    },
+    logoContainer: {
+        flex: 1,
         alignItems: 'center',
-        padding: 20,
     },
     logo: {
         width: '70%',
-        maxWidth: 300,
-        maxHeight: 100,
+        alignSelf: 'center',
     },
-    container: {
+    inputContainer: {
         flex: 1,
-        justifyContent: 'center'
+        padding: 20,
+        bottom: '15%',
+        marginTop: '15%',
+    },
+    whiteBox: {
+        backgroundColor: 'white',
+        borderRadius: 10,
+        elevation: 5,
+        padding: 20,
+    },
+    input: {
+        padding: 10,
+        marginBottom: 10,
+        borderRadius: 10,
+        borderWidth: 1,
+        borderColor: '#ccc',
+    },
+    button: {
+        backgroundColor: '#04ACD9DD',
+        padding: 15,
+        borderRadius: 10,
+        marginTop: 10,
+    },
+    buttonText: {
+        color: 'white',
+        fontWeight: 'bold',
+        textAlign: 'center',
     },
 });
 
