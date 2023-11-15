@@ -26,7 +26,7 @@ const sendVerificationEmail = (email, username) => {
   const token = jwt.sign({ username }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
   // Define the frontend URL for email verification (change this to your actual frontend URL)
-  const verificationUrl = `https://checksnbalances.us/api/verify-email${token}`;
+  const verificationUrl = `https://checksnbalances.us/verifyToken/${token}`;
 
   const params = {
     Source: 'noreply@checksnbalances.us', // Your verified email in SES

@@ -16,7 +16,7 @@ function App() {
         <Route path="/register" element={<LoginPage register />} />
         <Route path="/cards" element={<CardPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
-        <Route path="/verify-email/:token" component={EmailVerification} />
+        <Route path="/verifyToken/:token" element={<EmailVerification />} />
       </Routes>
     </BrowserRouter>
       );
