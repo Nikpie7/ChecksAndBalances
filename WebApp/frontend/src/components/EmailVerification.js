@@ -22,7 +22,7 @@ function EmailVerification() {
 
   return (
     <div>
-      <h1>Email Verification</h1>
+      <h1>Email Verification!!!!!!</h1>
       <p>{message}</p>
     </div>
   );

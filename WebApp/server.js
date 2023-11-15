@@ -26,7 +26,7 @@ const sendVerificationEmail = (email, username) => {
   const token = jwt.sign({ username }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
   // Define the frontend URL for email verification (change this to your actual frontend URL)
-  const verificationUrl = `http://localhost:5001/verify-email/${token}`;
+  const verificationUrl = `https://checksnbalances.us/api/verify-email${token}`;
 
   const params = {
     Source: 'noreply@checksnbalances.us', // Your verified email in SES
@@ -583,6 +583,8 @@ app.get('/api/verify-email', async (req, res) => {
   const { token } = req.query;
   console.error(token);
 
+  console.log(token);
+
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const username = decoded.username;
@@ -596,7 +598,7 @@ app.get('/api/verify-email', async (req, res) => {
       { $set: { Verified: true } }
     );
 
-    res.send('Email verified successfully');
+    res.send('Email verified successfully (THIS IS FROM THE API)');
   } catch (error) {
     res.status(400).send('Invalid or expired token');
   }
