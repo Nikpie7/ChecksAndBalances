@@ -8,7 +8,7 @@ const PORT = process.env.PORT || 5001;
 const axios = require('axios');
 const app = express();
 
-
+// AWS STUFF
 const AWS = require('aws-sdk');
 
 // Configure AWS with your access and secret key
