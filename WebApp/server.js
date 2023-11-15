@@ -220,6 +220,61 @@ app.use((req, res, next) =>
   next();
 });
 
+// Takes the lowercase abbreviation of a state (i.e. fl) and returns its senators.
+app.post('/api/getSenByState', async (req, res, next) => {
+  try {
+    const { state } = req.body;
+    const apiKey = process.env.GOOGLE_KEY;
+
+    let initText = 'https://civicinfo.googleapis.com/civicinfo/v2/representatives/ocd-division';
+    let test1 = initText.concat("%2Fcountry%3Aus%2Fstate");
+    let finalText = test1.concat("%3A", state);
+
+    const response = await axios.get(finalText, {
+      params: {
+        levels: "country",
+        recursive: false,
+        roles: "legislatorUpperBody",
+        key: apiKey,
+      }
+    });
+
+    res.status(200).json(response.data);
+    //res.json(response.data);
+  } catch (error) {
+    console.error("Error:", error.message);
+    res.status(500).send(error.message);
+  }
+});
+
+// Takes an id (district number) and a state (lowercase abbreviation)
+app.post('/api/getRepByDistrict', async (req, res, next) => {
+  try {
+    const { id, state } = req.body;
+    const apiKey = process.env.GOOGLE_KEY;
+
+    let initText = 'https://civicinfo.googleapis.com/civicinfo/v2/representatives/ocd-division';
+    let test1 = initText.concat("%2Fcountry%3Aus%2Fstate");
+    let test2 = test1.concat("%3A", state);
+    let test3 = test2.concat("%2F", "cd");
+    let finalText = test3.concat("%3A", id);
+
+    const response = await axios.get(finalText, {
+      params: {
+        levels: "country",
+        recursive: true,
+        roles: "legislatorLowerBody",
+        key: apiKey,
+      }
+    });
+
+    res.status(200).json(response.data);
+    //res.json(response.data);
+  } catch (error) {
+    console.error("Error:", error.message);
+    res.status(500).send(error.message);
+  }
+});
 app.get('/api/getMemberID', async(req, res, next) => {
   const API_KEY = process.env.CONGRESS_KEY;
   const { name } = req.body;
