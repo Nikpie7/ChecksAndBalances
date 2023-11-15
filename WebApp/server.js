@@ -25,19 +25,25 @@ const jwt = require('jsonwebtoken');
 const sendVerificationEmail = (email, username) => {
   const token = jwt.sign({ username }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
+  // Define the frontend URL for email verification (change this to your actual frontend URL)
+  const verificationUrl = `http://localhost:5001/verify-email/${token}`;
+
   const params = {
     Source: 'noreply@checksnbalances.us', // Your verified email in SES
     Destination: { ToAddresses: [email] },
     Message: {
       Subject: { Data: 'Email Verification' },
       Body: {
-        Text: { Data: `Please verify your email using this token: ${token}` }
+        // Include both Text and Html versions for email clients that don't support HTML
+        Text: { Data: `YOO PLEASE WORK Please verify your email by visiting the following link: ${verificationUrl}` },
+        Html: { Data: `<html><body><p>Please verify your email by clicking the following link: <a href="${verificationUrl}">Verify Email</a></p></body></html>` }
       }
     }
   };
 
   return ses.sendEmail(params).promise();
 };
+
 
 
 
@@ -573,11 +579,15 @@ app.post('/api/register', async (req, res, next) =>
 });
 
 app.get('/api/verify-email', async (req, res) => {
+  
   const { token } = req.query;
+  console.error(token);
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const username = decoded.username;
+
+    console.log(username);
 
     // Update user verification status
     const db = client.db('POOSBigProject');

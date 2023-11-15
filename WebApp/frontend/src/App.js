@@ -6,6 +6,7 @@ import './App.css';
 import LoginPage from './pages/DemoLoginPage';
 import CardPage from './pages/CardPage';
 import DashboardPage from './pages/DashboardPage';
+import EmailVerification from './components/EmailVerification';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path="/register" element={<LoginPage register />} />
         <Route path="/cards" element={<CardPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/verify-email/:token" component={EmailVerification} />
       </Routes>
     </BrowserRouter>
       );
