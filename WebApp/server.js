@@ -1,4 +1,4 @@
-require('dotenv').config();
+rrequire('dotenv').config();
 
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -7,108 +7,65 @@ const path = require('path');
 const PORT = process.env.PORT || 5001;
 const axios = require('axios');
 const app = express();
-var cardList =
-[
-  'Roy Campanella',
-  'Paul Molitor',
-  'Tony Gwynn',
-  'Dennis Eckersley',
-  'Reggie Jackson',
-  'Gaylord Perry',
-  'Buck Leonard',
-  'Rollie Fingers',
-  'Charlie Gehringer',
-  'Wade Boggs',
-  'Carl Hubbell',
-  'Dave Winfield',
-  'Jackie Robinson',
-  'Ken Griffey, Jr.',
-  'Al Simmons',
-  'Chuck Klein',
-  'Mel Ott',
-  'Mark McGwire',
-  'Nolan Ryan',
-  'Ralph Kiner',
-  'Yogi Berra',
-  'Goose Goslin',
-  'Greg Maddux',
-  'Frankie Frisch',
-  'Ernie Banks',
-  'Ozzie Smith',
-  'Hank Greenberg',
-  'Kirby Puckett',
-  'Bob Feller',
-  'Dizzy Dean',
-  'Joe Jackson',
-  'Sam Crawford',
-  'Barry Bonds',
-  'Duke Snider',
-  'George Sisler',
-  'Ed Walsh',
-  'Tom Seaver',
-  'Willie Stargell',
-  'Bob Gibson',
-  'Brooks Robinson',
-  'Steve Carlton',
-  'Joe Medwick',
-  'Nap Lajoie',
-  'Cal Ripken, Jr.',
-  'Mike Schmidt',
-  'Eddie Murray',
-  'Tris Speaker',
-  'Al Kaline',
-  'Sandy Koufax',
-  'Willie Keeler',
-  'Pete Rose',
-  'Robin Roberts',
-  'Eddie Collins',
-  'Lefty Gomez',
-  'Lefty Grove',
-  'Carl Yastrzemski',
-  'Frank Robinson',
-  'Juan Marichal',
-  'Warren Spahn',
-  'Pie Traynor',
-  'Roberto Clemente',
-  'Harmon Killebrew',
-  'Satchel Paige',
-  'Eddie Plank',
-  'Josh Gibson',
-  'Oscar Charleston',
-  'Mickey Mantle',
-  'Cool Papa Bell',
-  'Johnny Bench',
-  'Mickey Cochrane',
-  'Jimmie Foxx',
-  'Jim Palmer',
-  'Cy Young',
-  'Eddie Mathews',
-  'Honus Wagner',
-  'Paul Waner',
-  'Grover Alexander',
-  'Rod Carew',
-  'Joe DiMaggio',
-  'Joe Morgan',
-  'Stan Musial',
-  'Bill Terry',
-  'Rogers Hornsby',
-  'Lou Brock',
-  'Ted Williams',
-  'Bill Dickey',
-  'Christy Mathewson',
-  'Willie McCovey',
-  'Lou Gehrig',
-  'George Brett',
-  'Hank Aaron',
-  'Harry Heilmann',
-  'Walter Johnson',
-  'Roger Clemens',
-  'Ty Cobb',
-  'Whitey Ford',
-  'Willie Mays',
-  'Rickey Henderson',
-  'Babe Ruth'
-];
+
+
+const AWS = require('aws-sdk');
+
+// Configure AWS with your access and secret key
+AWS.config.update({
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  region: 'us-east-2' // Change to your AWS SES region
+});
+
+const ses = new AWS.SES({ apiVersion: '2010-12-01' });
+
+const jwt = require('jsonwebtoken');
+
+const sendVerificationEmail = (email, username) => {
+  const token = jwt.sign({ username }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+  const params = {
+    Source: 'noreply@checksnbalances.us', // Your verified email in SES
+    Destination: { ToAddresses: [email] },
+    Message: {
+      Subject: { Data: 'Email Verification' },
+      Body: {
+        Text: { Data: `Please verify your email using this token: ${token}` }
+      }
+    }
+  };
+
+  return ses.sendEmail(params).promise();
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -499,97 +456,42 @@ app.get('/api/getBills', async (req, res, next) => {
   }
 });
 
-app.post('/api/getSenByState', async (req, res, next) => {
-  try {
-    const { state } = req.body;
-    const apiKey = process.env.GOOGLE_KEY;
-
-    let initText = 'https://civicinfo.googleapis.com/civicinfo/v2/representatives/ocd-division';
-    let test1 = initText.concat("%2Fcountry%3Aus%2Fstate");
-    let finalText = test1.concat("%3A", state);
-
-    const response = await axios.get(finalText, {
-      params: {
-        levels: "country",
-        recursive: false,
-        roles: "legislatorUpperBody",
-        key: apiKey,
-      }
-    });
-
-    res.status(200).json(response.data);
-    //res.json(response.data);
-  } catch (error) {
-    console.error("Error:", error.message);
-    res.status(500).send(error.message);
-  }
-});
-
-app.post('/api/getRepByDistrict', async (req, res, next) => {
-  try {
-    const { id, state } = req.body;
-    const apiKey = process.env.GOOGLE_KEY;
-
-    let initText = 'https://civicinfo.googleapis.com/civicinfo/v2/representatives/ocd-division';
-    let test1 = initText.concat("%2Fcountry%3Aus%2Fstate");
-    let test2 = test1.concat("%3A", state);
-    let test3 = test2.concat("%2F", "cd");
-    let finalText = test3.concat("%3A", id);
-
-    const response = await axios.get(finalText, {
-      params: {
-        levels: "country",
-        recursive: true,
-        roles: "legislatorLowerBody",
-        key: apiKey,
-      }
-    });
-
-    res.status(200).json(response.data);
-    //res.json(response.data);
-  } catch (error) {
-    console.error("Error:", error.message);
-    res.status(500).send(error.message);
-  }
-});
-
-app.post('/api/login', async (req, res, next) =>
-{
+app.post('/api/login', async (req, res, next) => {
   // incoming: username, password
   // outgoing: id, FirstName, LastName, Email, Verified, Address, ZipCode, error
 
- var error = '';
+  var error = '';
 
   const { username, password } = req.body;
-  // console.log(username, password);
 
   const db = client.db('POOSBigProject');
-  //console.log(db);
-  const results = await db.collection('Users').find({ $and: [{ Login: username }, { Password: password }] }).toArray();
-  // console.log(results);
+  const results = await db.collection('Users').find({ Login: username, Password: password }).toArray();
 
-  var id = -1;
-  var fn = '';
-  var ln = '';
-  var em = '';
-  var vf = '';
-  var ad = '';
-  var zc = '';
+  if (results.length > 0) {
+    // Check if the user is verified
+    if (!results[0].Verified) {
+      error = 'Account not verified. Please check your email for the verification link.';
+      return res.status(401).json({ error: error });
+    }
 
-  if( results.length > 0 )
-  {
-    id = results[0]._id.toString();
-    fn = results[0].FirstName;
-    ln = results[0].LastName;
-    em = results[0].Email;
-    vf = results[0].Verified;
-    ad = results[0].Address;
-    zc = results[0].ZipCode;
+    // Assign user details to variables
+    var id = results[0]._id.toString();
+    var fn = results[0].FirstName;
+    var ln = results[0].LastName;
+    var em = results[0].Email;
+    var vf = results[0].Verified;
+    var ad = results[0].Address;
+    var zc = results[0].ZipCode;
+
+  } else {
+    error = 'Login failed: Invalid username or password.';
+    return res.status(401).json({ error: error });
   }
   
-  var ret = { id:id, firstName:fn, lastName:ln, email: em, verified: vf, address: ad, zipCode: zc, error:''};
+  var ret = { id: id, firstName: fn, lastName: ln, email: em, verified: vf, address: ad, zipCode: zc, error: error };
   res.status(200).json(ret);
 });
+
 
 app.post('/api/register', async (req, res, next) =>
 {
@@ -600,22 +502,41 @@ app.post('/api/register', async (req, res, next) =>
   
   const newUser = {FirstName: firstName, LastName: lastName, Login: username, Email: email, Password: password, Address: address, Verified: false, ZipCode: zipCode, Interests: defaultInterests};
   var error = '';
-
-  try
-  {
+  
+   try {
     const db = client.db('POOSBigProject');
-    const result = db.collection('Users').insertOne(newUser);
-  }
-  catch(e)
-  {
+    const result = await db.collection('Users').insertOne(newUser);
+
+    // Send verification email
+    await sendVerificationEmail(email, username);
+  } catch(e) {
     error = e.toString();
   }
-
-  //cardList.push( card );
 
   var ret = { error: error };
   res.status(200).json(ret);
 });
+
+app.get('/api/verify-email', async (req, res) => {
+  const { token } = req.query;
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const username = decoded.username;
+
+    // Update user verification status
+    const db = client.db('POOSBigProject');
+    await db.collection('Users').updateOne(
+      { Login: username },
+      { $set: { Verified: true } }
+    );
+
+    res.send('Email verified successfully');
+  } catch (error) {
+    res.status(400).send('Invalid or expired token');
+  }
+});
+
 
 app.post('/api/searchcards', async (req, res, next) =>
 {
