@@ -499,6 +499,60 @@ app.get('/api/getBills', async (req, res, next) => {
   }
 });
 
+app.post('/api/getSenByState', async (req, res, next) => {
+  try {
+    const { state } = req.body;
+    const apiKey = process.env.GOOGLE_KEY;
+
+    let initText = 'https://civicinfo.googleapis.com/civicinfo/v2/representatives/ocd-division';
+    let test1 = initText.concat("%2Fcountry%3Aus%2Fstate");
+    let finalText = test1.concat("%3A", state);
+
+    const response = await axios.get(finalText, {
+      params: {
+        levels: "country",
+        recursive: false,
+        roles: "legislatorUpperBody",
+        key: apiKey,
+      }
+    });
+
+    res.status(200).json(response.data);
+    //res.json(response.data);
+  } catch (error) {
+    console.error("Error:", error.message);
+    res.status(500).send(error.message);
+  }
+});
+
+app.post('/api/getRepByDistrict', async (req, res, next) => {
+  try {
+    const { id, state } = req.body;
+    const apiKey = process.env.GOOGLE_KEY;
+
+    let initText = 'https://civicinfo.googleapis.com/civicinfo/v2/representatives/ocd-division';
+    let test1 = initText.concat("%2Fcountry%3Aus%2Fstate");
+    let test2 = test1.concat("%3A", state);
+    let test3 = test2.concat("%2F", "cd");
+    let finalText = test3.concat("%3A", id);
+
+    const response = await axios.get(finalText, {
+      params: {
+        levels: "country",
+        recursive: true,
+        roles: "legislatorLowerBody",
+        key: apiKey,
+      }
+    });
+
+    res.status(200).json(response.data);
+    //res.json(response.data);
+  } catch (error) {
+    console.error("Error:", error.message);
+    res.status(500).send(error.message);
+  }
+});
+
 app.post('/api/login', async (req, res, next) =>
 {
   // incoming: username, password
