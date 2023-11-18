@@ -1,1 +1,2 @@
-export { default } from './DashboardScreen';
+import React from 'react';
+export {default} from './DashboardScreen';

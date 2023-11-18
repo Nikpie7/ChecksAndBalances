@@ -5,111 +5,8 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const path = require('path');
 const PORT = process.env.PORT || 5001;
-//Hello World 2!
 const axios = require('axios');
 const app = express();
-var cardList =
-[
-  'Roy Campanella',
-  'Paul Molitor',
-  'Tony Gwynn',
-  'Dennis Eckersley',
-  'Reggie Jackson',
-  'Gaylord Perry',
-  'Buck Leonard',
-  'Rollie Fingers',
-  'Charlie Gehringer',
-  'Wade Boggs',
-  'Carl Hubbell',
-  'Dave Winfield',
-  'Jackie Robinson',
-  'Ken Griffey, Jr.',
-  'Al Simmons',
-  'Chuck Klein',
-  'Mel Ott',
-  'Mark McGwire',
-  'Nolan Ryan',
-  'Ralph Kiner',
-  'Yogi Berra',
-  'Goose Goslin',
-  'Greg Maddux',
-  'Frankie Frisch',
-  'Ernie Banks',
-  'Ozzie Smith',
-  'Hank Greenberg',
-  'Kirby Puckett',
-  'Bob Feller',
-  'Dizzy Dean',
-  'Joe Jackson',
-  'Sam Crawford',
-  'Barry Bonds',
-  'Duke Snider',
-  'George Sisler',
-  'Ed Walsh',
-  'Tom Seaver',
-  'Willie Stargell',
-  'Bob Gibson',
-  'Brooks Robinson',
-  'Steve Carlton',
-  'Joe Medwick',
-  'Nap Lajoie',
-  'Cal Ripken, Jr.',
-  'Mike Schmidt',
-  'Eddie Murray',
-  'Tris Speaker',
-  'Al Kaline',
-  'Sandy Koufax',
-  'Willie Keeler',
-  'Pete Rose',
-  'Robin Roberts',
-  'Eddie Collins',
-  'Lefty Gomez',
-  'Lefty Grove',
-  'Carl Yastrzemski',
-  'Frank Robinson',
-  'Juan Marichal',
-  'Warren Spahn',
-  'Pie Traynor',
-  'Roberto Clemente',
-  'Harmon Killebrew',
-  'Satchel Paige',
-  'Eddie Plank',
-  'Josh Gibson',
-  'Oscar Charleston',
-  'Mickey Mantle',
-  'Cool Papa Bell',
-  'Johnny Bench',
-  'Mickey Cochrane',
-  'Jimmie Foxx',
-  'Jim Palmer',
-  'Cy Young',
-  'Eddie Mathews',
-  'Honus Wagner',
-  'Paul Waner',
-  'Grover Alexander',
-  'Rod Carew',
-  'Joe DiMaggio',
-  'Joe Morgan',
-  'Stan Musial',
-  'Bill Terry',
-  'Rogers Hornsby',
-  'Lou Brock',
-  'Ted Williams',
-  'Bill Dickey',
-  'Christy Mathewson',
-  'Willie McCovey',
-  'Lou Gehrig',
-  'George Brett',
-  'Hank Aaron',
-  'Harry Heilmann',
-  'Walter Johnson',
-  'Roger Clemens',
-  'Ty Cobb',
-  'Whitey Ford',
-  'Willie Mays',
-  'Rickey Henderson',
-  'Babe Ruth'
-];
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -156,7 +53,7 @@ app.post('/api/addcard', async (req, res, next) =>
 });
 
 app.get('/api/getVotesSenate', async (req, res, next) => {
-  const API_KEY = 'celRz6ypa6JuFoqCsYBelBwS5HxkGTHbcTMQGo8V';
+  const API_KEY = process.env.PRO_KEY;
 
   try {
     
@@ -174,7 +71,7 @@ app.get('/api/getVotesSenate', async (req, res, next) => {
 });
 
 app.get('/api/getVotesHouse', async (req, res, next) => {
-  const API_KEY = 'celRz6ypa6JuFoqCsYBelBwS5HxkGTHbcTMQGo8V';
+  const API_KEY = process.env.PRO_KEY;
 
   try {
     
@@ -192,7 +89,7 @@ app.get('/api/getVotesHouse', async (req, res, next) => {
 });
 
 app.get('/api/getVotesMember', async (req, res, next) => {
-  const API_KEY = 'celRz6ypa6JuFoqCsYBelBwS5HxkGTHbcTMQGo8V';
+  const API_KEY = process.env.PRO_KEY;
   const { memberID } = req.body;
 
   let initText = 'https://api.propublica.org/congress/v1/members'
@@ -214,7 +111,7 @@ app.get('/api/getVotesMember', async (req, res, next) => {
 });
 
 app.get('/api/getBillSubjects', async(req, res, next) => {
-  const API_KEY = '1bFnnjNn8xkUuTvnhjdLO2URpY5eK3dTYkhpoBaQ';
+  const API_KEY = process.env.CONGRESS_KEY;
   const { congress, billType, billNumber } = req.body;
   // Takes Congress number, the type of bill, and the number of the specific bill
   // Returns list of legislative subjects of bill.
@@ -261,7 +158,7 @@ app.get('/api/getBillSubjects', async(req, res, next) => {
 })
 
 app.get('/api/getBillAmendments', async(req, res, next) => {
-  const API_KEY = '1bFnnjNn8xkUuTvnhjdLO2URpY5eK3dTYkhpoBaQ';
+  const API_KEY = process.env.CONGRESS_KEY;
   const { congress, billType, billNumber } = req.body;
   // Takes Congress number, the type of bill, and the number of the specific bill
   // Returns list of amendments to a bill
@@ -308,7 +205,7 @@ app.get('/api/getBillAmendments', async(req, res, next) => {
 })
 
 app.get('/api/getBillRelatedBills', async(req, res, next) => {
-  const API_KEY = '1bFnnjNn8xkUuTvnhjdLO2URpY5eK3dTYkhpoBaQ';
+  const API_KEY = process.env.CONGRESS_KEY;
   const { congress, billType, billNumber } = req.body;
   // Takes Congress number, the type of bill, and the number of the specific bill
   // Returns a list of related bills.
@@ -355,7 +252,7 @@ app.get('/api/getBillRelatedBills', async(req, res, next) => {
 })
 
 app.get('/api/getBillSummaries', async(req, res, next) => {
-  const API_KEY = '1bFnnjNn8xkUuTvnhjdLO2URpY5eK3dTYkhpoBaQ';
+  const API_KEY = process.env.CONGRESS_KEY;
   const { congress, billType, billNumber } = req.body;
   // Takes Congress number, the type of bill, and the number of the specific bill
   // Returns a list of bill summaries
@@ -402,7 +299,7 @@ app.get('/api/getBillSummaries', async(req, res, next) => {
 })
 
 app.get('/api/getBillCosponsors', async(req, res, next) => {
-  const API_KEY = '1bFnnjNn8xkUuTvnhjdLO2URpY5eK3dTYkhpoBaQ';
+  const API_KEY = process.env.CONGRESS_KEY;
   const { congress, billType, billNumber } = req.body;
   // Takes Congress number, the type of bill, and the number of the specific bill
   // Returns a list of bill cosponsors.
@@ -449,7 +346,7 @@ app.get('/api/getBillCosponsors', async(req, res, next) => {
 })
 
 app.get('/api/getBillActions', async(req, res, next) => {
-  const API_KEY = '1bFnnjNn8xkUuTvnhjdLO2URpY5eK3dTYkhpoBaQ';
+  const API_KEY = process.env.CONGRESS_KEY;
   const { congress, billType, billNumber } = req.body;
   // Takes Congress number, the type of bill, and the number of the specific bill
   // Returns a list of actions taken on a bill.
@@ -496,7 +393,7 @@ app.get('/api/getBillActions', async(req, res, next) => {
 })
 
 app.get('/api/getBillCommittees', async(req, res, next) => {
-  const API_KEY = '1bFnnjNn8xkUuTvnhjdLO2URpY5eK3dTYkhpoBaQ';
+  const API_KEY = process.env.CONGRESS_KEY;
   const { congress, billType, billNumber } = req.body;
   // Takes Congress number, the type of bill, and the number of the specific bill
   // Returns a list of committees tied to a bill
