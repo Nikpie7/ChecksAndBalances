@@ -205,7 +205,7 @@ app.post('/api/updateInterests', async (req, res) => {
         //     return res.status(404).json({ error: 'User not found' });
         // }
 
-        res.json({ interests: user.value.Interests });
+        res.json({ interests: user.Interests });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
