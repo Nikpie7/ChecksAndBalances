@@ -422,6 +422,42 @@ app.get('/api/getBillsByInterest', async(req, res, next) => {
   }
 })
 
+app.get('/api/getBillTitles', async(req, res, next) => {
+  const API_KEY = process.env.CONGRESS_KEY;
+  const { congress, billType, billNumber } = req.body;
+  // Takes Congress number, the type of bill, and the number of the specific bill
+  // Returns list of legislative subjects of bill.
+  if (!billType)
+  {
+    return res.status(400).json({ error: 'Missing bill_type parameter'});
+  }
+
+  try {
+    let initText = 'https://api.congress.gov/v3/bill';
+    let test1 = initText.concat("/", congress);
+    let test2 = test1.concat("/", billType);
+    let test3 = test2.concat("/", billNumber);
+    let finalText = test3.concat("/", "titles");
+
+    const response = await axios.get(finalText,
+    {
+      params: {
+        format: 'json',
+        api_key: API_KEY,
+      },
+      headers: {
+        accept: 'application/json',
+      }
+    });
+
+
+    res.json(response.data);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to retrieve bill data '});
+  }
+})
+
 app.get('/api/getBillSubjects', async(req, res, next) => {
   const API_KEY = process.env.CONGRESS_KEY;
   const { congress, billType, billNumber } = req.body;
