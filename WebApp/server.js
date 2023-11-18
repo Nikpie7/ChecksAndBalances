@@ -7,7 +7,7 @@ const path = require('path');
 const PORT = process.env.PORT || 5001;
 const axios = require('axios');
 const app = express();
-const ObjectId = require('mongodb').ObjectId;
+const { ObjectId } = require('mongodb');
 // AWS STUFF
 const AWS = require('aws-sdk');
 
