@@ -1,15 +1,18 @@
 /* eslint-disable prettier/prettier */
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, TextInput, ScrollView, Image, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, TextInput, ScrollView, Image, StyleSheet, useWindowDimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import  Modal  from 'react-native-modal';
 import { CustomHamburgerIcon } from '../../components/HamburgerButton/CustomHamburgerIcon';
+import Logo from '../../../../assets/images/logo.png';
 
 const DashboardScreen = () => {
   const navigation = useNavigation();
   const [isProfileModalVisible, setProfileModalVisible] = useState(false);
   const [isHamburgerModalVisible, setHamburgerModalVisible] = useState(false);
+
+  const {height} = useWindowDimensions();
 
   const toggleProfileModal = () => {
     setProfileModalVisible(!isProfileModalVisible);
@@ -55,6 +58,9 @@ const DashboardScreen = () => {
         {/* Header section */}
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 16 }}>
           {/**/}
+
+          <Image source={Logo} style={[styles.logo, {height: height * 0.3}]} resizeMode="contain"/>
+
           <TouchableOpacity onPress={handleProfilePress}>
             {<Image source={require('../../components/ProfileImage/ProfileImage.png')} style={{ width: 30, height: 30 }} />}
           </TouchableOpacity>
@@ -148,6 +154,21 @@ const DashboardScreen = () => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  root:{
+      alignItems: 'center',
+      padding: 20,
+  },
+  logo: {
+      width: '70%',
+      maxWidth: 300,
+      maxHeight: 200,
+  },
+  text: {
+      fontSize: 32,
+  },
+});
 
 export default DashboardScreen;
 
