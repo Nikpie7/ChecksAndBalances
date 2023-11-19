@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import * as Keychain from 'react-native-keychain';
-import {View, Text, Image, StyleSheet, useWindowDimensions, TextInput, TouchableOpacity, ScrollView} from 'react-native'
+import {View, Text, Image, StyleSheet, TextInput, TouchableOpacity, ScrollView} from 'react-native'
 import Logo from '../../../../assets/images/logo.png';
 import Background from '../../../../assets/images/background.png';
 import { useNavigation } from '@react-navigation/native';
@@ -8,11 +8,14 @@ import { useNavigation } from '@react-navigation/native';
 const SignInScreen = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [error, setError] = useState(null);
+    const [verifError, setVerifError] = useState(false);
 
-    const {height} = useWindowDimensions();
     const navigation = useNavigation();
 
     const onLogInPressed = () => {
+        setError(null);
+        setVerifError(false);
         bodyVariable = JSON.stringify({"username": username,"password": password,})
         
         console.log(bodyVariable);
@@ -28,7 +31,7 @@ const SignInScreen = () => {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            if(data.id !== 0 && data.id !== -1){
+            if(data.id){
                 //then go to home page
                 console.warn("Successfully Logged In!");
                 
@@ -37,15 +40,25 @@ const SignInScreen = () => {
                     navigation.navigate('Dashboard');
                 })
                 .catch(error => {
-                    console.error("Failed to save credentials", error);
+                    console.log("Failed to save credentials", error);
+                    setError(error);
                 });
             }
             else{
-                console.warn("Incorrect User or Pass");
+                if(data.error === 'Account not verified. Please check your email for the verification link.'){
+                    setVerifError(true);
+                    setError(data.error);
+                }else{
+                    console.log("Login Failed");
+                    setError(data.error);
+                    setVerifError(false);
+                }
+                
             }
         })
         .catch(error => {
-        console.error(error);
+            console.error('Login Failed: ', error);
+            setError('Login Failed: ', error);
         });
        
     }
@@ -66,8 +79,13 @@ const SignInScreen = () => {
                 </View>
                 <View style={styles.inputContainer}>
                     <View style={styles.whiteBox}>
-                        <TextInput style={styles.input} placeholder="Username" value={username} onChangeText={setUsername}/>
-                        <TextInput style={styles.input} placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry/>
+                        {error && (
+                            <View style={verifError ? styles.warnBanner : styles.errorBanner}>
+                                <Text style={styles.errorText}>{error}</Text>
+                            </View>
+                        )}
+                        <TextInput style={[styles.input, (error && !verifError) && styles.inputError]} placeholder="Username" value={username} onChangeText={setUsername}/>
+                        <TextInput style={[styles.input, (error && !verifError) && styles.inputError]} placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry/>
                         
                         <TouchableOpacity onPress={onLogInPressed} style={styles.button}>
                             <Text style={styles.buttonText}>Log In</Text>
@@ -126,6 +144,9 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#ccc',
     },
+    inputError:{
+        borderColor: 'red',
+    },
     button: {
         backgroundColor: '#04ACD9DD',
         padding: 15,
@@ -144,6 +165,22 @@ const styles = StyleSheet.create({
     },
     signUpText: {
         color: 'black',
+    },
+    errorBanner: {
+        backgroundColor: 'red',
+        padding: 10,
+        borderRadius: 5,
+        marginBottom: 10,
+    },
+    warnBanner: {
+        backgroundColor: 'orange',
+        padding: 10,
+        borderRadius: 5,
+        marginBottom: 10,
+    },
+    errorText: {
+        color: 'white',
+        textAlign: 'center',
     },
 });
 

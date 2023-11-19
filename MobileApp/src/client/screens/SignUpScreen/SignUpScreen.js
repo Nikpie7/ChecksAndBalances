@@ -80,7 +80,7 @@ const SignUpScreen = () => {
                     <View style={styles.whiteBox}>
                         <TextInput style={styles.input} placeholder="Username" value={username} onChangeText={setUsername}/>
                         <TextInput style={styles.input} placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry/>
-                        <TextInput style={styles.input} placeholder="Confirm Password" value={passwordRepeat} onChangeText={setPasswordRepeat} secure={true}/>
+                        <TextInput style={styles.input} placeholder="Confirm Password" value={passwordRepeat} onChangeText={setPasswordRepeat} secureTextEntry/>
                         <TextInput style={styles.input} placeholder="Email" value={email} onChangeText={setEmail}/>
                         <TextInput style={styles.input} placeholder="First Name" value={firstName} onChangeText={setFirstName}/>
                         <TextInput style={styles.input} placeholder="Last Name" value={lastName} onChangeText={setLastName}/>
