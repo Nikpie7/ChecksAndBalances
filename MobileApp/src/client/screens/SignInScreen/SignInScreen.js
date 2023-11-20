@@ -68,6 +68,11 @@ const SignInScreen = () => {
         navigation.navigate('SignUp');
     }
 
+    const onForgotPressed = () => {
+        //go to forgot password screen
+        navigation.navigate('Forgot');
+    }
+
     return(
         <View style={styles.container}>
             <View style={styles.background}>
@@ -87,12 +92,16 @@ const SignInScreen = () => {
                         <TextInput style={[styles.input, (error && !verifError) && styles.inputError]} placeholder="Username" value={username} onChangeText={setUsername}/>
                         <TextInput style={[styles.input, (error && !verifError) && styles.inputError]} placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry/>
                         
+                        <TouchableOpacity onPress={onForgotPressed} style={styles.forgotPassContainer}>
+                            <Text style={styles.normalText}>Forgot Password</Text>
+                        </TouchableOpacity>
+
                         <TouchableOpacity onPress={onLogInPressed} style={styles.button}>
                             <Text style={styles.buttonText}>Log In</Text>
                         </TouchableOpacity>
-                        
+
                         <TouchableOpacity onPress={onSignUpPressed} style={styles.noAccountContainer}>
-                            <Text style={styles.signUpText}>No Account? Sign Up</Text>
+                            <Text style={styles.normalText}>No Account? Sign Up</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -163,7 +172,11 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         marginTop: 10,
     },
-    signUpText: {
+    forgotPassContainer: {
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+    },
+    normalText: {
         color: 'black',
     },
     errorBanner: {

@@ -7,15 +7,9 @@ import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 
-const SignUpScreen = () => {
+const ForgotPassScreen = () => {
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [passwordRepeat, setPasswordRepeat] = useState('');
-    const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
-    const [streetAddress, setStreetAddress] = useState('');
-    const [zipCode, setZipCode] = useState('');
     const [emptyInputs, setEmptyInputs] = useState([]);
     const [error, setError] = useState('');
 
@@ -23,9 +17,9 @@ const SignUpScreen = () => {
 
     
 
-    const onSignUpPressed = () => {
+    const onResetPressed = () => {
         //Validation to see if all fields are filled
-        const inputs = [username, password, passwordRepeat, email, firstName, lastName, streetAddress, zipCode];
+        const inputs = [username, email];
         const emptyInputIndex = inputs.reduce((acc, input, index) => {
             if(input === ''){
                 acc.push(index);
@@ -34,65 +28,53 @@ const SignUpScreen = () => {
         }, []);
 
         if(emptyInputIndex.length > 0){
-            const inputNames = ['Username', 'Password', 'Confirm Password', 'Email', 'First Name', 'Last Name', 'Street Address', 'Zip Code'];
+            const inputNames = ['Username', 'Email'];
             setEmptyInputs(emptyInputIndex);
             const emptyFields = emptyInputIndex.map(index => inputNames[index]);
             setError(`Please Fill out: ${emptyFields.join(', ')}`);
             console.log('All fields are not filled out');
             return;
         }
-        //Validation for password matching
-        if(password !== passwordRepeat){
-            setEmptyInputs([1, 2]);
-            setError("Error: Passwords do not match");
-            return;
-        }
-        //Validation for password complexity
-        if(password.length < 8 && passwordRepeat.length < 8){
-            setEmptyInputs([1, 2]);
-            setError("Error: Password must be greater than 8 characters");
-            return;
-        }
 
         //Passed Validation
         //gather up all fields
-        bodyVariable = JSON.stringify({
-            "username": username,
-            "password": password,
-            "email": email,
-            "firstName": firstName,
-            "lastName": lastName,
-            "address": streetAddress,
-            "zipCode": zipCode,
-        })
-        console.log(bodyVariable);
+        // bodyVariable = JSON.stringify({
+        //     "username": username,
+        //     "password": password,
+        //     "email": email,
+        //     "firstName": firstName,
+        //     "lastName": lastName,
+        //     "address": streetAddress,
+        //     "zipCode": zipCode,
+        // })
+        // console.log(bodyVariable);
 
-        //send data to server
-        fetch('https://checksnbalances.us/api/register', {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: bodyVariable,
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log(data);
-            if(data.error == ""){
-                //redirect to log in screen
-                console.warn("Registration Complete! Check Email for Varification!");
-                navigation.navigate('SignIn');
-            }
-            else{
-                console.log("Email was not imputed correctly");
-                setError("Error: Email has incorect format\n(example@domain.com)");
-                setEmptyInputs([3])
-            }
-        })
-        .catch(error => {
-        console.error(error);
-        });
+        // //send data to server
+        // fetch('https://checksnbalances.us/api/register', {
+        //     method: 'POST',
+        //     headers: {
+        //         Accept: 'application/json',
+        //         'Content-Type': 'application/json',
+        //     },
+        //     body: bodyVariable,
+        // })
+        // .then(response => response.json())
+        // .then(data => {
+        //     console.log(data);
+        //     if(data.error == ""){
+        //         //redirect to log in screen
+        //         console.warn("Registration Complete! Check Email for Varification!");
+        //         navigation.navigate('SignIn');
+        //     }
+        //     else{
+        //         console.log("Email was not imputed correctly");
+        //         setError("Error: Email has incorect format\n(example@domain.com)");
+        //         setEmptyInputs([3])
+        //     }
+        // })
+        // .catch(error => {
+        // console.error(error);
+        // });
     };
 
     return(
@@ -114,17 +96,13 @@ const SignUpScreen = () => {
                                 <Text style={styles.errorText}>{error}</Text>
                             </View>
                         )}
+                        <Text style={styles.normalText}>Enter either your username or your email to get a password reset link sent to your email.</Text>
                         <TextInput style={[styles.input, emptyInputs.includes(0) && styles.inputError,]} placeholder="Username" value={username} onChangeText={setUsername}/>
-                        <TextInput style={[styles.input, emptyInputs.includes(1) && styles.inputError,]} placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry/>
-                        <TextInput style={[styles.input, emptyInputs.includes(2) && styles.inputError,]} placeholder="Confirm Password" value={passwordRepeat} onChangeText={setPasswordRepeat} secureTextEntry/>
-                        <TextInput style={[styles.input, emptyInputs.includes(3) && styles.inputError,]} placeholder="Email" value={email} onChangeText={setEmail}/>
-                        <TextInput style={[styles.input, emptyInputs.includes(4) && styles.inputError,]} placeholder="First Name" value={firstName} onChangeText={setFirstName}/>
-                        <TextInput style={[styles.input, emptyInputs.includes(5) && styles.inputError,]} placeholder="Last Name" value={lastName} onChangeText={setLastName}/>
-                        <TextInput style={[styles.input, emptyInputs.includes(6) && styles.inputError,]} placeholder="123 Main Street, Orlando, FL" value={streetAddress} onChangeText={setStreetAddress}/>
-                        <TextInput style={[styles.input, emptyInputs.includes(7) && styles.inputError,]} placeholder="12345" value={zipCode} onChangeText={setZipCode}/>
+                        <Text style={styles.normalText}>Or</Text>
+                        <TextInput style={[styles.input, emptyInputs.includes(1) && styles.inputError,]} placeholder="Email" value={email} onChangeText={setEmail}/>
                         
-                        <TouchableOpacity onPress={onSignUpPressed} style={styles.button}>
-                            <Text style={styles.buttonText}>Register</Text>
+                        <TouchableOpacity onPress={onResetPressed} style={styles.button}>
+                            <Text style={styles.buttonText}>Send Reset Link</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -205,6 +183,12 @@ const styles = StyleSheet.create({
         color: 'white',
         textAlign: 'center',
     },
+    normalText: {
+        color: 'black',
+        fontWeight: 'bold',
+        textAlign: 'center',
+        marginBottom: 10,
+    },
 });
 
-export default SignUpScreen;
+export default ForgotPassScreen;
