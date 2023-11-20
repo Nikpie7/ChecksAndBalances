@@ -374,9 +374,9 @@ app.get('/api/getSponsoredBills', async(req, res, next) => {
 
 app.get('/api/getBillsByInterest', async(req, res, next) => {
   const API_KEY = process.env.CONGRESS_KEY;
-  const { interest } = req.query;
+  const { interest, offset, limit, fromDateTime, toDateTime } = req.body;
   const ourIndex = 0;
-  // Takes Congress number, the type of bill, and the number of the specific bill
+  // Takes Interest, a limit of bills you want back, and a fromDateTime and toDateTime given in the form YYYY-MM-DDT00:00:00Z
   // Returns list of bill numbers.
 
   try {
@@ -396,12 +396,15 @@ app.get('/api/getBillsByInterest', async(req, res, next) => {
           let initText = 'https://api.congress.gov/v3/committee';
           let test1 = initText.concat("/", chamber);
           let test2 = test1.concat("/", interestList[k][i]);
-          let finalText = test2.concat("/", "bills");
-          const response = await axios.get(finalText,
+          let test3 = test2.concat("/", "bills");
+          const response = await axios.get(test3,
           {
             params: {
               format: 'json',
-              limit: 20,
+              offset: offset,
+              limit: limit,
+              fromDateTime: fromDateTime,
+              toDateTime: toDateTime,
               api_key: API_KEY,
             },
             headers: {
@@ -409,19 +412,28 @@ app.get('/api/getBillsByInterest', async(req, res, next) => {
             }
           });
           let temp = response.data['committee-bills'];
-          for (let j = 0; j < 20; j++)
+          for (let j = 0; j < limit; j++)
           {
-            bigArray = bigArray.concat(temp.bills[j].number);
+            if (temp.bills[j] === undefined)
+            {
+              console.log("We (tried) broke out");
+              break;
+            }
+            console.log(temp.bills[j]);
+            let smallArray = [temp.bills[j].number, temp.bills[j].congress, temp.bills[j].updateDate];
+            bigArray[j] = smallArray;
           }
         }
       }
     }
+    bigArray = bigArray.reverse();
     res.json(bigArray);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Failed to retrieve bill data '});
   }
 })
+
 
 app.get('/api/getBillTitles', async(req, res, next) => {
   const API_KEY = process.env.CONGRESS_KEY;
