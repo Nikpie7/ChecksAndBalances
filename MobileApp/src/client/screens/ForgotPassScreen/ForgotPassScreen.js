@@ -84,7 +84,7 @@ const ForgotPassScreen = () => {
                 <Image source={Background} resizeMode="cover" />
             </View>
             <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-                <Icon name="arrow-back" size={24} color="black" />
+                <Icon name="arrow-back" size={30} color="black" />
             </TouchableOpacity>
             <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
                 <View style={styles.logoContainer}>

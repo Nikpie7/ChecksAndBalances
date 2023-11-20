@@ -5,7 +5,8 @@ import Logo from '../../../../assets/images/logo.png';
 import Background from '../../../../assets/images/background.png';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import FloatingLabelInput from '../../components/FloatingLabelInput';
+import FloatingLabelInput from '../../components/FloatingLabelInput/FloatingLabelInput';
+import PasswordComplex from '../../components/PasswordComplex/PasswordComplex';
 
 
 const SignUpScreen = () => {
@@ -102,7 +103,7 @@ const SignUpScreen = () => {
                 <Image source={Background} resizeMode="cover" />
             </View>
             <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-                <Icon name="arrow-back" size={24} color="black" />
+                <Icon name="arrow-back" size={30} color="black" />
             </TouchableOpacity>
             <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
                 <View style={styles.logoContainer}>
@@ -115,8 +116,10 @@ const SignUpScreen = () => {
                                 <Text style={styles.errorText}>{error}</Text>
                             </View>
                         )}
+
                         <FloatingLabelInput style={[styles.input, emptyInputs.includes(0) && styles.inputError,]} label="Username" value={username} onChangeText={setUsername}/>
                         <FloatingLabelInput style={[styles.input, emptyInputs.includes(1) && styles.inputError,]} label="Password" value={password} onChangeText={setPassword} secureTextEntry/>
+                        <PasswordComplex password={password}/>
                         <FloatingLabelInput style={[styles.input, emptyInputs.includes(2) && styles.inputError,]} label="Confirm Password" value={passwordRepeat} onChangeText={setPasswordRepeat} secureTextEntry/>
                         <FloatingLabelInput style={[styles.input, emptyInputs.includes(3) && styles.inputError,]} label="Email" value={email} onChangeText={setEmail}/>
                         <FloatingLabelInput style={[styles.input, emptyInputs.includes(4) && styles.inputError,]} label="First Name" value={firstName} onChangeText={setFirstName}/>
