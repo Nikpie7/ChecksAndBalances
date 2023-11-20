@@ -5,6 +5,7 @@ import Logo from '../../../../assets/images/logo.png';
 import Background from '../../../../assets/images/background.png';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import FloatingLabelInput from '../../components/FloatingLabelInput';
 
 
 const ForgotPassScreen = () => {
@@ -96,10 +97,10 @@ const ForgotPassScreen = () => {
                                 <Text style={styles.errorText}>{error}</Text>
                             </View>
                         )}
-                        <Text style={styles.normalText}>Enter either your username or your email to get a password reset link sent to your email.</Text>
-                        <TextInput style={[styles.input, emptyInputs.includes(0) && styles.inputError,]} placeholder="Username" value={username} onChangeText={setUsername}/>
+                        <Text style={styles.normalText}>Input either your username or your email to get a password reset link sent to your email.</Text>
+                        <FloatingLabelInput style={[styles.input, emptyInputs.includes(0) && styles.inputError,]} label="Username" value={username} onChangeText={setUsername}/>
                         <Text style={styles.normalText}>Or</Text>
-                        <TextInput style={[styles.input, emptyInputs.includes(1) && styles.inputError,]} placeholder="Email" value={email} onChangeText={setEmail}/>
+                        <FloatingLabelInput style={[styles.input, emptyInputs.includes(1) && styles.inputError,]} label="Email" value={email} onChangeText={setEmail}/>
                         
                         <TouchableOpacity onPress={onResetPressed} style={styles.button}>
                             <Text style={styles.buttonText}>Send Reset Link</Text>

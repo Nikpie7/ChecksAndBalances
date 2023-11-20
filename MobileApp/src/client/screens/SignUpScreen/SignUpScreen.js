@@ -5,6 +5,7 @@ import Logo from '../../../../assets/images/logo.png';
 import Background from '../../../../assets/images/background.png';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import FloatingLabelInput from '../../components/FloatingLabelInput';
 
 
 const SignUpScreen = () => {
@@ -114,14 +115,14 @@ const SignUpScreen = () => {
                                 <Text style={styles.errorText}>{error}</Text>
                             </View>
                         )}
-                        <TextInput style={[styles.input, emptyInputs.includes(0) && styles.inputError,]} placeholder="Username" value={username} onChangeText={setUsername}/>
-                        <TextInput style={[styles.input, emptyInputs.includes(1) && styles.inputError,]} placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry/>
-                        <TextInput style={[styles.input, emptyInputs.includes(2) && styles.inputError,]} placeholder="Confirm Password" value={passwordRepeat} onChangeText={setPasswordRepeat} secureTextEntry/>
-                        <TextInput style={[styles.input, emptyInputs.includes(3) && styles.inputError,]} placeholder="Email" value={email} onChangeText={setEmail}/>
-                        <TextInput style={[styles.input, emptyInputs.includes(4) && styles.inputError,]} placeholder="First Name" value={firstName} onChangeText={setFirstName}/>
-                        <TextInput style={[styles.input, emptyInputs.includes(5) && styles.inputError,]} placeholder="Last Name" value={lastName} onChangeText={setLastName}/>
-                        <TextInput style={[styles.input, emptyInputs.includes(6) && styles.inputError,]} placeholder="123 Main Street, Orlando, FL" value={streetAddress} onChangeText={setStreetAddress}/>
-                        <TextInput style={[styles.input, emptyInputs.includes(7) && styles.inputError,]} placeholder="12345" value={zipCode} onChangeText={setZipCode}/>
+                        <FloatingLabelInput style={[styles.input, emptyInputs.includes(0) && styles.inputError,]} label="Username" value={username} onChangeText={setUsername}/>
+                        <FloatingLabelInput style={[styles.input, emptyInputs.includes(1) && styles.inputError,]} label="Password" value={password} onChangeText={setPassword} secureTextEntry/>
+                        <FloatingLabelInput style={[styles.input, emptyInputs.includes(2) && styles.inputError,]} label="Confirm Password" value={passwordRepeat} onChangeText={setPasswordRepeat} secureTextEntry/>
+                        <FloatingLabelInput style={[styles.input, emptyInputs.includes(3) && styles.inputError,]} label="Email" value={email} onChangeText={setEmail}/>
+                        <FloatingLabelInput style={[styles.input, emptyInputs.includes(4) && styles.inputError,]} label="First Name" value={firstName} onChangeText={setFirstName}/>
+                        <FloatingLabelInput style={[styles.input, emptyInputs.includes(5) && styles.inputError,]} label="Last Name" value={lastName} onChangeText={setLastName}/>
+                        <FloatingLabelInput style={[styles.input, emptyInputs.includes(6) && styles.inputError,]} label="Street Address, City, State" value={streetAddress} onChangeText={setStreetAddress}/>
+                        <FloatingLabelInput style={[styles.input, emptyInputs.includes(7) && styles.inputError,]} label="5 Digit Zip Code" value={zipCode} onChangeText={setZipCode}/>
                         
                         <TouchableOpacity onPress={onSignUpPressed} style={styles.button}>
                             <Text style={styles.buttonText}>Register</Text>
