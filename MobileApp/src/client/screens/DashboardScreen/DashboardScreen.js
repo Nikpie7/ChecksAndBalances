@@ -6,11 +6,14 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import  Modal  from 'react-native-modal';
 import { CustomHamburgerIcon } from '../../components/HamburgerButton/CustomHamburgerIcon';
 import Logo from '../../../../assets/images/logo.png';
+import Background from '../../../../assets/images/background.png';
 
 const DashboardScreen = () => {
   const navigation = useNavigation();
   const [isProfileModalVisible, setProfileModalVisible] = useState(false);
   const [isHamburgerModalVisible, setHamburgerModalVisible] = useState(false);
+
+  const congress = 118;
 
   const {height} = useWindowDimensions();
 
@@ -49,36 +52,98 @@ const DashboardScreen = () => {
     console.log('Switch to tab:', tab);
   };
 
-  // ... rest of the code ...
+  const getBillTitles = () => {
+    var bodyVariable = JSON.stringify({"congress": congress,"billType": billType, "billNumber": billNumber});
+        
+        console.log(bodyVariable);
+        //Validate the user
+        fetch('https://checksnbalances.us/api/getBillTitles', {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: bodyVariable,
+        })
+        .then(response => response.json())
+        .catch(error => {
+          console.error(error);
+          });
+  };
+
+  const getBillsByInterest = () => {
+    // TODO replace "Finance" with interest variable
+    var bodyVariable = JSON.stringify({'interest': 'Finance'});
+
+    console.log(bodyVariable);
+
+    fetch('https://checksnbalances.us/api/getBillTitles', {
+        method: 'POST',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: bodyVariable,
+    })
+    .then(response => response.json())
+    .catch(error => {
+      console.error(error);
+    });
+  };
+
+  const readInterests = () => {
+    var bodyVariable = JSON.stringify({"userID": userID});
+
+    console.log(bodyVariable);
+
+    fetch('https://checksnbalances.us/api/getBillTitles', {
+        method: 'POST',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: bodyVariable,
+    })
+    .then(response => response.json())
+    .catch(error => {
+      console.error(error);
+    });
+  };
+
+  const getUserID = () => {
+
+  }
 
   return (
-    <View style={{ flex: 1 }}>
-      {/* SafeAreaView to handle notches and other safe area insets */}
+    <View style={styles.flex}>
+      <Image source={Background} style={[styles.background]} resizeMode="cover"/>
       <SafeAreaView style={{ flex: 1 }}>
         {/* Header section */}
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 16 }}>
           {/**/}
 
-          <Image source={Logo} style={[styles.logo, {height: height * 0.3}]} resizeMode="contain"/>
+          <Image source={Logo} style={[styles.logo, {height: height * 0.1}]} resizeMode="contain"/>
 
-          <TouchableOpacity onPress={handleProfilePress}>
-            {<Image source={require('../../components/ProfileImage/ProfileImage.png')} style={{ width: 30, height: 30 }} />}
-          </TouchableOpacity>
+          {/* <TouchableOpacity onPress={handleProfilePress}>
+            {<Image source={require('../../components/ProfileImage/ProfileImage.png')} style={{ width: 30, height: 30, padding: 20 }} />}
+          </TouchableOpacity> */}
 
-          <Text style= {{fontWeight: 500, flex: 1, fontSize: 16}}>
+          {/* <Text style= {{fontWeight: 500, flex: 1, fontSize: 16}}>
             Hello, *insert user later*
-          </Text>
-
+          </Text> */}
+        </View>
+        <View>
           <TextInput
             placeholder="Search..."
-            style={{ flex: 1, height: 30, borderColor: 'gray', borderWidth: 2, borderRadius: 8, paddingHorizontal: 8 }}
+            style={{ flex: 0, height: 35, borderColor: 'gray', borderWidth: 2, borderRadius: 8, paddingHorizontal: 8, width: '85%', backgroundColor: 'white'}}
           />
 
           {/* Hamburger Menu */}
           <TouchableOpacity onPress={handleHamburgerPress}>
-            {<Text source={ CustomHamburgerIcon } style={{ flex: 1, height: 30, borderColor: 'gray', borderWidth: 2, borderRadius: 8, paddingHorizontal: 8 }}/>}
+            {<Text source={ CustomHamburgerIcon } style={{ flex: 0, height: 40, borderColor: 'gray', borderWidth: 2, borderRadius: 8, paddingHorizontal: 8 }}/>}
           </TouchableOpacity>
         </View>
+        
 
         {/* Modal for Profile Options */}
         <Modal isVisible={isProfileModalVisible} onBackdropPress={toggleProfileModal}>
@@ -121,34 +186,35 @@ const DashboardScreen = () => {
 
         {/* Feed Section */}
         <ScrollView style={{ flex: 1, paddingHorizontal: 16 }}>
-          {/* Add your feed items based on the selected tab and user settings */}
-          <Text>Feed items go here and here Feed items go here and here Feed items go here and here Feed items go here and here
-          Feed items go here and here Feed items go here and here Feed items go here and here Feed items go here and here
-          Feed items go here and here Feed items go here and here Feed items go here and here Feed items go here and here
-          Feed items go here and here Feed items go here and here Feed items go here and here Feed items go here and here
-          Feed items go here and here Feed items go here and here Feed items go here and here Feed items go here and here
-          Feed items go here and here Feed items go here and here Feed items go here and here Feed items go here and here
-          Feed items go here and here Feed items go here and here Feed items go here and here Feed items go here and here
-          Feed items go here and here Feed items go here and here Feed items go here and here Feed items go here and here
-          Feed items go here and here Feed items go here and here Feed items go here and here Feed items go here and here
-          Feed items go here and here Feed items go here and here Feed items go here and here Feed items go here and here
-          Feed items go here and here Feed items go here and here Feed items go here and here Feed items go here and here
-          Feed items go here and here Feed items go here and here Feed items go here and here Feed items go here and here
-          Feed items go here and here Feed items go here and here Feed items go here and here Feed items go here and here
-          Feed items go here and here Feed items go here and here Feed items go here and here Feed items go here and here
-          Feed items go here and here Feed items go here and here Feed items go here and here Feed items go here and here
-          Feed items go here and here Feed items go here and here Feed items go here and here Feed items go here and here
-          Feed items go here and here Feed items go here and here Feed items go here and here Feed items go here and here
-          Feed items go here and here Feed items go here and here Feed items go here and here Feed items go here and here
-          Feed items go here and here Feed items go here and here Feed items go here and here Feed items go here and here
-          Feed items go here and here Feed items go here and here Feed items go here and here Feed items go here and here
-          Feed items go here and here Feed items go here and here Feed items go here and here Feed items go here and here
-          Feed items go here and here Feed items go here and here Feed items go here and here Feed items go here and here
-          Feed items go here and here Feed items go here and here Feed items go here and here Feed items go here and here
-          Feed items go here and here Feed items go here and here Feed items go here and here Feed items go here and here
-          Feed items go here and here Feed items go here and here Feed items go here and here Feed items go here and here
-          Feed items go here and here Feed items go here and here Feed items go here and here Feed items go here and here
-          </Text>
+          <View key="legislationList-row" style={styles.billBackground}>
+              <Text style={styles.titleText}>{getBillTitles}</Text>
+              <Text>House Judiciary Committee</Text>
+          </View>
+          <Text> {'\n'} </Text>
+          <View key="legislationList-row" style={styles.billBackground} >
+              <Text style={styles.titleText}>Bill 2</Text>
+              <Text>House Judiciary Committee</Text>
+          </View>
+          <Text> {'\n'} </Text>
+          <View key="legislationList-row" style={styles.billBackground}>
+              <Text style={styles.titleText}>Bill 3</Text>
+              <Text>House Judiciary Committee</Text>
+          </View>
+          <Text> {'\n'} </Text>
+          <View key="legislationList-row" style={styles.billBackground}>
+              <Text style={styles.titleText}>Bill 4</Text>
+              <Text>House Judiciary Committee</Text>
+          </View>
+          <Text> {'\n'} </Text>
+          <View key="legislationList-row" style={styles.billBackground}>
+              <Text style={styles.titleText}>Bill 5</Text>
+              <Text>House Judiciary Committee</Text>
+          </View>
+          <Text> {'\n'} </Text>
+          <View key="legislationList-row" style={styles.billBackground}>
+              <Text style={styles.titleText}>Bill 6</Text>
+              <Text>House Judiciary Committee</Text>
+          </View>
         </ScrollView>
       </SafeAreaView>
     </View>
@@ -157,16 +223,31 @@ const DashboardScreen = () => {
 
 const styles = StyleSheet.create({
   root:{
-      alignItems: 'center',
-      padding: 20,
+      alignItems: 'left',
+      padding: 10,
   },
   logo: {
-      width: '70%',
+      width: '75%',
       maxWidth: 300,
-      maxHeight: 200,
+      maxHeight: 50,
   },
   text: {
       fontSize: 32,
+  },
+  titleText: {
+      fontSize: 20,
+  },
+  flex: {
+      flex: 1,
+  },
+  background:{
+    position: 'absolute',
+    maxWidth: '100%',
+    maxHeight: '100%',
+  },
+  billBackground:{
+    backgroundColor: 'white',
+    padding: 20,
   },
 });
 
