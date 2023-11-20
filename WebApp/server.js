@@ -117,7 +117,7 @@ const defaultInterests = [
 // Read Interests
 app.get('/api/readInterests', async (req, res) => {
     try {
-        const { userId } = req.body;
+        const { userId } = req.query;
         const db = client.db('POOSBigProject');
         // const user = await db.collection('Users').findById(userId);
         const user = await db.collection('Users').findOne({ _id: new ObjectId(userId) });
@@ -137,7 +137,7 @@ app.get('/api/getBillVote', async (req, res, next) => {
   // Only works for most recent congress with this implementation
   // Takes one input, billName, with a string as its field (example: H.R.4820)
   const API_KEY = process.env.PRO_KEY;
-  const { billName } = req.body;
+  const { billName } = req.query;
   try {
     let myOffset = 0;
     let mostRecent = 0;
@@ -281,9 +281,10 @@ app.post('/api/getRepByDistrict', async (req, res, next) => {
     res.status(500).send(error.message);
   }
 });
+
 app.get('/api/getMemberID', async(req, res, next) => {
   const API_KEY = process.env.CONGRESS_KEY;
-  const { name } = req.body;
+  const { name } = req.query;
   let memberID = '';
   // This name should be given as "Leahy, Patrick J." or as "Kelly, Mark"
   let bigList = [];
@@ -335,7 +336,7 @@ app.get('/api/getMemberID', async(req, res, next) => {
 
 app.get('/api/getSponsoredBills', async(req, res, next) => {
   const API_KEY = process.env.CONGRESS_KEY;
-  const { memberID, offset } = req.body;
+  const { memberID, offset } = req.query;
   // Takes memberID from getMemberID endpoint, as well as an offset to load older legislation
   try{
     let initText = 'https://api.congress.gov/v3/member';
@@ -373,7 +374,7 @@ app.get('/api/getSponsoredBills', async(req, res, next) => {
 
 app.get('/api/getBillsByInterest', async(req, res, next) => {
   const API_KEY = process.env.CONGRESS_KEY;
-  const { interest } = req.body;
+  const { interest } = req.query;
   const ourIndex = 0;
   // Takes Congress number, the type of bill, and the number of the specific bill
   // Returns list of bill numbers.
@@ -424,7 +425,7 @@ app.get('/api/getBillsByInterest', async(req, res, next) => {
 
 app.get('/api/getBillTitles', async(req, res, next) => {
   const API_KEY = process.env.CONGRESS_KEY;
-  const { congress, billType, billNumber } = req.body;
+  const { congress, billType, billNumber } = req.query;
   // Takes Congress number, the type of bill, and the number of the specific bill
   // Returns list of legislative subjects of bill.
   if (!billType)
@@ -460,7 +461,7 @@ app.get('/api/getBillTitles', async(req, res, next) => {
 
 app.get('/api/getBillSubjects', async(req, res, next) => {
   const API_KEY = process.env.CONGRESS_KEY;
-  const { congress, billType, billNumber } = req.body;
+  const { congress, billType, billNumber } = req.query;
   // Takes Congress number, the type of bill, and the number of the specific bill
   // Returns list of legislative subjects of bill.
   if (!billType)
@@ -496,7 +497,7 @@ app.get('/api/getBillSubjects', async(req, res, next) => {
 
 app.get('/api/getBillAmendments', async(req, res, next) => {
   const API_KEY = process.env.CONGRESS_KEY;
-  const { congress, billType, billNumber } = req.body;
+  const { congress, billType, billNumber } = req.query;
   // Takes Congress number, the type of bill, and the number of the specific bill
   // Returns list of amendments to a bill
   if (!billType)
@@ -531,7 +532,7 @@ app.get('/api/getBillAmendments', async(req, res, next) => {
 
 app.get('/api/getBillRelatedBills', async(req, res, next) => {
   const API_KEY = process.env.CONGRESS_KEY;
-  const { congress, billType, billNumber } = req.body;
+  const { congress, billType, billNumber } = req.query;
   // Takes Congress number, the type of bill, and the number of the specific bill
   // Returns a list of related bills.
   if (!billType)
@@ -566,7 +567,7 @@ app.get('/api/getBillRelatedBills', async(req, res, next) => {
 
 app.get('/api/getBillSummaries', async(req, res, next) => {
   const API_KEY = process.env.CONGRESS_KEY;
-  const { congress, billType, billNumber } = req.body;
+  const { congress, billType, billNumber } = req.query;
   // Takes Congress number, the type of bill, and the number of the specific bill
   // Returns a list of bill summaries
   if (!billType)
@@ -601,7 +602,7 @@ app.get('/api/getBillSummaries', async(req, res, next) => {
 
 app.get('/api/getBillCosponsors', async(req, res, next) => {
   const API_KEY = process.env.CONGRESS_KEY;
-  const { congress, billType, billNumber } = req.body;
+  const { congress, billType, billNumber } = req.query;
   // Takes Congress number, the type of bill, and the number of the specific bill
   // Returns a list of bill cosponsors.
   if (!billType)
@@ -636,7 +637,7 @@ app.get('/api/getBillCosponsors', async(req, res, next) => {
 
 app.get('/api/getBillActions', async(req, res, next) => {
   const API_KEY = process.env.CONGRESS_KEY;
-  const { congress, billType, billNumber } = req.body;
+  const { congress, billType, billNumber } = req.query;
   // Takes Congress number, the type of bill, and the number of the specific bill
   // Returns a list of actions taken on a bill.
   if (!billType)
@@ -671,7 +672,7 @@ app.get('/api/getBillActions', async(req, res, next) => {
 
 app.get('/api/getBillCommittees', async(req, res, next) => {
   const API_KEY = process.env.CONGRESS_KEY;
-  const { congress, billType, billNumber } = req.body;
+  const { congress, billType, billNumber } = req.query;
   // Takes Congress number, the type of bill, and the number of the specific bill
   // Returns a list of committees tied to a bill
   if (!billType)
@@ -770,7 +771,7 @@ app.get('/api/getBills', async (req, res, next) => {
   // Outgoing: Bill numbers
 
   const API_KEY = process.env.CONGRESS_KEY;
-  const { billType } = req.body; // Use req.query to get query parameters
+  const { billType } = req.query; // Use req.query to get query parameters
 
   if (!billType) {
     return res.status(400).json({ error: 'Missing bill_type parameter' });
