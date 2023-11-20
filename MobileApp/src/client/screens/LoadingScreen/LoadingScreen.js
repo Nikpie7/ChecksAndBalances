@@ -31,7 +31,7 @@ const LoadingScreen = () => {
                     .then(response => response.json())
                     .then(data => {
                         console.log(data);
-                        if(data.id !== 0 && data.id !== -1){
+                        if(data.id){
                             //then go to home page
                             console.warn("Successfully Logged In!");
                             navigation.navigate('Dashboard');
