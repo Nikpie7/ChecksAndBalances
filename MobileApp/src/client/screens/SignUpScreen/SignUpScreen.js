@@ -49,10 +49,28 @@ const SignUpScreen = () => {
             setError("Error: Passwords do not match");
             return;
         }
-        //Validation for password complexity
-        if(password.length < 8 && passwordRepeat.length < 8){
+        //Validation for password length
+        if(password.length < 8){
             setEmptyInputs([1, 2]);
             setError("Error: Password must be greater than 8 characters");
+            return;
+        }
+        //Validation for password number
+        if(!(/\d/.test(password))){
+            setEmptyInputs([1, 2]);
+            setError("Error: Password must contain numbers");
+            return;
+        }
+        //Validation for password Upper
+        if(!(/[A-Z]/.test(password))){
+            setEmptyInputs([1, 2]);
+            setError("Error: Password must contain at least one uppercase letter");
+            return;
+        }
+        //Validation for password Special
+        if(!(/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password))){
+            setEmptyInputs([1, 2]);
+            setError("Error: Password must contain at least one special character");
             return;
         }
 

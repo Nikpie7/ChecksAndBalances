@@ -4,7 +4,7 @@ import { View, Text, StyleSheet, TextInput } from 'react-native';
 const PasswordComplex = ({ password }) => {
   const hasLength = password.length >= 8;
   const hasUppercase = /[A-Z]/.test(password);
-  const hasLowercase = /[a-z]/.test(password);
+  const hasNumber = /\d/.test(password);
   const hasSpecialChar = /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password);
   return (
     <View style={styles.container}>
@@ -15,8 +15,8 @@ const PasswordComplex = ({ password }) => {
           <View style={[styles.indicator, { backgroundColor: hasUppercase ? 'green' : 'red' }]}>
             <Text style={styles.indicatorText}>{'Uppercase'}</Text>
           </View>
-          <View style={[styles.indicator, { backgroundColor: hasLowercase ? 'green' : 'red' }]}>
-            <Text style={styles.indicatorText}>{'Lowercase'}</Text>
+          <View style={[styles.indicator, { backgroundColor: hasNumber ? 'green' : 'red' }]}>
+            <Text style={styles.indicatorText}>{'Number'}</Text>
           </View>
           <View style={[styles.indicator, { backgroundColor: hasSpecialChar ? 'green' : 'red' }]}>
             <Text style={styles.indicatorText}>{'Special'}</Text>
