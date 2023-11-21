@@ -926,7 +926,7 @@ app.post('/api/send-password-reset', async (req, res, next) =>
 
 
 
-app.post('/api/password-reset', async (req, res) => {
+app.get('/api/password-reset', async (req, res) => {
   
   const { token, newPassword } = req.query;
   console.error(token);

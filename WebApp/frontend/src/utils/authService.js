@@ -42,7 +42,12 @@ const postSendPasswordReset = (request) => {
 
 const postPasswordReset = (request) => {
   return axios
-    .get(`${baseUrl}/api/password-reset`, request)
+    .get(`${baseUrl}/api/password-reset`, {
+      params: {
+        token: request.token,
+        newPassword: request.newPassword
+      }
+    })
     .then((response) => {
       console.log(response);
       return response.data;

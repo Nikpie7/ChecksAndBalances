@@ -17,8 +17,7 @@ const ForgotPasswordPage = () => {
         if (result === "") {
           alert("Something went wrong.");
         } else {
-          // Re-route to page to input new password.
-          window.location.href = "/resetPassword/:token";
+          alert('Check email and click reset password link.');
         }
       })
       .catch((error) => console.log(error));
