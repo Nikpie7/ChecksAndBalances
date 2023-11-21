@@ -5,6 +5,8 @@ import Logo from '../../../../assets/images/logo.png';
 import Background from '../../../../assets/images/background.png';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import FloatingLabelInput from '../../components/FloatingLabelInput/FloatingLabelInput';
+import PasswordComplex from '../../components/PasswordComplex/PasswordComplex';
 
 
 const SignUpScreen = () => {
@@ -47,10 +49,28 @@ const SignUpScreen = () => {
             setError("Error: Passwords do not match");
             return;
         }
-        //Validation for password complexity
-        if(password.length < 8 && passwordRepeat.length < 8){
+        //Validation for password length
+        if(password.length < 8){
             setEmptyInputs([1, 2]);
             setError("Error: Password must be greater than 8 characters");
+            return;
+        }
+        //Validation for password number
+        if(!(/\d/.test(password))){
+            setEmptyInputs([1, 2]);
+            setError("Error: Password must contain numbers");
+            return;
+        }
+        //Validation for password Upper
+        if(!(/[A-Z]/.test(password))){
+            setEmptyInputs([1, 2]);
+            setError("Error: Password must contain at least one uppercase letter");
+            return;
+        }
+        //Validation for password Special
+        if(!(/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password))){
+            setEmptyInputs([1, 2]);
+            setError("Error: Password must contain at least one special character");
             return;
         }
 
@@ -101,7 +121,7 @@ const SignUpScreen = () => {
                 <Image source={Background} resizeMode="cover" />
             </View>
             <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-                <Icon name="arrow-back" size={24} color="black" />
+                <Icon name="arrow-back" size={30} color="black" />
             </TouchableOpacity>
             <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
                 <View style={styles.logoContainer}>
@@ -114,14 +134,16 @@ const SignUpScreen = () => {
                                 <Text style={styles.errorText}>{error}</Text>
                             </View>
                         )}
-                        <TextInput style={[styles.input, emptyInputs.includes(0) && styles.inputError,]} placeholder="Username" value={username} onChangeText={setUsername}/>
-                        <TextInput style={[styles.input, emptyInputs.includes(1) && styles.inputError,]} placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry/>
-                        <TextInput style={[styles.input, emptyInputs.includes(2) && styles.inputError,]} placeholder="Confirm Password" value={passwordRepeat} onChangeText={setPasswordRepeat} secureTextEntry/>
-                        <TextInput style={[styles.input, emptyInputs.includes(3) && styles.inputError,]} placeholder="Email" value={email} onChangeText={setEmail}/>
-                        <TextInput style={[styles.input, emptyInputs.includes(4) && styles.inputError,]} placeholder="First Name" value={firstName} onChangeText={setFirstName}/>
-                        <TextInput style={[styles.input, emptyInputs.includes(5) && styles.inputError,]} placeholder="Last Name" value={lastName} onChangeText={setLastName}/>
-                        <TextInput style={[styles.input, emptyInputs.includes(6) && styles.inputError,]} placeholder="123 Main Street, Orlando, FL" value={streetAddress} onChangeText={setStreetAddress}/>
-                        <TextInput style={[styles.input, emptyInputs.includes(7) && styles.inputError,]} placeholder="12345" value={zipCode} onChangeText={setZipCode}/>
+
+                        <FloatingLabelInput style={[styles.input, emptyInputs.includes(0) && styles.inputError,]} label="Username" value={username} onChangeText={setUsername}/>
+                        <FloatingLabelInput style={[styles.input, emptyInputs.includes(1) && styles.inputError,]} label="Password" value={password} onChangeText={setPassword} secureTextEntry/>
+                        <PasswordComplex password={password}/>
+                        <FloatingLabelInput style={[styles.input, emptyInputs.includes(2) && styles.inputError,]} label="Confirm Password" value={passwordRepeat} onChangeText={setPasswordRepeat} secureTextEntry/>
+                        <FloatingLabelInput style={[styles.input, emptyInputs.includes(3) && styles.inputError,]} label="Email" value={email} onChangeText={setEmail}/>
+                        <FloatingLabelInput style={[styles.input, emptyInputs.includes(4) && styles.inputError,]} label="First Name" value={firstName} onChangeText={setFirstName}/>
+                        <FloatingLabelInput style={[styles.input, emptyInputs.includes(5) && styles.inputError,]} label="Last Name" value={lastName} onChangeText={setLastName}/>
+                        <FloatingLabelInput style={[styles.input, emptyInputs.includes(6) && styles.inputError,]} label="Street Address, City, State" value={streetAddress} onChangeText={setStreetAddress}/>
+                        <FloatingLabelInput style={[styles.input, emptyInputs.includes(7) && styles.inputError,]} label="5 Digit Zip Code" value={zipCode} onChangeText={setZipCode}/>
                         
                         <TouchableOpacity onPress={onSignUpPressed} style={styles.button}>
                             <Text style={styles.buttonText}>Register</Text>
