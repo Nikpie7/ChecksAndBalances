@@ -3,6 +3,7 @@ import * as Keychain from 'react-native-keychain';
 import {View, Text, Image, StyleSheet, TextInput, TouchableOpacity, ScrollView} from 'react-native'
 import Logo from '../../../../assets/images/logo.png';
 import Background from '../../../../assets/images/background.png';
+import FloatingLabelInput from '../../components/FloatingLabelInput';
 import { useNavigation } from '@react-navigation/native';
 
 const SignInScreen = () => {
@@ -89,8 +90,8 @@ const SignInScreen = () => {
                                 <Text style={styles.errorText}>{error}</Text>
                             </View>
                         )}
-                        <TextInput style={[styles.input, (error && !verifError) && styles.inputError]} placeholder="Username" value={username} onChangeText={setUsername}/>
-                        <TextInput style={[styles.input, (error && !verifError) && styles.inputError]} placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry/>
+                        <FloatingLabelInput style={[styles.input, (error && !verifError) && styles.inputError]} label="Username" value={username} onChangeText={setUsername}/>
+                        <FloatingLabelInput style={[styles.input, (error && !verifError) && styles.inputError]} label="Password" value={password} onChangeText={setPassword} secureTextEntry/>
                         
                         <TouchableOpacity onPress={onForgotPressed} style={styles.forgotPassContainer}>
                             <Text style={styles.normalText}>Forgot Password</Text>
