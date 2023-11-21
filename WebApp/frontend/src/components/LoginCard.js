@@ -29,6 +29,7 @@ const LoginCard = ({className}) => {
       })
       .catch(error => console.log(error));
   }
+
   return (
     <div className={`w-[30rem] p-8 shadow-lg bg-white rounded-xl ${className}`}>
       <h2 className="font-semibold text-2xl">
@@ -80,6 +81,13 @@ const LoginCard = ({className}) => {
           href="./register"
         >
           Sign up for a new account
+        </a>
+        <br></br>
+        <a
+          className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+          href="./forgotPassword"
+        >
+          Forgot password?
         </a>
       </div>
     </div>
