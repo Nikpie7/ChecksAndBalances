@@ -19,7 +19,7 @@ function PasswordReset() {
     authService.postPasswordReset({ token, newPassword }).then(result => {
       // If any sort of message appears, something went wrong.
       if (result) {
-        alert('Something went wrong.')
+        alert(result)
       }
       window.location.href = './'
     });

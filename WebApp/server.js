@@ -946,7 +946,7 @@ app.get('/api/password-reset', async (req, res) => {
       { $set: { Password: newPassword } }
     );
 
-    res.send('Password successfully set to "reset"');
+    res.send('Password successfully reset');
   } catch (error) {
     res.status(400).send('Invalid or expired token');
   }
