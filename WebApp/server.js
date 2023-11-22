@@ -382,7 +382,7 @@ app.get('/api/getBillsByInterest', async(req, res, next) => {
   const { interest, offset, limit, fromDateTime, toDateTime } = req.body;
   const ourIndex = 0;
   // Takes Interest, a limit of bills you want back, and a fromDateTime and toDateTime given in the form YYYY-MM-DDT00:00:00Z
-  // Returns list of bill numbers.
+  // Returns list of bill numbers, billType, congress number, and update date.
 
   try {
     let bigArray = [];
@@ -425,7 +425,7 @@ app.get('/api/getBillsByInterest', async(req, res, next) => {
               break;
             }
             console.log(temp.bills[j]);
-            let smallArray = [temp.bills[j].number, temp.bills[j].congress, temp.bills[j].updateDate];
+            let smallArray = [temp.bills[j].number, temp.bills[j].type, temp.bills[j].congress, temp.bills[j].updateDate];
             bigArray[j] = smallArray;
           }
         }
