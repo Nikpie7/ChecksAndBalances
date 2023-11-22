@@ -67,7 +67,11 @@ const sendPasswordResetEmail = (email, username) => {
   return ses.sendEmail(params).promise();
 };
 
-
+// Utility function to capitalize the first letter of a string and make the rest lower case
+function capitalize(str) {
+  if (!str) return str;
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+}
 
 
 
@@ -308,10 +312,51 @@ app.post('/api/mongoBill', async (req, res, next) =>
         }
         break;
       }
-      
     }
 
-    const newBill = {BillType: type, BillNumber: number, CongressNum: congress, LastUpdated: updateDate, Title: title, Committee: committee, RelatedInterest: interest};
+    initText = 'https://api.congress.gov/v3/bill';
+    test1 = initText.concat("/", congress);
+    test2 = test1.concat("/", type);
+    test3 = test2.concat("/", number);
+
+    const retVal3 = await axios.get(test3,
+      {
+        params: {
+          format: 'json',
+          api_key: API_KEY,
+        },
+        headers: {
+          accept: 'application/json',
+        }
+      });
+      
+      let sponsor = (retVal3.data.bill.sponsors[0].firstName).concat(" ", retVal3.data.bill.sponsors[0].lastName);
+    
+      initText = 'https://api.congress.gov/v3/bill';
+      test1 = initText.concat("/", congress);
+      test2 = test1.concat("/", type);
+      test3 = test2.concat("/", number);
+      finalText = test3.concat("/", "cosponsors");
+  
+      const retVal4 = await axios.get(finalText,
+        {
+          params: {
+            format: 'json',
+            api_key: API_KEY,
+          },
+          headers: {
+            accept: 'application/json',
+          }
+        });
+      
+      let ourCosponsors = [];
+      for (let q = 0; q < retVal4.data.cosponsors.length; q++) {
+        const firstName = capitalize(retVal4.data.cosponsors[q].firstName);
+        const lastName = capitalize(retVal4.data.cosponsors[q].lastName);
+        ourCosponsors[q] = `${firstName} ${lastName}`;
+      }
+
+    const newBill = {BillType: type, BillNumber: number, CongressNum: congress, LastUpdated: updateDate, Title: title, Committee: committee, RelatedInterest: interest, Sponsor: sponsor, Cosponsors: ourCosponsors};
     var error = '';
     
      try {
@@ -353,7 +398,7 @@ app.post('/api/mongoBill', async (req, res, next) =>
   }
   });
 
-  // This endpoint searches bills by name or by number
+  // This endpoint searches bills by name, number, or a member's sponsored bills
   app.post('/api/searchBillsBasic', async (req, res, next) =>
   {
     try {
@@ -365,7 +410,9 @@ app.post('/api/mongoBill', async (req, res, next) =>
       let response = await db.collection('Bills').find({ 
                               $or: [
                                 { BillNumber: { $regex: input, $options: "i"} } ,
-                                { Title: { $regex: input, $options: "i"} }
+                                { Title: { $regex: input, $options: "i"} }, 
+                                { Sponsor: { $regex: input, $options: "i"} },
+                                { Cosponsors: { $elemMatch: { $regex: input, $options: "i" } } }
                               ]
                             }).toArray();
 
@@ -379,6 +426,31 @@ app.post('/api/mongoBill', async (req, res, next) =>
   }
   });
 
+  // This endpoint searches for a member's sponsored bills
+  app.post('/api/searchBillsSponsors', async (req, res, next) =>
+  {
+    try {
+      // We expect one field, "input", in the post body.
+      // We return a list of bills with all information stored in them.
+      const { member } = req.body;
+      const db = client.db('POOSBigProject');
+      
+      let response = await db.collection('Bills').find({ 
+                              $or: [
+                                { Sponsor: member } ,
+                                { Cosponsors: { $elemMatch: { $eq: member } } }
+                              ]
+                            }).toArray();
+
+      if (!response) {
+          return res.status(404).json({ error: 'No bills found' });
+      }
+
+      res.json({ response });
+  } catch (error) {
+      res.status(500).json({ error: "Interests Not Found" });
+  }
+  }); 
 // Takes the lowercase abbreviation of a state (i.e. fl) and returns its senators.
 app.post('/api/getSenByState', async (req, res, next) => {
   try {
