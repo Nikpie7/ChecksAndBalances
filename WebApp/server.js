@@ -45,22 +45,27 @@ const sendVerificationEmail = (email, username) => {
 };
 
 
+const sendPasswordResetEmail = (email, username) => {
+  const token = jwt.sign({ username }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
+  // Define the frontend URL for password reset
+  const passwordResetUrl = `http://checksnbalances.us/resetPassword/${token}`;
 
+  const params = {
+    Source: 'noreply@checksnbalances.us', // Your verified email in SES
+    Destination: { ToAddresses: [email] },
+    Message: {
+      Subject: { Data: 'Password Reset' },
+      Body: {
+        // Include both Text and Html versions for email clients that don't support HTML
+        Text: { Data: `Please reset your password by visiting the following link: ${passwordResetUrl}` },
+        Html: { Data: `<html><body><p>Please reset your password by visiting the following link: <a href="${passwordResetUrl}">Reset Password</a></p></body></html>` }
+      }
+    }
+  };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+  return ses.sendEmail(params).promise();
+};
 
 
 
@@ -374,10 +379,10 @@ app.get('/api/getSponsoredBills', async(req, res, next) => {
 
 app.get('/api/getBillsByInterest', async(req, res, next) => {
   const API_KEY = process.env.CONGRESS_KEY;
-  const { interest } = req.query;
+  const { interest, offset, limit, fromDateTime, toDateTime } = req.body;
   const ourIndex = 0;
-  // Takes Congress number, the type of bill, and the number of the specific bill
-  // Returns list of bill numbers.
+  // Takes Interest, a limit of bills you want back, and a fromDateTime and toDateTime given in the form YYYY-MM-DDT00:00:00Z
+  // Returns list of bill numbers, billType, congress number, and update date.
 
   try {
     let bigArray = [];
@@ -396,12 +401,15 @@ app.get('/api/getBillsByInterest', async(req, res, next) => {
           let initText = 'https://api.congress.gov/v3/committee';
           let test1 = initText.concat("/", chamber);
           let test2 = test1.concat("/", interestList[k][i]);
-          let finalText = test2.concat("/", "bills");
-          const response = await axios.get(finalText,
+          let test3 = test2.concat("/", "bills");
+          const response = await axios.get(test3,
           {
             params: {
               format: 'json',
-              limit: 20,
+              offset: offset,
+              limit: limit,
+              fromDateTime: fromDateTime,
+              toDateTime: toDateTime,
               api_key: API_KEY,
             },
             headers: {
@@ -409,19 +417,28 @@ app.get('/api/getBillsByInterest', async(req, res, next) => {
             }
           });
           let temp = response.data['committee-bills'];
-          for (let j = 0; j < 20; j++)
+          for (let j = 0; j < limit; j++)
           {
-            bigArray = bigArray.concat(temp.bills[j].number);
+            if (temp.bills[j] === undefined)
+            {
+              console.log("We (tried) broke out");
+              break;
+            }
+            console.log(temp.bills[j]);
+            let smallArray = [temp.bills[j].number, temp.bills[j].type, temp.bills[j].congress, temp.bills[j].updateDate];
+            bigArray[j] = smallArray;
           }
         }
       }
     }
+    bigArray = bigArray.reverse();
     res.json(bigArray);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Failed to retrieve bill data '});
   }
 })
+
 
 app.get('/api/getBillTitles', async(req, res, next) => {
   const API_KEY = process.env.CONGRESS_KEY;
@@ -882,6 +899,54 @@ app.get('/api/verify-email', async (req, res) => {
     );
 
     res.send('Email verified successfully (THIS IS FROM THE API)');
+  } catch (error) {
+    res.status(400).send('Invalid or expired token');
+  }
+});
+
+app.post('/api/send-password-reset', async (req, res, next) =>
+{
+  // incoming: username, email
+  // outgoing: id, error
+
+  const { username, email} = req.body;
+  
+  var error = '';
+  
+   try {
+    // Send password reset email
+    await sendPasswordResetEmail(email, username);
+  } catch(e) {
+    error = e.toString();
+  }
+
+  var ret = { error: error };
+  res.status(200).json(ret);
+});
+
+
+
+app.get('/api/password-reset', async (req, res) => {
+  
+  const { token, newPassword } = req.query;
+  console.error(token);
+
+  console.log(token);
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const username = decoded.username;
+
+    console.log(username);
+
+    // Reset user password
+    const db = client.db('POOSBigProject');
+    await db.collection('Users').updateOne(
+      { Login: username },
+      { $set: { Password: newPassword } }
+    );
+
+    res.send('Password successfully reset');
   } catch (error) {
     res.status(400).send('Invalid or expired token');
   }

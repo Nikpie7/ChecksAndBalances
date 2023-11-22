@@ -7,6 +7,8 @@ import LoginPage from './pages/DemoLoginPage';
 import CardPage from './pages/CardPage';
 import DashboardPage from './pages/DashboardPage';
 import EmailVerification from './components/EmailVerification';
+import PasswordReset from './components/PasswordReset';
+import ForgotPasswordPage from './pages/ForgotPasswordPage.js'
 
 function App() {
   return (
@@ -17,6 +19,8 @@ function App() {
         <Route path="/cards" element={<CardPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/verifyToken/:token" element={<EmailVerification />} />
+        <Route path="/forgotPassword" element={<ForgotPasswordPage />} />
+        <Route path="/resetPassword/:token" element={<PasswordReset />} />
       </Routes>
     </BrowserRouter>
       );
