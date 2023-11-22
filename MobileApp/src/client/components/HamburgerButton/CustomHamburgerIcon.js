@@ -16,10 +16,14 @@ const CustomHamburgerIcon = ({ onPress }) => {
 
 const styles = StyleSheet.create({
   container: {
-    width: 30,
-    height: 20,
-    justifyContent: 'space-between',
+    flex: 0,
+    width: 100,
+    height: 100,
+    justifyContent: 'center',
     alignItems: 'center',
+    position: 'absolute',
+    top: 50,
+    right: 50,
   },
   line: {
     width: '100%',
