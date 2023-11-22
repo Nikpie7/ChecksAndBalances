@@ -275,10 +275,43 @@ app.post('/api/mongoBill', async (req, res, next) =>
         accept: 'application/json',
       }
     });
-    let title = retVal.data.titles[0].title;
 
-  
-    const newBill = {BillType: type, BillNumber: number, CongressNum: congress, LastUpdated: updateDate, Title: title};
+    
+    initText = 'https://api.congress.gov/v3/bill';
+    test1 = initText.concat("/", congress);
+    test2 = test1.concat("/", type);
+    test3 = test2.concat("/", number);
+    finalText = test3.concat("/", "committees");
+
+    const retVal2 = await axios.get(finalText,
+      {
+        params: {
+          format: 'json',
+          api_key: API_KEY,
+        },
+        headers: {
+          accept: 'application/json',
+        }
+      });
+
+    let title = retVal.data.titles[0].title;
+    let committee = retVal2.data.committees[0].systemCode;
+    let committeeName = retVal2.data.committees[0].name;
+    let interest = "Miscellaneous";
+    for (let k = 0; k < interestList.length && interest === "Miscellaneous"; k++)
+    {
+      for (let b = 1; b < interestList[k].length; b++)
+      {
+        if (committee === interestList[k][b])
+        {
+          interest = interestList[k][0];
+        }
+        break;
+      }
+      
+    }
+
+    const newBill = {BillType: type, BillNumber: number, CongressNum: congress, LastUpdated: updateDate, Title: title, Committee: committee, RelatedInterest: interest};
     var error = '';
     
      try {
