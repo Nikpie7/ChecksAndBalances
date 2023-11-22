@@ -231,6 +231,74 @@ app.use((req, res, next) =>
   next();
 });
 
+// Run this ONLY to populate MongoDB database with fresh bills. NOT FOR FRONTEND USE
+app.post('/api/mongoBill', async (req, res, next) =>
+{
+  // incoming: offset
+  // outgoing: bill id
+  const { offset, limit } = req.body;
+  const API_KEY = process.env.CONGRESS_KEY;
+  
+  const response = await axios.get("https://api.congress.gov/v3/bill",
+    {
+      params: {
+        format: 'json',
+        offset: offset,
+        limit: limit,
+        api_key: API_KEY,
+      },
+      headers: {
+        accept: 'application/json',
+      }
+    });
+    
+  for (let i = 0; i < limit; i++)
+  {
+    let type = (response.data.bills[i].type).toLowerCase();
+    let number = response.data.bills[i].number;
+    let congress = response.data.bills[i].congress;
+    let updateDate = response.data.bills[i].updateDate;
+
+    let initText = 'https://api.congress.gov/v3/bill';
+    let test1 = initText.concat("/", congress);
+    let test2 = test1.concat("/", type);
+    let test3 = test2.concat("/", number);
+    let finalText = test3.concat("/", "titles");
+
+    const retVal = await axios.get(finalText,
+    {
+      params: {
+        format: 'json',
+        api_key: API_KEY,
+      },
+      headers: {
+        accept: 'application/json',
+      }
+    });
+    let title = retVal.data.titles[0].title;
+
+  
+    const newBill = {BillType: type, BillNumber: number, CongressNum: congress, LastUpdated: updateDate, Title: title};
+    var error = '';
+    
+     try {
+      const db = client.db('POOSBigProject');
+      const result = await db.collection('Bills').insertOne(newBill);
+  
+    } catch(e) {
+      if (e.code === 11000) {
+        error = 'User already exists';
+      }
+      else {
+        error = e.toString();
+      }
+    }
+  
+    var ret = { error: error };
+  }
+  res.status(200).json(ret);
+  });
+
 // Takes the lowercase abbreviation of a state (i.e. fl) and returns its senators.
 app.post('/api/getSenByState', async (req, res, next) => {
   try {
