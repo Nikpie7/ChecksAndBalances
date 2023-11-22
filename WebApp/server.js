@@ -234,7 +234,7 @@ app.use((req, res, next) =>
 // Run this ONLY to populate MongoDB database with fresh bills. NOT FOR FRONTEND USE
 app.post('/api/mongoBill', async (req, res, next) =>
 {
-  // incoming: offset
+  // incoming: offset, limit
   // outgoing: bill id
   const { offset, limit } = req.body;
   const API_KEY = process.env.CONGRESS_KEY;
@@ -330,6 +330,53 @@ app.post('/api/mongoBill', async (req, res, next) =>
     var ret = { error: error };
   }
   res.status(200).json(ret);
+  });
+
+  // This endpoint searches through Mongo and returns all bills of a specific interest
+  app.post('/api/searchBillsByInterest', async (req, res, next) =>
+  {
+    try {
+      // We expect one field, "Interest", in the post body.
+      // We return a list of bills with all information stored in them.
+      const { Interest } = req.body;
+      const db = client.db('POOSBigProject');
+      
+      let response = await (db.collection('Bills').find({ RelatedInterest: Interest})).toArray();
+
+      if (!response) {
+          return res.status(404).json({ error: 'No bills found' });
+      }
+
+      res.json({ response });
+  } catch (error) {
+      res.status(500).json({ error: "Interests Not Found" });
+  }
+  });
+
+  // This endpoint searches bills by name or by number
+  app.post('/api/searchBillsBasic', async (req, res, next) =>
+  {
+    try {
+      // We expect one field, "input", in the post body.
+      // We return a list of bills with all information stored in them.
+      const { input } = req.body;
+      const db = client.db('POOSBigProject');
+      
+      let response = await db.collection('Bills').find({ 
+                              $or: [
+                                { BillNumber: { $regex: input, $options: "i"} } ,
+                                { Title: { $regex: input, $options: "i"} }
+                              ]
+                            }).toArray();
+
+      if (!response) {
+          return res.status(404).json({ error: 'No bills found' });
+      }
+
+      res.json({ response });
+  } catch (error) {
+      res.status(500).json({ error: "Interests Not Found" });
+  }
   });
 
 // Takes the lowercase abbreviation of a state (i.e. fl) and returns its senators.
