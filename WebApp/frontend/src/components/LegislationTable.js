@@ -1,13 +1,15 @@
 import { render } from "@testing-library/react";
 import { React, useState } from "react";
+import { useQuery } from "react-query";
 
-import bills from "./legislationListTestData";
+// import bills from "./legislationListTestData";
 import "./LegislationTable.css";
 
 import dashboardService from "../utils/dashboardService.js";
+//import axiosClient from "../../../axios.js";
 
 // ONLY FOR TESTING!!!!
-// TODO: REMOVE THIS
+// TODO: REOVE THIS
 const USER_ID = { userId: "65580d043bdf8a775970f892" };
 
 // Define the current Congress.
@@ -16,89 +18,51 @@ const USER_ID = { userId: "65580d043bdf8a775970f892" };
 const CONGRESS_NUM = 118;
 
 const LegistlationTable = () => {
-  // Hold bills.
-  const [billList, setBillList] = useState([]);
-
-  // const [billNum, setbillNum] = useState("");
-
   // Get user's interests.
-  dashboardService.getReadInterests(USER_ID).then((interestsData) => {
-    // Hold interests data.
-    let interests = interestsData.Interests;
+  const {
+    data: interests,
+    isLoading,
+    isError,
+  } = useQuery(["interestsData", USER_ID], () =>
+    dashboardService.getReadInterests(USER_ID)
+  );
 
-    // Iterate through interests.
-    for (let i = 0; i < interests.length; i++) {
-      if (interests[i].value === true) {
-        // Get bill #s for current interest.
-        dashboardService
-          .getGetBillsByInterests(interests[i].InterestName)
-          .then((billNumbers) => {
-            // Iterate through all bills related to interest.
-            for (const billNumber in billNumbers) {
-              
-              // Get bill info for house and senate.
-              for (const billType in ["hr", "s"]) {
-                // Get bill titles.
-                let billTitles = dashboardService.getGetBillTitles(
-                  CONGRESS_NUM,
-                  billType,
-                  billNumber
-                );
+  //TODO: Add custom animations.
+  if (isLoading) return <p>Loading...</p>;
+  if (isError) return <p>Error...</p>;
 
-                // Get Bill summaries.
-                let billSummary = dashboardService.getGetBillSummaries(
-                  CONGRESS_NUM,
-                  billType,
-                  billNumber
-                );
+  let userInterestsTemp = [];
 
-                // Get bill committees.
-                let billcommittees = dashboardService.getGetBillCommittees(
-                  CONGRESS_NUM,
-                  billType,
-                  billNumber
-                );
-
-                // Add bill info to list.
-                setBillList((billList) => [
-                  ...billList,
-                  {
-                    title: billTitles.titles[0].title,
-                    summary: billSummary.summaries[0].text,
-                    committees: billcommittees.committees[0].name,
-                  },
-                ]);
-              }
-            }
-          });
-      }
+  // Iterate through all interests and save ones user follows.
+  for (let i = 0; i < interests.Interests.length; i++) {
+    if (interests.Interests[i].value) {
+      userInterestsTemp.push(interests.Interests[i].InterestName);
     }
-  });
+  }
 
   return (
     <div>
       {/* LegistlationList */}
-      <LegistlationList bills={billList} />
+      <LegistlationList userInterests={userInterestsTemp} />
     </div>
   );
 };
 
 const LegistlationList = (props) => {
-  let bills = props.bills;
+  const userInterests = props.userInterests;
 
   // Render the row for each piece of legislation.
-  const renderLegislationRow = (bill) => {
+  const renderLegislationRow = (userInterests) => {
     return (
       <div
-        key={bill.title}
-        id="legislationList-row"
-        className="grid grid-flow-row shadow-2xl p-4 m-8 rounded-lg hover:scale-105 duration-300"
-      >
+        key={userInterests.id}      >
         <li>
           {/* Mobile = Bill name + short description
               Web = Bill Name + short description + committee*/}
-          <h1>{bill.title}</h1>
-          <h2>{bill.committee}</h2>
+          {/* Iterate through each interest. */}
+          {userInterests.map((interest) => (
+            <BillList Interest={interest} />
+          ))}
         </li>
       </div>
     );
@@ -107,11 +71,59 @@ const LegistlationList = (props) => {
   return (
     <div className="grid justify-center md:justify-normal">
       <ul>
-        {bills.map((bill) =>
+        {
           // Create rows.
-          renderLegislationRow(bill)
-        )}
+          renderLegislationRow(userInterests)
+        }
       </ul>
+    </div>
+  );
+};
+
+const BillList = (props) => {
+  const currInterest = props.Interest;
+  // Hold bills.
+  // const [billList, setBillList] = useState([]);
+
+  // Get bills for current interest.
+  const {
+    data: bills,
+    isLoading,
+    isError,
+  } = useQuery(["billsData", { Interest: currInterest }], () =>
+    dashboardService.postSearchBillsByInterest({ Interest: currInterest })
+  );
+
+  //TODO: Add custom animations.
+  if (isLoading) return <p>Loading...</p>;
+  if (isError) return <p>Error...</p>;
+
+  // Hold bills temporarily.
+  let billList = bills.response;
+
+  return (
+    <div key={billList.id}>
+      {/* Iterate through each bill. */}
+      {billList.map((bill) => (
+        <div
+          id="legislationList-row"
+          className="grid grid-flow-row shadow-2xl p-4 m-8 rounded-lg hover:scale-105 duration-300"
+        >
+          <Bill currBill={bill} />
+        </div>
+      ))}
+      ;
+    </div>
+  );
+};
+
+const Bill = (props) => {
+  const bill = props.currBill;
+
+  return (
+    <div key={bill.id}>
+      <h1>{bill.Title}</h1>
+      <h2><b>{bill.Sponsor}</b></h2>
     </div>
   );
 };
