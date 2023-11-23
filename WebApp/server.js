@@ -507,6 +507,7 @@ app.post('/api/getRepByDistrict', async (req, res, next) => {
   }
 });
 
+//DEPRECATED API
 app.get('/api/getMemberID', async(req, res, next) => {
   const API_KEY = process.env.CONGRESS_KEY;
   const { name } = req.query;
@@ -559,6 +560,7 @@ app.get('/api/getMemberID', async(req, res, next) => {
   }
 });
 
+//DEPRECATED API
 app.get('/api/getSponsoredBills', async(req, res, next) => {
   const API_KEY = process.env.CONGRESS_KEY;
   const { memberID, offset } = req.query;
@@ -597,6 +599,7 @@ app.get('/api/getSponsoredBills', async(req, res, next) => {
   }
 });
 
+//DEPRECATED API
 app.get('/api/getBillsByInterest', async(req, res, next) => {
   const API_KEY = process.env.CONGRESS_KEY;
   const { interest, offset, limit, fromDateTime, toDateTime } = req.body;
@@ -659,7 +662,7 @@ app.get('/api/getBillsByInterest', async(req, res, next) => {
   }
 })
 
-
+// Should be unnecessary; you have access to titles from MongoDB.
 app.get('/api/getBillTitles', async(req, res, next) => {
   const API_KEY = process.env.CONGRESS_KEY;
   const { congress, billType, billNumber } = req.query;
@@ -942,6 +945,7 @@ app.get('/api/getBillCommittees', async(req, res, next) => {
   }
 })
 
+// DEPRECATED API
 app.post('/api/addcard', async (req, res, next) =>
 {
   // incoming: userId, color
@@ -1003,6 +1007,7 @@ app.post('/api/getReps', async (req, res, next) => {
   }
 });
 
+// DEPRECATED API
 app.get('/api/getBills', async (req, res, next) => {
   // Incoming: billType
   // Outgoing: Bill numbers
@@ -1172,7 +1177,7 @@ app.get('/api/password-reset', async (req, res) => {
   }
 });
 
-
+// DEPRECATED API
 app.post('/api/searchcards', async (req, res, next) =>
 {
   // incoming: userId, search
