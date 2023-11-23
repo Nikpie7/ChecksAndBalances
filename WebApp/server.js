@@ -297,6 +297,13 @@ app.post('/api/mongoBill', async (req, res, next) =>
           accept: 'application/json',
         }
       });
+    
+    // Some of these are null for whatever reason, and hence should be skipped.
+    if (retVal2.data.committees[0] == null) {
+      var ret = { error: "Null data detected, skipped." };
+      continue;
+    }
+      
 
     let title = retVal.data.titles[0].title;
     let committee = retVal2.data.committees[0].systemCode;
