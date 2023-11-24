@@ -67,7 +67,11 @@ const sendPasswordResetEmail = (email, username) => {
   return ses.sendEmail(params).promise();
 };
 
-
+// Utility function to capitalize the first letter of a string and make the rest lower case
+function capitalize(str) {
+  if (!str) return str;
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+}
 
 
 
@@ -231,6 +235,231 @@ app.use((req, res, next) =>
   next();
 });
 
+// Run this ONLY to populate MongoDB database with fresh bills. NOT FOR FRONTEND USE
+app.post('/api/mongoBill', async (req, res, next) =>
+{
+  // incoming: offset, limit
+  // outgoing: bill id
+  const { offset, limit } = req.body;
+  const API_KEY = process.env.CONGRESS_KEY;
+  
+  const response = await axios.get("https://api.congress.gov/v3/bill",
+    {
+      params: {
+        format: 'json',
+        offset: offset,
+        limit: limit,
+        api_key: API_KEY,
+      },
+      headers: {
+        accept: 'application/json',
+      }
+    });
+    
+  for (let i = 0; i < limit; i++)
+  {
+    let type = (response.data.bills[i].type).toLowerCase();
+    let number = response.data.bills[i].number;
+    let congress = response.data.bills[i].congress;
+    let updateDate = response.data.bills[i].updateDate;
+
+    let initText = 'https://api.congress.gov/v3/bill';
+    let test1 = initText.concat("/", congress);
+    let test2 = test1.concat("/", type);
+    let test3 = test2.concat("/", number);
+    let finalText = test3.concat("/", "titles");
+
+    const retVal = await axios.get(finalText,
+    {
+      params: {
+        format: 'json',
+        api_key: API_KEY,
+      },
+      headers: {
+        accept: 'application/json',
+      }
+    });
+
+    
+    initText = 'https://api.congress.gov/v3/bill';
+    test1 = initText.concat("/", congress);
+    test2 = test1.concat("/", type);
+    test3 = test2.concat("/", number);
+    finalText = test3.concat("/", "committees");
+
+    const retVal2 = await axios.get(finalText,
+      {
+        params: {
+          format: 'json',
+          api_key: API_KEY,
+        },
+        headers: {
+          accept: 'application/json',
+        }
+      });
+      
+
+    let title = retVal.data.titles[0].title;
+
+    // Some of these are null for whatever reason, and hence should be left as N/A
+    let committee = "N/A";
+    let committeeName = "N/A"
+    if (retVal2.data.committees[0] != null) {
+      committee = retVal2.data.committees[0].systemCode;
+      committeeName = retVal2.data.committees[0].name;
+    }
+    
+    let interest = "Miscellaneous";
+    
+    for (let k = 0; k < interestList.length && interest === "Miscellaneous"; k++)
+    {
+      for (let b = 1; b < interestList[k].length; b++)
+      {
+        if (committee === interestList[k][b])
+        {
+          interest = interestList[k][0];
+        }
+        break;
+      }
+    }
+
+    initText = 'https://api.congress.gov/v3/bill';
+    test1 = initText.concat("/", congress);
+    test2 = test1.concat("/", type);
+    test3 = test2.concat("/", number);
+
+    const retVal3 = await axios.get(test3,
+      {
+        params: {
+          format: 'json',
+          api_key: API_KEY,
+        },
+        headers: {
+          accept: 'application/json',
+        }
+      });
+      
+      let sponsor = (retVal3.data.bill.sponsors[0].firstName).concat(" ", retVal3.data.bill.sponsors[0].lastName);
+    
+      initText = 'https://api.congress.gov/v3/bill';
+      test1 = initText.concat("/", congress);
+      test2 = test1.concat("/", type);
+      test3 = test2.concat("/", number);
+      finalText = test3.concat("/", "cosponsors");
+  
+      const retVal4 = await axios.get(finalText,
+        {
+          params: {
+            format: 'json',
+            api_key: API_KEY,
+          },
+          headers: {
+            accept: 'application/json',
+          }
+        });
+      
+      let ourCosponsors = [];
+      for (let q = 0; q < retVal4.data.cosponsors.length; q++) {
+        const firstName = capitalize(retVal4.data.cosponsors[q].firstName);
+        const lastName = capitalize(retVal4.data.cosponsors[q].lastName);
+        ourCosponsors[q] = `${firstName} ${lastName}`;
+      }
+
+    const newBill = {BillType: type, BillNumber: number, CongressNum: congress, LastUpdated: updateDate, Title: title, Committee: committee, RelatedInterest: interest, Sponsor: sponsor, Cosponsors: ourCosponsors};
+    var error = '';
+    
+     try {
+      const db = client.db('POOSBigProject');
+      const result = await db.collection('Bills').insertOne(newBill);
+  
+    } catch(e) {
+      if (e.code === 11000) {
+        error = 'User already exists';
+      }
+      else {
+        error = e.toString();
+      }
+    }
+  
+    var ret = { error: error };
+  }
+  res.status(200).json(ret);
+  });
+
+  // This endpoint searches through Mongo and returns all bills of a specific interest
+  app.post('/api/searchBillsByInterest', async (req, res, next) =>
+  {
+    try {
+      // We expect one field, "Interest", in the post body.
+      // We return a list of bills with all information stored in them.
+      const { Interest } = req.body;
+      const db = client.db('POOSBigProject');
+      
+      let response = await (db.collection('Bills').find({ RelatedInterest: Interest})).toArray();
+
+      if (!response) {
+          return res.status(404).json({ error: 'No bills found' });
+      }
+
+      res.json({ response });
+  } catch (error) {
+      res.status(500).json({ error: "Interests Not Found" });
+  }
+  });
+
+  // This endpoint searches bills by name, number, or a member's sponsored bills
+  app.post('/api/searchBillsBasic', async (req, res, next) =>
+  {
+    try {
+      // We expect one field, "input", in the post body.
+      // We return a list of bills with all information stored in them.
+      const { input } = req.body;
+      const db = client.db('POOSBigProject');
+      
+      let response = await db.collection('Bills').find({ 
+                              $or: [
+                                { BillNumber: { $regex: input, $options: "i"} } ,
+                                { Title: { $regex: input, $options: "i"} }, 
+                                { Sponsor: { $regex: input, $options: "i"} },
+                                { Cosponsors: { $elemMatch: { $regex: input, $options: "i" } } }
+                              ]
+                            }).toArray();
+
+      if (!response) {
+          return res.status(404).json({ error: 'No bills found' });
+      }
+
+      res.json({ response });
+  } catch (error) {
+      res.status(500).json({ error: "Interests Not Found" });
+  }
+  });
+
+  // This endpoint searches for a member's sponsored bills
+  app.post('/api/searchBillsSponsors', async (req, res, next) =>
+  {
+    try {
+      // We expect one field, "input", in the post body.
+      // We return a list of bills with all information stored in them.
+      const { member } = req.body;
+      const db = client.db('POOSBigProject');
+      
+      let response = await db.collection('Bills').find({ 
+                              $or: [
+                                { Sponsor: member } ,
+                                { Cosponsors: { $elemMatch: { $eq: member } } }
+                              ]
+                            }).toArray();
+
+      if (!response) {
+          return res.status(404).json({ error: 'No bills found' });
+      }
+
+      res.json({ response });
+  } catch (error) {
+      res.status(500).json({ error: "Interests Not Found" });
+  }
+  }); 
 // Takes the lowercase abbreviation of a state (i.e. fl) and returns its senators.
 app.post('/api/getSenByState', async (req, res, next) => {
   try {
@@ -287,6 +516,7 @@ app.post('/api/getRepByDistrict', async (req, res, next) => {
   }
 });
 
+//DEPRECATED API
 app.get('/api/getMemberID', async(req, res, next) => {
   const API_KEY = process.env.CONGRESS_KEY;
   const { name } = req.query;
@@ -339,6 +569,7 @@ app.get('/api/getMemberID', async(req, res, next) => {
   }
 });
 
+//DEPRECATED API
 app.get('/api/getSponsoredBills', async(req, res, next) => {
   const API_KEY = process.env.CONGRESS_KEY;
   const { memberID, offset } = req.query;
@@ -377,6 +608,7 @@ app.get('/api/getSponsoredBills', async(req, res, next) => {
   }
 });
 
+//DEPRECATED API
 app.get('/api/getBillsByInterest', async(req, res, next) => {
   const API_KEY = process.env.CONGRESS_KEY;
   const { interest, offset, limit, fromDateTime, toDateTime } = req.body;
@@ -439,7 +671,7 @@ app.get('/api/getBillsByInterest', async(req, res, next) => {
   }
 })
 
-
+// Should be unnecessary; you have access to titles from MongoDB.
 app.get('/api/getBillTitles', async(req, res, next) => {
   const API_KEY = process.env.CONGRESS_KEY;
   const { congress, billType, billNumber } = req.query;
@@ -722,6 +954,7 @@ app.get('/api/getBillCommittees', async(req, res, next) => {
   }
 })
 
+// DEPRECATED API
 app.post('/api/addcard', async (req, res, next) =>
 {
   // incoming: userId, color
@@ -783,6 +1016,7 @@ app.post('/api/getReps', async (req, res, next) => {
   }
 });
 
+// DEPRECATED API
 app.get('/api/getBills', async (req, res, next) => {
   // Incoming: billType
   // Outgoing: Bill numbers
@@ -952,7 +1186,7 @@ app.get('/api/password-reset', async (req, res) => {
   }
 });
 
-
+// DEPRECATED API
 app.post('/api/searchcards', async (req, res, next) =>
 {
   // incoming: userId, search

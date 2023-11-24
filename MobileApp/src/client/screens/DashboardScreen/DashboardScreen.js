@@ -1,54 +1,39 @@
 /* eslint-disable prettier/prettier */
-import React, {useState} from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  TextInput,
-  ScrollView,
-  Image,
-  StyleSheet,
-  useWindowDimensions,
-} from 'react-native';
-import {useNavigation, NavigationContainer} from '@react-navigation/native';
-import {TabNavigator} from 'react-navigation';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import Modal from 'react-native-modal';
-import {CustomHamburgerIcon} from '../../components/HamburgerButton/CustomHamburgerIcon';
-import Logo from '../../../../assets/images/logo.png';
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, TextInput, ScrollView, Image, StyleSheet, useWindowDimensions } from 'react-native';
+import { useNavigation, NavigationContainer, DrawerActions } from '@react-navigation/native';
+import { createDrawerNavigator } from '@react-navigation/drawer';
+import { TabNavigator } from 'react-navigation';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import  Modal  from 'react-native-modal';
+import { CustomHamburgerIcon } from '../../components/HamburgerButton/CustomHamburgerIcon';
 import Background from '../../../../assets/images/background.png';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 function InterestsScreen() {
   return (
-    <ScrollView style={{ flex: 1 }}>
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text>This is the interests tab</Text>
-      </View>
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
       {/* Add API endpoint here*/}
-    </ScrollView>
+      <Text fontSize={20}>All Interests!</Text>
+    </View>
   );
-}
+};
 
 function VotesScreen() {
   return (
-    <ScrollView style={{ flex: 1 }}>
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
       {/* Add API endpoint here*/}
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text>This is the votes tab</Text>
-      </View>
-    </ScrollView>
+      <Text>Votes!</Text>
+    </View>
   );
 }
 
 function AllBillsScreen() {
   return (
-    <ScrollView style={{ flex: 1 }}>
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
       {/* Add API endpoint here*/}
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text>This is the interests tab</Text>
-      </View>
-    </ScrollView>
+      <Text>All Bills!</Text>
+    </View>
   );
 }
 
@@ -56,7 +41,7 @@ const DashboardScreen = () => {
   const navigation = useNavigation();
   const [isProfileModalVisible, setProfileModalVisible] = useState(false);
   const [isHamburgerModalVisible, setHamburgerModalVisible] = useState(false);
-  const [activeTab, setActiveTab] = useState('Home');
+  const [activeTab, setActiveTab] = useState("Home");
 
   const congress = 118;
   const Tab = createBottomTabNavigator();
@@ -76,7 +61,7 @@ const DashboardScreen = () => {
     toggleProfileModal();
   };
 
-  const handleOptionSelect = option => {
+  const handleOptionSelect = (option) => {
     // Handle the selected option
     console.log('Selected option:', option);
 
@@ -86,118 +71,100 @@ const DashboardScreen = () => {
 
   const handleSearch = () => {
     // TODO
-    console.log("beans! Can't search quite yet but will be able to soon!");
+    console.log('beans! Can\'t search quite yet but will be able to soon!');
   };
 
   const toggleHamburgerModal = () => {
     setHamburgerModalVisible(!isHamburgerModalVisible);
   };
 
-  const handleTabChange = tab => {
+  const handleTabChange = (tab) => {
     // Add logic to update the feed based on the selected tab
     console.log('Switch to tab:', tab);
   };
 
   const getBillTitles = () => {
-    var bodyVariable = JSON.stringify({
-      congress: congress,
-      billType: billType,
-      billNumber: billNumber,
-    });
-    
-    console.log(bodyVariable);
-    //Validate the user
-    fetch('https://checksnbalances.us/api/getBillTitles', {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: bodyVariable,
-    })
-      .then(response => response.json())
-      .catch(error => {
-        console.error(error);
-      });
+    var bodyVariable = JSON.stringify({"congress": congress,"billType": billType, "billNumber": billNumber});
+        
+        console.log(bodyVariable);
+        //Validate the user
+        fetch('https://checksnbalances.us/api/getBillTitles', {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: bodyVariable,
+        })
+        .then(response => response.json())
+        .catch(error => {
+          console.error(error);
+          });
   };
 
   const getBillsByInterest = () => {
     // TODO replace "Finance" with interest variable
-    var bodyVariable = JSON.stringify({interest: 'Finance'});
+    var bodyVariable = JSON.stringify({'interest': 'Finance'});
 
     console.log(bodyVariable);
 
     fetch('https://checksnbalances.us/api/getBillTitles', {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: bodyVariable,
+        method: 'POST',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: bodyVariable,
     })
-      .then(response => response.json())
-      .catch(error => {
-        console.error(error);
-      });
+    .then(response => response.json())
+    .catch(error => {
+      console.error(error);
+    });
   };
 
   const readInterests = () => {
-    var bodyVariable = JSON.stringify({userID: userID});
+    var bodyVariable = JSON.stringify({"userID": userID});
 
     console.log(bodyVariable);
 
     fetch('https://checksnbalances.us/api/getBillTitles', {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: bodyVariable,
+        method: 'POST',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: bodyVariable,
     })
-      .then(response => response.json())
-      .catch(error => {
-        console.error(error);
-      });
+    .then(response => response.json())
+    .catch(error => {
+      console.error(error);
+    });
   };
 
-  const getUserID = () => {};
+  const getUserID = () => {
+
+  };
 
   return (
-    <SafeAreaView style={{flex: 1}}>
-      <Image
-        source={Background}
-        style={[styles.background]}
-        resizeMode="cover"
-      />
+    <SafeAreaView style={{ flex: 1 }}>
+      <Image source={Background} style={[styles.background]} resizeMode="cover"/>
 
       {/* Header section */}
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          padding: 16,
-        }}>
-        <Image
-          source={Logo}
-          style={[styles.logo, {height: height * 0.1}]}
-          resizeMode="contain"
-        />
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 16 }}>
+      
       </View>
 
       {/* Search bar */}
       <View>
-        <TextInput
-          placeholder="Search..."
-          style={styles.searchBar} /*Add onclick */
-        />
-        <View source={CustomHamburgerIcon}/>
+        <TextInput placeholder="Search..." style={ styles.searchBar } /*Add onclick *//>
+          <View source={ CustomHamburgerIcon }>
+            { CustomHamburgerIcon }
+          </View>
       </View>
 
       {/* Modal for hamburger menu options */}
-      <Modal
-        isVisible={isHamburgerModalVisible}
-        onBackdropPress={toggleHamburgerModal}>
-        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+      <Modal isVisible={isHamburgerModalVisible} onBackdropPress={toggleHamburgerModal}>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
           <TouchableOpacity onPress={() => handleOptionSelect('Option 1')}>
             <Text>Option 1</Text>
           </TouchableOpacity>
@@ -208,43 +175,42 @@ const DashboardScreen = () => {
       </Modal>
 
       {/* Feed Section */}
-      <Tab.Navigator>
-        <Tab.Screen name="Interests" component={InterestsScreen} />
-        <Tab.Screen name="Votes" component={VotesScreen} />
-        <Tab.Screen name="All Bills" component={AllBillsScreen} />
-      </Tab.Navigator>
-    </SafeAreaView>
-    
+        <Tab.Navigator>
+          <Tab.Screen name="Interests" component={InterestsScreen}/>
+          <Tab.Screen name="Votes" component={VotesScreen}/>
+          <Tab.Screen name="All Bills" component={AllBillsScreen}/>
+        </Tab.Navigator>
+      </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  root: {
-    alignItems: 'left',
-    padding: 10,
+  root:{
+      alignItems: 'left',
+      padding: 10,
   },
   logo: {
-    width: '75%',
-    maxWidth: 300,
-    maxHeight: 50,
+      width: '75%',
+      maxWidth: 300,
+      maxHeight: 50,
   },
   text: {
-    fontSize: 32,
+      fontSize: 32,
   },
   titleText: {
-    fontSize: 20,
+      fontSize: 20,
   },
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'Center',
   },
-  background: {
+  background:{
     position: 'absolute',
     maxWidth: '100%',
     maxHeight: '100%',
   },
-  billBackground: {
+  billBackground:{
     backgroundColor: 'white',
     padding: 20,
   },
@@ -282,3 +248,28 @@ const styles = StyleSheet.create({
 });
 
 export default DashboardScreen;
+
+
+
+
+// Implement profile functionality
+// First/last name API call
+// Implement hamburger bar functionality
+    // implement hamburger option 1 functionality
+    // implement hamburger option 2 functionality
+    // implement hamburger option 3 functionality
+// Search bar functionality
+
+// Interests tab styling
+// interests tab functionality
+    // Scroll, fetch and implement data
+
+// New tab styling
+// New tab functionality
+    // Scroll, fetch and implement data
+
+// All bills tab styling
+// All bills tab functionality
+    // Scroll, fetch and implement data
+
+// Scrollbar styling

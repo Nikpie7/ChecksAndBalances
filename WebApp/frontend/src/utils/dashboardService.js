@@ -90,10 +90,23 @@ const getGetBillSummaries = (request) => {
     });
 };
 
+const postSearchBillsByInterest = (request) => {
+  return axios
+    .post(`${baseUrl}/api/searchBillsByInterest`, request)
+    .then((response) => {
+      console.log(response);
+      return response.data;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
 export default {
   getReadInterests,
   getGetBillsByInterests,
   getGetBillTitles,
   getGetBillCommittees,
   getGetBillSummaries,
+  postSearchBillsByInterest
 };
