@@ -1,12 +1,12 @@
 /* eslint-disable prettier/prettier */
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, TextInput, ScrollView, Image, StyleSheet, useWindowDimensions } from 'react-native';
-import { useNavigation, NavigationContainer } from '@react-navigation/native';
+import { useNavigation, NavigationContainer, DrawerActions } from '@react-navigation/native';
+import { createDrawerNavigator } from '@react-navigation/drawer';
 import { TabNavigator } from 'react-navigation';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import  Modal  from 'react-native-modal';
 import { CustomHamburgerIcon } from '../../components/HamburgerButton/CustomHamburgerIcon';
-import Logo from '../../../../assets/images/logo.png';
 import Background from '../../../../assets/images/background.png';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
@@ -151,7 +151,7 @@ const DashboardScreen = () => {
 
       {/* Header section */}
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 16 }}>
-        <Image source={Logo} style={[styles.logo, {height: height * 0.1}]} resizeMode="contain"/>
+      
       </View>
 
       {/* Search bar */}
