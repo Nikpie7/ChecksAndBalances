@@ -89,18 +89,17 @@ const BillList = (props) => {
   let billList = bills.response;
 
   return (
-    <div>
+    <div className="md:2/6">
       {/* Iterate through each bill. */}
       {billList.map((bill) => (
         <div
           key={bill._id}
           id="legislationList-row"
-          className="grid grid-flow-row shadow-2xl p-4 m-8 rounded-lg hover:scale-105 duration-300"
+          className="grid-flow-row shadow-2xl p-4 m-8 rounded-lg hover:scale-105 duration-300 max-w-prose"
         >
           <Bill currBill={bill} />
         </div>
       ))}
-      ;
     </div>
   );
 };
@@ -110,10 +109,10 @@ const Bill = (props) => {
 
   return (
     <div>
-      <h1>{bill.Title}</h1>
-      <h2>
-        <b>{bill.Sponsor}</b>
-      </h2>
+      <h1 className="text-lg truncate ... whitespace-nowrap">
+        <b>{bill.Title}</b>
+      </h1>
+      <h2>{bill.BillType.toUpperCase()}.{bill.BillNumber}</h2>
     </div>
   );
 };
