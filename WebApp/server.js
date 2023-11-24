@@ -297,18 +297,20 @@ app.post('/api/mongoBill', async (req, res, next) =>
           accept: 'application/json',
         }
       });
-    
-    // Some of these are null for whatever reason, and hence should be skipped.
-    if (retVal2.data.committees[0] == null) {
-      var ret = { error: "Null data detected, skipped." };
-      continue;
-    }
       
 
     let title = retVal.data.titles[0].title;
-    let committee = retVal2.data.committees[0].systemCode;
-    let committeeName = retVal2.data.committees[0].name;
+
+    // Some of these are null for whatever reason, and hence should be left as N/A
+    let committee = "N/A";
+    let committeeName = "N/A"
+    if (retVal2.data.committees[0] != null) {
+      committee = retVal2.data.committees[0].systemCode;
+      committeeName = retVal2.data.committees[0].name;
+    }
+    
     let interest = "Miscellaneous";
+    
     for (let k = 0; k < interestList.length && interest === "Miscellaneous"; k++)
     {
       for (let b = 1; b < interestList[k].length; b++)
