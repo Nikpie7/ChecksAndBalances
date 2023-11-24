@@ -51,29 +51,18 @@ const LegistlationTable = () => {
 const LegistlationList = (props) => {
   const userInterests = props.userInterests;
 
-  // Render the row for each piece of legislation.
-  const renderLegislationRow = (userInterests) => {
-    return (
-      <div
-        key={userInterests.id}      >
-        <li>
-          {/* Mobile = Bill name + short description
-              Web = Bill Name + short description + committee*/}
-          {/* Iterate through each interest. */}
-          {userInterests.map((interest) => (
-            <BillList Interest={interest} />
-          ))}
-        </li>
-      </div>
-    );
-  };
-
   return (
     <div className="grid justify-center md:justify-normal">
       <ul>
         {
-          // Create rows.
-          renderLegislationRow(userInterests)
+          <li>
+            {/* Mobile = Bill name + short description
+                Web = Bill Name + short description + committee*/}
+            {/* Iterate through each interest. */}
+            {userInterests.map((interest) => (
+              <BillList key={interest} Interest={interest} />
+            ))}
+          </li>
         }
       </ul>
     </div>
@@ -82,8 +71,6 @@ const LegistlationList = (props) => {
 
 const BillList = (props) => {
   const currInterest = props.Interest;
-  // Hold bills.
-  // const [billList, setBillList] = useState([]);
 
   // Get bills for current interest.
   const {
@@ -102,10 +89,11 @@ const BillList = (props) => {
   let billList = bills.response;
 
   return (
-    <div key={billList.id}>
+    <div>
       {/* Iterate through each bill. */}
       {billList.map((bill) => (
         <div
+          key={bill._id}
           id="legislationList-row"
           className="grid grid-flow-row shadow-2xl p-4 m-8 rounded-lg hover:scale-105 duration-300"
         >
@@ -121,9 +109,11 @@ const Bill = (props) => {
   const bill = props.currBill;
 
   return (
-    <div key={bill.id}>
+    <div>
       <h1>{bill.Title}</h1>
-      <h2><b>{bill.Sponsor}</b></h2>
+      <h2>
+        <b>{bill.Sponsor}</b>
+      </h2>
     </div>
   );
 };
