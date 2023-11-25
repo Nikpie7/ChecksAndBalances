@@ -2,11 +2,9 @@ import { render } from "@testing-library/react";
 import { React, useState } from "react";
 import { useQuery } from "react-query";
 
-// import bills from "./legislationListTestData";
 import "./LegislationTable.css";
 
 import dashboardService from "../utils/dashboardService.js";
-//import axiosClient from "../../../axios.js";
 
 // ONLY FOR TESTING!!!!
 // TODO: REOVE THIS
@@ -88,7 +86,7 @@ const BillList = (props) => {
   // Hold bills temporarily.
   let billList = bills.response;
 
-  return (//max-w-xs sm:max-w-lg md:max-w-[20%] lg:max-w-sm xl:max-w-xl
+  return (
     <div className="">
       {/* Iterate through each bill. */}
       {billList.map((bill) => (
