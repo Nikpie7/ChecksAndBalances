@@ -1,4 +1,6 @@
 /* eslint-disable prettier/prettier */
+/* eslint-disable react-native/no-inline-styles */
+
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, TextInput, ScrollView, Image, StyleSheet, useWindowDimensions } from 'react-native';
 import { useNavigation, NavigationContainer } from '@react-navigation/native';
@@ -9,12 +11,15 @@ import { CustomHamburgerIcon } from '../../components/HamburgerButton/CustomHamb
 import Logo from '../../../../assets/images/logo.png';
 import Background from '../../../../assets/images/background.png';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import LegistlationTable from '../../components/LegislationTable/LegislationTable.js';
 
 function InterestsScreen() {
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      {/* Add API endpoint here*/}
-      <Text fontSize={20}>All Interests!</Text>
+      <View>
+        <LegistlationTable/>
+      </View>
+      {/* <Text fontSize={20}>All Interests!</Text> */}
     </View>
   );
 };
