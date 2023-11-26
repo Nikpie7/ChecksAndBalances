@@ -11,24 +11,24 @@ import { CustomHamburgerIcon } from '../../components/HamburgerButton/CustomHamb
 import Logo from '../../../../assets/images/logo.png';
 import Background from '../../../../assets/images/background.png';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import LegistlationTable from '../../components/LegislationTable/LegislationTable.js';
+// import LegistlationTable from '../../components/LegislationTable/LegislationTable.js';
 
 function InterestsScreen() {
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <View>
+      {/* <View>
         <LegistlationTable/>
-      </View>
-      {/* <Text fontSize={20}>All Interests!</Text> */}
+      </View> */}
+      <Text fontSize={20}>All Interests!</Text>
     </View>
   );
-};
+}
 
-function VotesScreen() {
+function RepresentativesScreen() {
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
       {/* Add API endpoint here*/}
-      <Text>Votes!</Text>
+      <Text>Representatives!</Text>
     </View>
   );
 }
@@ -182,8 +182,8 @@ const DashboardScreen = () => {
       {/* Feed Section */}
         <Tab.Navigator>
           <Tab.Screen name="Interests" component={InterestsScreen}/>
-          <Tab.Screen name="Votes" component={VotesScreen}/>
-          <Tab.Screen name="All Bills" component={AllBillsScreen}/>
+          <Tab.Screen name="Representatives" component={RepresentativesScreen}/>
+          <Tab.Screen name="TBD" component={AllBillsScreen}/>
         </Tab.Navigator>
       </SafeAreaView>
   );
