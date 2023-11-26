@@ -439,7 +439,7 @@ app.post('/api/mongoBill', async (req, res, next) =>
   app.post('/api/searchBillsSponsors', async (req, res, next) =>
   {
     try {
-      // We expect one field, "input", in the post body.
+      // We expect one field, "member", in the post body. This is in the form Firstname Lastname.
       // We return a list of bills with all information stored in them.
       const { member } = req.body;
       const db = client.db('POOSBigProject');
