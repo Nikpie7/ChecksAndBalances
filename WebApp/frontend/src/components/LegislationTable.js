@@ -2,11 +2,9 @@ import { render } from "@testing-library/react";
 import { React, useState } from "react";
 import { useQuery } from "react-query";
 
-// import bills from "./legislationListTestData";
 import "./LegislationTable.css";
 
 import dashboardService from "../utils/dashboardService.js";
-//import axiosClient from "../../../axios.js";
 
 // ONLY FOR TESTING!!!!
 // TODO: REOVE THIS
@@ -52,10 +50,10 @@ const LegistlationList = (props) => {
   const userInterests = props.userInterests;
 
   return (
-    <div className="grid justify-center md:justify-normal">
+    <div className="grid justify-normal">
       <ul>
         {
-          <li>
+          <li className="">
             {/* Mobile = Bill name + short description
                 Web = Bill Name + short description + committee*/}
             {/* Iterate through each interest. */}
@@ -89,13 +87,13 @@ const BillList = (props) => {
   let billList = bills.response;
 
   return (
-    <div className="md:2/6">
+    <div className="">
       {/* Iterate through each bill. */}
       {billList.map((bill) => (
         <div
           key={bill._id}
           id="legislationList-row"
-          className="grid-flow-row shadow-2xl p-4 m-8 rounded-lg hover:scale-105 duration-300 max-w-prose"
+          className="shadow-2xl p-4 m-8 rounded-lg hover:scale-105 duration-300"
         >
           <Bill currBill={bill} />
         </div>
@@ -109,7 +107,7 @@ const Bill = (props) => {
 
   return (
     <div>
-      <h1 className="text-lg truncate ... whitespace-nowrap">
+      <h1 className="md:text-lg line-clamp-2 xl:line-clamp-1">
         <b>{bill.Title}</b>
       </h1>
       <h2>{bill.BillType.toUpperCase()}.{bill.BillNumber}</h2>

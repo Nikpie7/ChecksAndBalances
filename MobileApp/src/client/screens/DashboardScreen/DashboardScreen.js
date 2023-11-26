@@ -1,14 +1,15 @@
 /* eslint-disable prettier/prettier */
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { View, Text, TouchableOpacity, TextInput, ScrollView, Image, StyleSheet, useWindowDimensions } from 'react-native';
 import { useNavigation, NavigationContainer, DrawerActions } from '@react-navigation/native';
-import { createDrawerNavigator } from '@react-navigation/drawer';
 import { TabNavigator } from 'react-navigation';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import  Modal  from 'react-native-modal';
 import { CustomHamburgerIcon } from '../../components/HamburgerButton/CustomHamburgerIcon';
 import Background from '../../../../assets/images/background.png';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import pic from '../../../../assets/images/ProfileImage.png';
+import { UserContext } from '../../components/UserContext/UserContext';
 
 function InterestsScreen() {
   return (
@@ -38,6 +39,8 @@ function AllBillsScreen() {
 }
 
 const DashboardScreen = () => {
+  const { user } = useContext(UserContext);
+
   const navigation = useNavigation();
   const [isProfileModalVisible, setProfileModalVisible] = useState(false);
   const [isHamburgerModalVisible, setHamburgerModalVisible] = useState(false);
@@ -45,6 +48,7 @@ const DashboardScreen = () => {
 
   const congress = 118;
   const Tab = createBottomTabNavigator();
+  
 
   const {height} = useWindowDimensions();
 
@@ -145,13 +149,35 @@ const DashboardScreen = () => {
 
   };
 
+  const onProfilePressed = () => {
+    navigation.navigate('Profile');
+    console.warn("Going to profile");
+  };
+  const onInterestsPressed = () => {
+    navigation.navigate('Interests');
+    console.warn("Going to interests page");
+  }
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <Image source={Background} style={[styles.background]} resizeMode="cover"/>
 
       {/* Header section */}
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 16 }}>
-      
+        <TouchableOpacity onPress={onProfilePressed}>
+          {/* <Image source={pic} resizeMode='contain'/> */}
+          <View style={styles.userInfoContainer}>
+            <View style={styles.imageContainer}>
+              <Image source={pic} style={{ width: '100%', height: '100%' }} resizeMode='cover' />
+            </View>
+            <Text style={styles.user}>{user.firstName} {user.lastName}</Text>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.hamburgerMenu} onPress={handleHamburgerPress}>
+          <View style={styles.hamburger}></View>
+          <View style={styles.hamburger}></View>
+          <View style={styles.hamburger}></View>
+        </TouchableOpacity>
       </View>
 
       {/* Search bar */}
@@ -165,8 +191,8 @@ const DashboardScreen = () => {
       {/* Modal for hamburger menu options */}
       <Modal isVisible={isHamburgerModalVisible} onBackdropPress={toggleHamburgerModal}>
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <TouchableOpacity onPress={() => handleOptionSelect('Option 1')}>
-            <Text>Option 1</Text>
+          <TouchableOpacity onPress={onInterestsPressed}>
+            <Text>Change Interests</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => handleOptionSelect('Option 2')}>
             <Text>Option 2</Text>
@@ -194,6 +220,25 @@ const styles = StyleSheet.create({
       maxWidth: 300,
       maxHeight: 50,
   },
+  userInfoContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  imageContainer: {
+    width: 50, // Adjust size as needed
+    height: 50, // Adjust size as needed
+    borderRadius: 25, // Half of the width and height to create a circle
+    backgroundColor: 'black',
+    marginRight: 10,
+    overflow: 'hidden',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  user: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: 'black',
+  },
   text: {
       fontSize: 32,
   },
@@ -215,19 +260,14 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   hamburgerMenu: {
-    position: 'absolute',
-    top: 50,
-    right: 50,
-    width: 70,
-    height: 15,
-    backgroundColor: 'black',
-    borderRadius: 30,
+    padding: 10,
   },
   hamburger: {
-    width: 5,
-    height: 5,
-    backgroundColor: '#fff',
-    borderRadius: 20,
+    width: 25,
+    height: 3,
+    backgroundColor: '#000',
+    marginVertical: 3,
+    borderRadius: 2,
   },
   tabBar: {
     flex: 0,

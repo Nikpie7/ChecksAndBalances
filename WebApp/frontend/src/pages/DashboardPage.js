@@ -10,15 +10,15 @@ const DashboardPage = () => {
     <div className="h-screen">
       {/* <NavBar /> */}
       {/* Outer div holding side bar and table */}
-      <div className="grid grid-cols-8 md:grid md:grid-cols-4 h-full">
+      <div className="grid grid-cols-8 lg:grid-cols-4 h-full">
         <div className="col-start-1 col-end-2">
           <SideBar />
         </div>
-        <div className="hidden md:block md:col-start-2 md:col-end-3">
+        <div className="hidden lg:block lg:col-start-2 lg:col-end-3">
           <WelcomeMessage />
         </div>
 
-        <div className="col-start-2 col-end-9 md:col-start-3 md:col-span-4 overflow-y-auto md:2-6 md:my-10 md:mr-20">
+        <div className="col-start-2 col-end-9 lg:col-start-3 lg:col-span-4 overflow-y-auto lg:my-10 lg:mr-20">
           <LegistlationTable />
         </div>
       </div>
