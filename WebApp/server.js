@@ -183,7 +183,7 @@ app.get('/api/getBillVote', async (req, res, next) => {
         if (response2.data.results.votes[k].bill.number === billName)
         {
           let ret = response2.data.results.votes[k]
-          return res.status(500).json(ret);
+          return res.status(200).json(ret);
         }
       }
     }
