@@ -460,6 +460,8 @@ app.post('/api/mongoBill', async (req, res, next) =>
       res.status(500).json({ error: "Interests Not Found" });
   }
   }); 
+
+// DEPRECATED API
 // Takes the lowercase abbreviation of a state (i.e. fl) and returns its senators.
 app.post('/api/getSenByState', async (req, res, next) => {
   try {
@@ -487,6 +489,7 @@ app.post('/api/getSenByState', async (req, res, next) => {
   }
 });
 
+// DEPRECATED API
 // Takes an id (district number) and a state (lowercase abbreviation)
 app.post('/api/getRepByDistrict', async (req, res, next) => {
   try {
