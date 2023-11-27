@@ -3,8 +3,10 @@ import {
   useState
 } from 'react';
 import authService from '../utils/authService.js';
+import { useNavigate } from 'react-router-dom';
 
 const LoginCard = ({className}) => {
+  const navigate = useNavigate();
   const [loginCreds, setLoginCreds] = useState({
     username: '',
     password: ''
@@ -25,7 +27,7 @@ const LoginCard = ({className}) => {
           alert('Invalid username and/or password');
         }
         sessionStorage.setItem('userData', JSON.stringify(userData));
-        window.location.href = './cards';
+        navigate('/dashboard');
       })
       .catch(error => console.log(error));
   }

@@ -1,158 +1,137 @@
-import {
-  useState,
-  useEffect,
-  useRef
-} from 'react';
-import { MapContainer, Marker, GeoJSON, Pane, Popup, TileLayer, Tooltip, useMap, useMapEvents } from 'react-leaflet';
-import stateJSON from '../assets/geoJSON/cb_2022_us_state_5m.json';
-import districtJSON from '../assets/geoJSON/cb_2022_us_cd118_5m.json';
-import { GeoJSON as LeafletGeoJSON, LatLngBounds } from 'leaflet';
+import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import RegistrationCard from '../components/RegistrationCard';
+import { HeaderBar, ViewTitle, BackButton } from '../components/HeaderBar';
+import { useEffect, useState } from 'react';
+import MapInterface from '../components/MapInterface';
+import AddressCard from '../components/AddressCard';
+import InterestsCard from '../components/InterestsCard';
+import { StateDropdown, StateHeader } from '../components/StateComponents';
+import { AboutUsButton, LogInButton, HeroCard } from './HomeViewComponents.js'
+import logo from '../assets/headerLogo.png';
+import { RepInfo, SenatorInfo } from '../components/PoliticianInfo';
+import interestsJson from '../utils/interestsJson.js';
+
+  // HeaderBar   DONE
+
+  // AboutUs     WIP
+  // LogIn       WIP
+
+  // HeroCard    WIP
+  // StateDropdown   WIP
+  // Senator        WIP
+  // Representative  
+
+  // Map
+
+  // Address
+  // Interests
+  // Signup
 
 const OnboardingPage = () => {
-  const [selectedState, setSelectedState] = useState(0);
-  const [map, setMap] = useState(null);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const paths = ['/', '/state', '/district', '/interests', '/createAccount'];
+
+  const getStep = () => paths.findIndex(path => path === location.pathname);
+
+  const [userData, setUserData] = useState({
+    // state: null,
+    // district: null,
+    // interests: interestsJson,
+    // email: '',
+    // username: '',
+    // password: ''
+    state: 9,
+    district: null,
+    coords: null,
+    interests: interestsJson,
+    email: '',
+    username: '',
+    password: ''
+  });
+  const [headerBarState, setHeaderBarState] = useState({
+    left: null,
+    center: null,
+    right: null
+  });
+  const [heroCardVisible, setHeroCardVisible] = useState(true);
+  const [stateDropdownVisible, setStateDropdownVisible] = useState(false);
+  const [stateHeaderVisible, setStateHeaderVisible] = useState(false);
+  const [senatorInfoVisible, setSenatorInfoVisible] = useState(false);
+  const [repInfoVisible, setRepInfoVisible] = useState(false);
 
   useEffect(() => {
-    if (!map)
-      return;
-    map._renderer.options.padding = 3;
-    const nationBounds = [[], []];
-    const coords = stateJSON.features[selectedState].geometry.coordinates[1]
-      ? stateJSON.features[selectedState].geometry.coordinates.flat(2)
-      : stateJSON.features[selectedState].geometry.coordinates[0];
-    const bounds = new LatLngBounds(LeafletGeoJSON.coordsToLatLngs(coords));
-    map.flyToBounds(bounds)
-  }, [selectedState]);
+    let titleText = { header: '', hover: '' }
+    switch (location.pathname) {
+      case paths[0]:
+        // Thes setUserData()s are for resetting userData upon page back
+        setUserData({ state: null, district: null, coords: null, interests: interestsJson, email: '', username: '', password: '' });
+        break;
+      case paths[1]:
+        titleText = { header: 'Select a state', hover: 'Your state yes.' };
+        setUserData({ state: null, district: null, coords: null, interests: interestsJson, email: '', username: '', password: '' });
+        break;
+      case paths[2]:
+        titleText = { header: 'Find your congressional district', hover: 'Your address is needed to determine your U.S. House representative.' };
+        setUserData({ ...userData, district: null, coords: null, interests: interestsJson, email: '', username: '', password: '' });
+        break;
+      case paths[3]:
+        titleText = { header: 'Select your policy interests', hover: 'Your dashboard will be personalized based on your choice of policy interests.' };
+        setUserData({ ...userData, email: '', username: '', password: '' });
+        break;
+      case paths[4]:
+        titleText = { header: 'Create an account', hover: 'Save your representatives and policy interests by registering for an account.' };
+        break;
+    }
+    if (location.pathname === '/')
+      setHeaderBarState({
+        left: <AboutUsButton />,
+        center: <img src={logo} className="h-[8vh] object-contain justify-self-center" />,
+        right: <LogInButton />
+      })
+    else
+      setHeaderBarState({
+        left: <BackButton onClick={() => navigate(paths[paths.findIndex(path => path === location.pathname) - 1])} />,
+        center: <ViewTitle info={titleText} />,
+        right: null
+      })
+    setHeroCardVisible(location.pathname === paths[0]);
+    setStateDropdownVisible(location.pathname === paths[1]);
+    setStateHeaderVisible(getStep() >= 2);
+    setSenatorInfoVisible(location.pathname === paths[2]);
+    setRepInfoVisible(location.pathname === paths[3]);
+  }, [location]);
 
-  const onMapReady = (L) => {
-    setMap(L.target);
-  }
-  const onStateClick = (properties) => {
-    const state = properties.layer.feature.properties.NAME;
-    console.log(state);
-  };
-  const onStateMouseOver = (properties) => {
-    const state = properties.layer.feature.properties.NAME;
-    console.log(state);
-  };
-  const jsonStyle = () => {
-    return {
-      fill: false,
-      weight: 1
-    };
-  };
-  const MapState = () => {
-    // const mapMethods = useMap();
-
-    // const coords = stateJSON.features[selectedState].geometry.coordinates[1]
-    //   ? stateJSON.features[selectedState].geometry.coordinates.flat(2)
-    //   : stateJSON.features[selectedState].geometry.coordinates[0];
-    // console.log(coords);
-    // const bounds = new LatLngBounds(LeafletGeoJSON.coordsToLatLngs(coords));
-    // const map = useMapEvents({
-    //   zoom: () => {
-    //     map.flyToBounds(bounds)
-    //   }
-    // });
-    // return null;
-  };
-  return (
-    <div className="w-[100vw] h-[100vh]">
-      <header className="w-full h-16 flex justify-center items-center">
-        {/* <h1 className="text-4xl font-bold">Select a state</h1> */}
-        <StateSelect state={selectedState} setState={setSelectedState} />
-      </header>
-      <main className="h-[90vh]">
-        <StateHeader />
-        <MapContainer center={[28.601345, -81.198845]} zoom={1} scrollWheelZoom={false} className="h-full" style={{backgroundColor: "white"}} whenReady={onMapReady} >
-
-        <MapState />
-          <GeoJSON data={stateJSON} eventHandlers={{click: onStateClick, mouseover: onStateMouseOver}} style={jsonStyle}>
-
-          <Tooltip permanent={true} direction="center" position={[40.633931, -70.667909]}>Rhode Island</Tooltip>
-          </GeoJSON>
-          {/* <Marker position={[51.505, -0.09]}>
-            <Popup>
-              A pretty CSS3 popup. <br /> Easily customizable!
-            </Popup>
-          </Marker> */}
-          {/* <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          /> */}
-        </MapContainer>
-      </main>
+  return (<div className="w-[100vw] h-[100vh]">
+    <HeaderBar props={headerBarState} />
+    {heroCardVisible ? <HeroCard /> : null }
+    {stateDropdownVisible ? <StateDropdown state={userData.state} setState={newState => {setUserData({...userData, state: newState})}} /> : null }
+    <div className="flex justify-center">
+      {
+        getStep() !== 0 ?
+        <div className={`${getStep() <= 1 ? 'w-[100vw]' : 'w-[50vw]'} flex flex-col items-center gap-5`}>
+          {stateHeaderVisible ? <StateHeader className="pt-5" state={userData.state} district={userData.district} /> : null }
+          <MapInterface userData={userData} setUserData={setUserData} />
+        </div>
+        : null
+      }
+      {
+        getStep() > 1 ?
+        <div className="w-[40vw] h-[85vh] flex flex-col justify-around items-center gap-5">
+          {senatorInfoVisible ? <SenatorInfo /> : null}
+          {repInfoVisible ? <RepInfo /> : null}
+          <Routes>
+            <Route path={paths[0]} element={null} />
+            <Route path={paths[1]} element={null} />
+            <Route path={paths[2]} element={<AddressCard userData={userData} setUserData={setUserData} />} />
+            <Route path={paths[3]} element={<InterestsCard userData={userData} setUserData={setUserData} />} />
+            <Route path={paths[4]} element={<RegistrationCard userData={userData} setUserData={setUserData} />} />
+          </Routes>
+        </div>
+        : null
+      }
     </div>
-  );
-};
-
-const StateHeader = ({state}) => {
-  return (
-    <span>
-    </span>
-  );
-};
-
-const StateSelect = ({state, setState}) => {
-  const onSelect = e => {
-    setState(e.target.value);
-  };
-  return (<>
-<label htmlFor="state">Select a State:</label>
-<select name="state" id="state" value={state} onChange={onSelect}>
-    <option value="0" defaultValue>Select a state</option>
-    <option value="0">Alabama</option>
-    <option value="1">Alaska</option>
-    <option value="2">Arizona</option>
-    <option value="3">Arkansas</option>
-    <option value="4">California</option>
-    <option value="5">Colorado</option>
-    <option value="6">Connecticut</option>
-    <option value="7">Delaware</option>
-    <option value="8">District of Columbia</option>
-    <option value="9">Florida</option>
-    <option value="10">Georgia</option>
-    <option value="11">Hawaii</option>
-    <option value="12">Idaho</option>
-    <option value="13">Illinois</option>
-    <option value="14">Indiana</option>
-    <option value="15">Iowa</option>
-    <option value="16">Kansas</option>
-    <option value="17">Kentucky</option>
-    <option value="18">Louisiana</option>
-    <option value="19">Maine</option>
-    <option value="20">Maryland</option>
-    <option value="21">Massachusetts</option>
-    <option value="22">Michigan</option>
-    <option value="23">Minnesota</option>
-    <option value="24">Mississippi</option>
-    <option value="25">Missouri</option>
-    <option value="26">Montana</option>
-    <option value="27">Nebraska</option>
-    <option value="28">Nevada</option>
-    <option value="29">New Hampshire</option>
-    <option value="30">New Jersey</option>
-    <option value="31">New Mexico</option>
-    <option value="32">New York</option>
-    <option value="33">North Carolina</option>
-    <option value="34">North Dakota</option>
-    <option value="35">Ohio</option>
-    <option value="36">Oklahoma</option>
-    <option value="37">Oregon</option>
-    <option value="38">Pennsylvania</option>
-    <option value="39">Rhode Island</option>
-    <option value="40">South Carolina</option>
-    <option value="41">South Dakota</option>
-    <option value="42">Tennessee</option>
-    <option value="43">Texas</option>
-    <option value="44">Utah</option>
-    <option value="45">Vermont</option>
-    <option value="46">Virginia</option>
-    <option value="47">Washington</option>
-    <option value="48">West Virginia</option>
-    <option value="49">Wisconsin</option>
-    <option value="50">Wyoming</option>
-</select></>);
-};
+  </div>);
+}
 
 export default OnboardingPage;
