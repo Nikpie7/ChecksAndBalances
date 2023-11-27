@@ -6,6 +6,14 @@ content-type: application/json
     "password": "COP4331"
 }
 ###
+POST https://checksnbalances.us/api/login
+content-type: application/json
+
+{
+    "username": "1",
+    "password": "1"
+}
+###
 POST http://localhost:5001/api/register
 content-type: application/json
 
@@ -33,7 +41,7 @@ content-type: application/json
 {
     "username": "username",
     "password": "password",
-    "email": "Username.Password@ucf.edu",
+    "email": "junidyeom@gmail.com",
     "firstName": "Username",
     "lastName": "Password",
     "address": "4000 Central Florida Blvd, Orlando, FL",
@@ -55,3 +63,45 @@ content-type: application/json
     "username": "gWash89",
     "password": "firstPresident"
 }
+
+###
+POST https://checksnbalances.us/api/getSenByState
+content-type: application/json
+
+{
+    "state": "nj"
+}
+
+###
+POST https://checksnbalances.us/api/getRepByDistrict
+content-type: application/json
+
+{
+    "id": 11,
+    "state": "fl"
+}
+###
+POST http://localhost:5001/api/getSenByState
+content-type: application/json
+
+{
+    "state": "fl"
+}
+###
+POST https://checksnbalances.us/api/login
+content-type: application/json
+
+{
+    "username": "gWash89",
+    "password": "firstPresident"
+}
+###
+GET http://localhost:5001/api/readInterests?userId=65580d043bdf8a775970f892
+###
+GET http://localhost:5001/api/readInterests?65580d043bdf8a775970f892
+###
+GET http://localhost:5001/api/readInterests
+###
+GET http://localhost:5001/api/geocode?address=213%20Meadow%20Wood%20Drive&state=Alabama
+###
+GET http://localhost:5001/api/getDistrict?coords=%5B27%2C%20-82%5D
