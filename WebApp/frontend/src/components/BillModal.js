@@ -18,9 +18,8 @@ const BillModal = ({ isOpen, onClose, billData }) => {
   //   }
   // }, [isOpen]);
 
-  // Check if bill title is empty. 
-  if (billData.title === '') return <div></div>;
-
+  // Check if bill title is empty.
+  if (billData.title === "") return <div></div>;
 
   return (
     <Modal hasCloseBtn={true} isOpen={isOpen} onClose={onClose}>
@@ -40,6 +39,7 @@ const BillModal = ({ isOpen, onClose, billData }) => {
         />
         <Sponsor sponsor={billData.Sponsor} />
         <Cosponsors cosponsors={billData.Cosponsors} />
+        <RelatedInterest relatedInterest={billData.RelatedInterest} />
       </div>
     </Modal>
   );
@@ -50,7 +50,10 @@ const Title = (props) => {
 
   return (
     <div>
-      <h1>{title}</h1>
+      <h1>
+        <b>Title:</b>
+        {title}
+      </h1>
     </div>
   );
 };
@@ -63,7 +66,7 @@ const TypeAndCommittee = (props) => {
   return (
     <div>
       <h2>
-        {type}.{number}, {committee}
+        <b>Type+Committee:</b> {type}.{number}, {committee}
       </h2>
     </div>
   );
@@ -74,7 +77,10 @@ const LastUpdated = (props) => {
 
   return (
     <div>
-      <h3>{lastUpdated}</h3>
+      <h3>
+        <b>Last updated:</b>
+        {lastUpdated}
+      </h3>
     </div>
   );
 };
@@ -87,7 +93,10 @@ const CongressNum = (props) => {
 
   return (
     <div>
-      <h1>{congressNum}th Congress</h1>
+      <h1>
+        <b>Congress Num:</b>
+        {congressNum}th Congress
+      </h1>
     </div>
   );
 };
@@ -125,8 +134,11 @@ const Summary = (props) => {
     return <div>No Summary</div>;
   } else {
     return (
-      // Format string into html object.
-      <div dangerouslySetInnerHTML={{ __html: summary.summaries[0].text }} />
+      <div>
+        <h1><b>Summary:</b></h1>
+        {/* Format string into html object. */}
+        <div dangerouslySetInnerHTML={{ __html: summary.summaries[0].text }} />
+      </div>
     );
   }
 };
@@ -136,7 +148,7 @@ const Sponsor = (props) => {
 
   return (
     <div>
-      <h1>Sponsor: {sponsor}</h1>
+      <h1><b>Sponsor:</b> {sponsor}</h1>
     </div>
   );
 };
@@ -146,7 +158,7 @@ const Cosponsors = (props) => {
 
   return (
     <div>
-      Cosponsors:
+      <h1><b>Cosponsor:</b></h1>
       {cosponsors.map((cosponsor) => (
         <h2 key={cosponsor}>{cosponsor},</h2>
       ))}
@@ -159,7 +171,7 @@ const RelatedInterest = (props) => {
 
   return (
     <div>
-      <h1>{relatedInterest}</h1>
+      <h1><b>Related Interest: </b>{relatedInterest}</h1>
     </div>
   );
 };

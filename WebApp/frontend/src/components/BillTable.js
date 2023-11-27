@@ -122,7 +122,7 @@ const Bill = (props) => {
       id="billList-row"
       className="shadow-2xl p-4 m-8 rounded-lg hover:scale-105 duration-300"
     >
-      <li onClick={handleBillListClick}>
+      <li onClick={handleBillListClick} className="hover:cursor-pointer">
         <h1 className="md:text-lg line-clamp-2 xl:line-clamp-1">
           <b>{bill.Title}</b>
         </h1>

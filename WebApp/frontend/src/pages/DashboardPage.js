@@ -45,15 +45,15 @@ const DashboardPage = () => {
     <div className="h-screen">
       {/* <NavBar /> */}
       {/* Outer div holding side bar and table */}
-      <div className="grid grid-cols-8 lg:grid-cols-4 h-full">
-        <div className="col-start-1 col-end-2">
+      <div className="grid grid-cols-8 grid-rows-8 lg:grid-cols-4 h-full">
+        <div className="col-start-1 col-end-2 row-start-2 row-end-9">
           <SideBar />
         </div>
-        <div className="hidden lg:block lg:col-start-2 lg:col-end-3">
+        <div className="hidden lg:block lg:col-start-2 lg:col-end-3 lg:row-start-2 lg:row-end-9">
           <WelcomeMessage />
         </div>
 
-        <div className="col-start-2 col-end-9 lg:col-start-3 lg:col-span-4 overflow-y-auto lg:my-10 lg:mr-20">
+        <div className="col-start-2 col-end-9 row-start-2 row-end-9 lg:col-start-3 lg:col-span-4 overflow-y-auto lg:my-10 lg:mr-20">
           <BillTable setClickedBillData={setClickedBillData} handleOpenBillModal={handleOpenBillModal}/>
         </div>
 
@@ -62,7 +62,7 @@ const DashboardPage = () => {
           onClose={handleCloseBillModal}
           billData={clickedBillData}
         />
-        
+
       </div>
     </div>
   );
