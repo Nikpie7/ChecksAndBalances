@@ -6,6 +6,7 @@ const baseURL = 'https://checksnbalances.us';
     // : "https://checksnbalances.us";
 
 const getReadInterests = (request) => {
+  console.log("reading interests")
   return axios
     .get(`${baseURL}/api/readInterests`, {
       params: {
@@ -17,6 +18,7 @@ const getReadInterests = (request) => {
       return response.data;
     })
     .catch((error) => {
+      console.log("error :(");
       console.log(error);
     });
 };
@@ -134,6 +136,6 @@ export default {
     getGetBillCommittees,
     getGetBillSummaries,
     postSearchBillsByInterest,
-    postGetReps,
+    postGetReps
     // postSearchBillsSponsors,
 };

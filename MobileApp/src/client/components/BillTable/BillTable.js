@@ -55,6 +55,7 @@ const BillTable = () => {
 
     let userInterestsTemp = [];
 
+    console.log("uh oh...for loop time :O");
     for (let i = 0; i < interests.Interests.length; i++) {
         if (interests.Interests[i].value) {
             userInterestsTemp.push(interests.Interests[i].InterestName);
@@ -178,7 +179,4 @@ const BillList = (props) => {
 
   
   
-  export default {
-    BillTable,
-    // BillTableReps
-  };
+  export default BillTable;

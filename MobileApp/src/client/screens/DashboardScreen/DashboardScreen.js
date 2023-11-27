@@ -11,7 +11,7 @@ import { CustomHamburgerIcon } from '../../components/HamburgerButton/CustomHamb
 import Logo from '../../../../assets/images/logo.png';
 import Background from '../../../../assets/images/background.png';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { BillTable } from '../../components/BillTable/BillTable';
+import BillTable from '../../components/BillTable/BillTable';
 import { useQuery, QueryClient, QueryClientProvider } from 'react-query';
 import BillModal from '../../components/BillModal/BillModal';
 
@@ -19,9 +19,9 @@ function InterestsScreen() {
   const queryClient = new QueryClient();
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <BillModal />
+      {/* <BillModal /> */}
         <QueryClientProvider client={queryClient}>
-          <BillTable/>
+          <BillTable />
         </QueryClientProvider>
       {/* <Text fontSize={20}>All Interests!</Text> */}
     </View>
@@ -29,7 +29,7 @@ function InterestsScreen() {
 }
 
 function RepresentativesScreen() {
-  const queryClient = new QueryClient();
+  // const queryClient = new QueryClient();
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
       {/* <BillModal />
