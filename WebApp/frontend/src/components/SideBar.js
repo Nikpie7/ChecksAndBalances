@@ -3,9 +3,10 @@ import { useQuery } from "react-query";
 import "./SideBar.css";
 
 import dashboardService from "../utils/dashboardService.js";
+import LoadingWheel from "./LoadingWheel.js"
 
 // ONLY FOR TESTING. REMOVE!
-const ADDRESS = "4000 Central Florida Blvd. Orlando, FL 32816";
+const ADDRESS = "1105 N Market St, Ste. 400 Wilmington, DE 19801";
 
 const SideBar = () => {
   // Get Representatives.
@@ -18,8 +19,10 @@ const SideBar = () => {
   );
 
   // TODO: Add custom animations.
-  if (isLoading) return <p>Loading...</p>;
+  if (isLoading) return <LoadingWheel />;
   if (isError) return <p>Error...</p>;
+
+  // TODO: Remove middle initial if it exists.
 
   return (
     <div id="SideBar" className="">

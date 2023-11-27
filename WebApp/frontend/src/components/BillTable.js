@@ -1,11 +1,19 @@
 import { render } from "@testing-library/react";
-import { React, useState } from "react";
+import {
+  React,
+  createContext,
+  useState,
+  useEffect,
+  useRef,
+  useContext,
+} from "react";
 import { useQuery } from "react-query";
 
 import interestsCategories from "./interestsCategories.json";
 import "./BillTable.css";
 
 import dashboardService from "../utils/dashboardService.js";
+import LoadingWheel from "./LoadingWheel.js"
 
 // ONLY FOR TESTING!!!!
 // TODO: REMOVE THIS
@@ -16,7 +24,10 @@ const USER_ID = { userId: "65580d043bdf8a775970f892" };
 // if we were to further this app.
 const CONGRESS_NUM = 118;
 
-const BillTable = () => {
+// Used to help pass state hooks for bill data down to child component
+const MyContext = createContext();
+
+const BillTable = ({ setClickedBillData, handleOpenBillModal }) => {
   // Get user's interests.
   const {
     data: interests,
@@ -26,8 +37,7 @@ const BillTable = () => {
     dashboardService.getReadInterests(USER_ID)
   );
 
-  //TODO: Add custom animations.
-  if (isLoading) return <p>Loading...</p>;
+  if (isLoading) return <LoadingWheel />;
   if (isError) return <p>Error...</p>;
 
   let userInterestsTemp = [];
@@ -41,8 +51,10 @@ const BillTable = () => {
 
   return (
     <div>
-      {/* LegistlationList */}
-      <BillList userInterests={userInterestsTemp} />
+      <MyContext.Provider value={{ setClickedBillData, handleOpenBillModal }}>
+        {/* LegistlationList */}
+        <BillList userInterests={userInterestsTemp} />
+      </MyContext.Provider>
     </div>
   );
 };
@@ -65,7 +77,7 @@ const BillList = (props) => {
   );
 
   //TODO: Add custom animations.
-  if (isLoading) return <p>Loading...</p>;
+  if (isLoading) return <LoadingWheel />;
   if (isError) return <p>Error...</p>;
 
   // Iterate through each interest category.
@@ -98,13 +110,19 @@ const BillList = (props) => {
 
 const Bill = (props) => {
   const bill = props.currBill;
+  const { setClickedBillData, handleOpenBillModal } = useContext(MyContext);
+
+  const handleBillListClick = () => {
+    setClickedBillData(bill);
+    handleOpenBillModal();
+  };
 
   return (
     <div
       id="billList-row"
       className="shadow-2xl p-4 m-8 rounded-lg hover:scale-105 duration-300"
     >
-      <li>
+      <li onClick={handleBillListClick}>
         <h1 className="md:text-lg line-clamp-2 xl:line-clamp-1">
           <b>{bill.Title}</b>
         </h1>
