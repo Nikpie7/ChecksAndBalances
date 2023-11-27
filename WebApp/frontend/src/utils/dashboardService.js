@@ -8,7 +8,7 @@ const getReadInterests = (request) => {
   return axios
     .get(`${baseUrl}/api/readInterests`, {
       params: {
-        userId: request.userId,
+        token: request.token,
       },
     })
     .then((response) => {

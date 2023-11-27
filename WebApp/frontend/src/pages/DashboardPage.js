@@ -1,7 +1,7 @@
 import React, { useState, createContext } from "react";
 
 import NavBar from "../components/NavBar.js";
-import BillTable from "../components/BillTable.js";
+import BillTable from "../components/billList/BillTable.js";
 import SideBar from "../components/SideBar.js";
 import WelcomeMessage from "../components/WelcomeMessage.js";
 import BillModal from "../components/BillModal.js";

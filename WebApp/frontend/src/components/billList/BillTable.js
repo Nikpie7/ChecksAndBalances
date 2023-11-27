@@ -9,15 +9,18 @@ import {
 } from "react";
 import { useQuery } from "react-query";
 
-import interestsCategories from "./interestsCategories.json";
+import interestsCategories from "../interestsCategories.json";
 import "./BillTable.css";
 
-import dashboardService from "../utils/dashboardService.js";
-import LoadingWheel from "./LoadingWheel.js"
+import dashboardService from "../../utils/dashboardService.js";
+import LoadingWheel from "../LoadingWheel.js";
 
 // ONLY FOR TESTING!!!!
 // TODO: REMOVE THIS
-const USER_ID = { userId: "65580d043bdf8a775970f892" };
+const USER_TOKEN = {
+  token:
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1NjY4Mjk1OWFmZGY5ODc5NDljY2NmZSIsImZpcnN0TmFtZSI6IlRlc3QyIiwibGFzdE5hbWUiOiJUZXN0MiIsInBhc3N3b3JkIjoiIVRlc3QxMjMiLCJlbWFpbCI6IlRlc3RlcjJAdGVzdC5jb20iLCJhZGRyZXNzIjoiNDAwMCBDZW50cmFsIEZsb3JpZGEgQmx2ZC4gT3JsYW5kbywgRkwgMzI4MTYiLCJpYXQiOjE3MDExMTEwMTksImV4cCI6MTcwMTE5NzQxOX0.iKI-ltuvV0Fb5F68UvBdW5rt72HjM_N9FhI8yHwkXHk",
+};
 
 // Define the current Congress.
 // Would want to eventually update this to dynamic check
@@ -28,17 +31,26 @@ const CONGRESS_NUM = 118;
 const MyContext = createContext();
 
 const BillTable = ({ setClickedBillData, handleOpenBillModal }) => {
-  // Get user's interests.
+  const [billTableToggle, setBillTableToggle] = useState('interests');
+  const [interestsBills, setInterestsBills] = useState([]);
+  const [repBills, setrepBills] = useState([]);
+
+
   const {
     data: interests,
     isLoading,
     isError,
-  } = useQuery(["interestsData", USER_ID], () =>
-    dashboardService.getReadInterests(USER_ID)
+  } = useQuery(["interestsData", USER_TOKEN], () =>
+    dashboardService.getReadInterests(USER_TOKEN)
   );
 
   if (isLoading) return <LoadingWheel />;
   if (isError) return <p>Error...</p>;
+
+  // TODO: ADD BETTER STYLE IF USER HAS NO INTERESTS
+  if (interests === undefined) {
+    return <h1>Unable to load interests :(</h1>;
+  }
 
   let userInterestsTemp = [];
 
@@ -47,6 +59,10 @@ const BillTable = ({ setClickedBillData, handleOpenBillModal }) => {
     if (interests.Interests[i].value) {
       userInterestsTemp.push(interests.Interests[i].InterestName);
     }
+  }
+
+  if (userInterestsTemp.length === 0) {
+    return <h1>You have not interests. You should add some :)</h1>;
   }
 
   return (
