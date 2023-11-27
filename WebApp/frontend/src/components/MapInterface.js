@@ -9,7 +9,7 @@ import {
 import { MapContainer, Marker, GeoJSON, Pane, Popup, TileLayer, Tooltip, useMap, useMapEvents } from 'react-leaflet';
 import stateJSON from '../assets/geoJSON/cb_2022_us_state_5m.json';
 import districtJSON from '../assets/geoJSON/cb_2022_us_cd118_5m.json';
-// import { GeoJSON as LeafletGeoJSON, LatLngBounds } from 'leaflet';
+import { GeoJSON as LeafletGeoJSON, LatLngBounds } from 'leaflet';
 import * as L from 'leaflet';
 import { getSenators } from '../utils/onboardingService.js';
 import { useNavigate } from 'react-router-dom';
