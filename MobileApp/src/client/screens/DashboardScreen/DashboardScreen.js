@@ -62,9 +62,9 @@ const DashboardScreen = () => {
 
   const {height} = useWindowDimensions();
 
-  const toggleTypeOfBill = () => {
-    setTypeOfBill(!typeOfBill);
-  }
+  // const toggleTypeOfBill = () => {
+  //   setTypeOfBill(!typeOfBill);
+  // }
 
   const toggleProfileModal = () => {
     setProfileModalVisible(!isProfileModalVisible);

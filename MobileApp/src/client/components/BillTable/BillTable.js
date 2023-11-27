@@ -1,14 +1,15 @@
+/* eslint-disable prettier/prettier */
 import {react, useState} from 'react';
 import { Text, View, ScrollView } from 'react-native';
 import { useQuery, QueryClient, QueryClientProvider } from 'react-query';
 
-import dashboardService from "../../utils/dashboardService";
-import interestsCategories from "./interestsCategories.json";
-import representativesList from "./representativesList.json"
+import dashboardService from '../../utils/dashboardService';
+import interestsCategories from './interestsCategories.json';
+import representativesList from './representativesList.json'
 
 // TODO: Remove later
-const USER_ID = {userId: "65580d043bdf8a775970f892" };
-const ADDRESS = "4000 Central Florida Blvd. Orlando, FL 32816";
+const USER_ID = {userId: '65580d043bdf8a775970f892' };
+const ADDRESS = '4000 Central Florida Blvd. Orlando, FL 32816';
 
 const queryClient = new QueryClient();
 
@@ -46,7 +47,7 @@ const BillTable = () => {
         data: interests,
         isLoading,
         isError,
-    } = useQuery(["interestsData", USER_ID], () =>
+    } = useQuery(['interestsData', USER_ID], () =>
         dashboardService.getReadInterests(USER_ID)
     );
 
@@ -55,7 +56,7 @@ const BillTable = () => {
 
     let userInterestsTemp = [];
 
-    console.log("uh oh...for loop time :O");
+    console.log('uh oh...for loop time :O');
     for (let i = 0; i < interests.Interests.length; i++) {
         if (interests.Interests[i].value) {
             userInterestsTemp.push(interests.Interests[i].InterestName);
@@ -79,7 +80,7 @@ const BillList = (props) => {
       data: bills,
       isLoading,
       isError,
-    } = useQuery(["billsData", interestsCategories], () =>
+    } = useQuery(['billsData', interestsCategories], () =>
       Promise.all(
         userInterests.map(async (interest) =>
           dashboardService.postSearchBillsByInterest({ Interest: interest })
@@ -177,6 +178,4 @@ const BillList = (props) => {
     );
   };
 
-  
-  
   export default BillTable;
