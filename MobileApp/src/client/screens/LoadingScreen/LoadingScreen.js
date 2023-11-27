@@ -1,12 +1,14 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useContext } from 'react'
 import {View, Text, Image, StyleSheet, useWindowDimensions} from 'react-native'
 import Logo from '../../../../assets/images/logo.png';
 import Background from '../../../../assets/images/background.png';
 import Wait from '../../../../assets/images/load.gif';
 import { useNavigation } from '@react-navigation/native';
 import * as Keychain from 'react-native-keychain';
+import { UserContext } from '../../components/UserContext/UserContext';
 
 const LoadingScreen = () => {
+    const {updateUser} = useContext(UserContext);
 
     const {height} = useWindowDimensions();
     const navigation = useNavigation();
@@ -32,8 +34,19 @@ const LoadingScreen = () => {
                     .then(data => {
                         console.log(data);
                         if(data.id){
+                            const userData = {
+                                firstName: data.firstName,
+                                lastName: data.lastName,
+                                userID: data.id,
+                                email: data.email,
+                                address: data.address,
+                                zip: data.zipCode,
+                                verified: data.verified,
+                            };
+
                             //then go to home page
                             console.warn("Successfully Logged In!");
+                            updateUser(userData);
                             navigation.navigate('Dashboard');
                         }
                         else{

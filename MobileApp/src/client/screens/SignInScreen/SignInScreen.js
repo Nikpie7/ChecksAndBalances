@@ -5,8 +5,11 @@ import Logo from '../../../../assets/images/logo.png';
 import Background from '../../../../assets/images/background.png';
 import FloatingLabelInput from '../../components/FloatingLabelInput';
 import { useNavigation } from '@react-navigation/native';
+import { UserContext } from '../../components/UserContext/UserContext';
 
 const SignInScreen = () => {
+    const {updateUser} = useContext(UserContext);
+
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState(null);
@@ -33,11 +36,22 @@ const SignInScreen = () => {
         .then(data => {
             console.log(data);
             if(data.id){
+                const userData = {
+                    firstName: data.firstName,
+                    lastName: data.lastName,
+                    userID: data.id,
+                    email: data.email,
+                    address: data.address,
+                    zip: data.zipCode,
+                    verified: data.verified,
+                };
+
                 //then go to home page
                 console.warn("Successfully Logged In!");
                 
                 Keychain.setGenericPassword(username, password).then(() => {
                     console.log("Credentials saved successfully!")
+                    updateUser(userData);
                     navigation.navigate('Dashboard');
                 })
                 .catch(error => {
