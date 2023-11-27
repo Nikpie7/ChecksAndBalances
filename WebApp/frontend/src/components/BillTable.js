@@ -3,7 +3,7 @@ import { React, useState } from "react";
 import { useQuery } from "react-query";
 
 import interestsCategories from "./interestsCategories.json";
-import "./LegislationTable.css";
+import "./BillTable.css";
 
 import dashboardService from "../utils/dashboardService.js";
 
@@ -16,7 +16,7 @@ const USER_ID = { userId: "65580d043bdf8a775970f892" };
 // if we were to further this app.
 const CONGRESS_NUM = 118;
 
-const LegistlationTable = () => {
+const BillTable = () => {
   // Get user's interests.
   const {
     data: interests,
@@ -42,12 +42,12 @@ const LegistlationTable = () => {
   return (
     <div>
       {/* LegistlationList */}
-      <LegistlationList userInterests={userInterestsTemp} />
+      <BillList userInterests={userInterestsTemp} />
     </div>
   );
 };
 
-const LegistlationList = (props) => {
+const BillList = (props) => {
   const userInterests = props.userInterests;
   let billListTemp = [];
 
@@ -87,16 +87,10 @@ const LegistlationList = (props) => {
   return (
     <div className="grid justify-normal">
       <ul>
-        {
-          <li className="">
-            {/* Mobile = Bill name + short description
-                Web = Bill Name + short description + committee*/}
-            {/* Iterate through each interest. */}
-            {billListTemp.map((bill) => (
-              <Bill key={bill._id} currBill={bill} />
-            ))}
-          </li>
-        }
+        {/* Iterate through each interest. */}
+        {billListTemp.map((bill) => (
+          <Bill key={bill._id} currBill={bill} />
+        ))}
       </ul>
     </div>
   );
@@ -107,17 +101,19 @@ const Bill = (props) => {
 
   return (
     <div
-      id="legislationList-row"
+      id="billList-row"
       className="shadow-2xl p-4 m-8 rounded-lg hover:scale-105 duration-300"
     >
-      <h1 className="md:text-lg line-clamp-2 xl:line-clamp-1">
-        <b>{bill.Title}</b>
-      </h1>
-      <h2>
-        {bill.BillType.toUpperCase()}.{bill.BillNumber}
-      </h2>
+      <li>
+        <h1 className="md:text-lg line-clamp-2 xl:line-clamp-1">
+          <b>{bill.Title}</b>
+        </h1>
+        <h2>
+          {bill.BillType.toUpperCase()}.{bill.BillNumber}
+        </h2>
+      </li>
     </div>
   );
 };
 
-export default LegistlationTable;
+export default BillTable;

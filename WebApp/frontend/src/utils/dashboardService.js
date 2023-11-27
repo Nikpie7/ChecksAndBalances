@@ -102,11 +102,24 @@ const postSearchBillsByInterest = (request) => {
     });
 };
 
+const postGetReps = (request) => {
+  return axios
+    .post(`${baseUrl}/api/getReps`, request)
+    .then((response) => {
+      console.log(response);
+      return response.data;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
 export default {
   getReadInterests,
   getGetBillsByInterests,
   getGetBillTitles,
   getGetBillCommittees,
   getGetBillSummaries,
-  postSearchBillsByInterest
+  postSearchBillsByInterest,
+  postGetReps
 };
