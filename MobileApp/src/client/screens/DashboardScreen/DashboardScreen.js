@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import React, { useState, useContext } from 'react';
-import { View, Text, TouchableOpacity, TextInput, ScrollView, Image, StyleSheet, useWindowDimensions } from 'react-native';
-import { useNavigation, NavigationContainer, DrawerActions } from '@react-navigation/native';
+import { View, Text, TouchableOpacity, TextInput, ScrollView, Image, DrawerLayoutAndroid, StyleSheet, useWindowDimensions } from 'react-native';
+import { useNavigation, NavigationContainer } from '@react-navigation/native';
 import { TabNavigator } from 'react-navigation';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import  Modal  from 'react-native-modal';

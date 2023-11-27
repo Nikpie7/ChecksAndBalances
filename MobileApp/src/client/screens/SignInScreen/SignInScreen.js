@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import * as Keychain from 'react-native-keychain';
 import {View, Text, Image, StyleSheet, TextInput, TouchableOpacity, ScrollView} from 'react-native'
 import Logo from '../../../../assets/images/logo.png';

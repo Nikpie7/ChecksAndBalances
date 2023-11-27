@@ -4,9 +4,12 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import Background from '../../../../assets/images/background.png';
 import pic from '../../../../assets/images/ProfileImage.png';
 import { UserContext } from '../../components/UserContext/UserContext';
+import { useNavigation } from '@react-navigation/native';
 
 const UserProfileScreen = () => {
   const { user } = useContext(UserContext);
+  const navigation = useNavigation();
+  console.log(user);
 
   return (
     <View style={styles.root}>
@@ -30,11 +33,11 @@ const UserProfileScreen = () => {
         {/* User Details */}
         <View style={styles.detailsContainer}>
           {/* Render user details here */}
-          <Text style={styles.detail}>UserID: {user.id}</Text>
+          <Text style={styles.detail}>UserID: {user.userID}</Text>
           <Text style={styles.detail}>Email: {user.email}</Text>
-          <Text style={styles.detail}>Email Verified?: {user.varified}</Text>
+          <Text style={styles.detail}>Verified?: {user.verified}</Text>
           <Text style={styles.detail}>Address: {user.address}</Text>
-          <Text style={styles.detail}>Zip: {user.zipCode}</Text>
+          <Text style={styles.detail}>Zip: {user.zip}</Text>
           {/* Add other user details */}
         </View>
       </View>
