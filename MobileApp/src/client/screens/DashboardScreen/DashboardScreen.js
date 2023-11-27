@@ -11,33 +11,41 @@ import { CustomHamburgerIcon } from '../../components/HamburgerButton/CustomHamb
 import Logo from '../../../../assets/images/logo.png';
 import Background from '../../../../assets/images/background.png';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-// import LegistlationTable from '../../components/LegislationTable/LegislationTable.js';
+import { BillTable } from '../../components/BillTable/BillTable';
+import { useQuery, QueryClient, QueryClientProvider } from 'react-query';
+import BillModal from '../../components/BillModal/BillModal';
 
 function InterestsScreen() {
+  const queryClient = new QueryClient();
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      {/* <View>
-        <LegistlationTable/>
-      </View> */}
-      <Text fontSize={20}>All Interests!</Text>
+      <BillModal />
+        <QueryClientProvider client={queryClient}>
+          <BillTable/>
+        </QueryClientProvider>
+      {/* <Text fontSize={20}>All Interests!</Text> */}
     </View>
   );
 }
 
 function RepresentativesScreen() {
+  const queryClient = new QueryClient();
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      {/* Add API endpoint here*/}
-      <Text>Representatives!</Text>
+      {/* <BillModal />
+        <QueryClientProvider client={queryClient}>
+          <BillTableReps/>
+        </QueryClientProvider> */}
+        <Text>Bills by representative</Text>
     </View>
   );
 }
 
-function AllBillsScreen() {
+function MyRepresentativesScreen() {
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
       {/* Add API endpoint here*/}
-      <Text>All Bills!</Text>
+      <Text>My Representatives</Text>
     </View>
   );
 }
@@ -47,11 +55,16 @@ const DashboardScreen = () => {
   const [isProfileModalVisible, setProfileModalVisible] = useState(false);
   const [isHamburgerModalVisible, setHamburgerModalVisible] = useState(false);
   const [activeTab, setActiveTab] = useState("Home");
+  const [displayBillModal, setDisplayBillModal] = useState(false);
+  // const [typeOfBill, setTypeOfBill] = useState('interests');
 
-  const congress = 118;
   const Tab = createBottomTabNavigator();
 
   const {height} = useWindowDimensions();
+
+  const toggleTypeOfBill = () => {
+    setTypeOfBill(!typeOfBill);
+  }
 
   const toggleProfileModal = () => {
     setProfileModalVisible(!isProfileModalVisible);
@@ -81,73 +94,6 @@ const DashboardScreen = () => {
 
   const toggleHamburgerModal = () => {
     setHamburgerModalVisible(!isHamburgerModalVisible);
-  };
-
-  const handleTabChange = (tab) => {
-    // Add logic to update the feed based on the selected tab
-    console.log('Switch to tab:', tab);
-  };
-
-  const getBillTitles = () => {
-    var bodyVariable = JSON.stringify({"congress": congress,"billType": billType, "billNumber": billNumber});
-        
-        console.log(bodyVariable);
-        //Validate the user
-        fetch('https://checksnbalances.us/api/getBillTitles', {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: bodyVariable,
-        })
-        .then(response => response.json())
-        .catch(error => {
-          console.error(error);
-          });
-  };
-
-  const getBillsByInterest = () => {
-    // TODO replace "Finance" with interest variable
-    var bodyVariable = JSON.stringify({'interest': 'Finance'});
-
-    console.log(bodyVariable);
-
-    fetch('https://checksnbalances.us/api/getBillTitles', {
-        method: 'POST',
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-        },
-        body: bodyVariable,
-    })
-    .then(response => response.json())
-    .catch(error => {
-      console.error(error);
-    });
-  };
-
-  const readInterests = () => {
-    var bodyVariable = JSON.stringify({"userID": userID});
-
-    console.log(bodyVariable);
-
-    fetch('https://checksnbalances.us/api/getBillTitles', {
-        method: 'POST',
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-        },
-        body: bodyVariable,
-    })
-    .then(response => response.json())
-    .catch(error => {
-      console.error(error);
-    });
-  };
-
-  const getUserID = () => {
-
   };
 
   return (
@@ -181,9 +127,9 @@ const DashboardScreen = () => {
 
       {/* Feed Section */}
         <Tab.Navigator>
-          <Tab.Screen name="Interests" component={InterestsScreen}/>
-          <Tab.Screen name="Representatives" component={RepresentativesScreen}/>
-          <Tab.Screen name="TBD" component={AllBillsScreen}/>
+          <Tab.Screen name="Bills by Interest" component={InterestsScreen} />
+          <Tab.Screen name="Bills by Representative" component={RepresentativesScreen} />
+          <Tab.Screen name="My Representatives" component={MyRepresentativesScreen}/>
         </Tab.Navigator>
       </SafeAreaView>
   );
