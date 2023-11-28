@@ -114,6 +114,19 @@ const postGetReps = (request) => {
     });
 };
 
+const postSearchBillsSponsors = (request) => {
+  return axios
+    .post(`${baseUrl}/api/searchBillsSponsors`, request)
+    .then((response) => {
+      console.log(response);
+      return response.data;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+
 export default {
   getReadInterests,
   getGetBillsByInterests,
@@ -121,5 +134,6 @@ export default {
   getGetBillCommittees,
   getGetBillSummaries,
   postSearchBillsByInterest,
-  postGetReps
+  postGetReps,
+  postSearchBillsSponsors
 };
