@@ -22,8 +22,8 @@ const ses = new AWS.SES({ apiVersion: '2010-12-01' });
 
 const jwt = require('jsonwebtoken');
 
-const sendVerificationEmail = (email, username) => {
-  const token = jwt.sign({ username }, process.env.JWT_SECRET, { expiresIn: '1h' });
+const sendVerificationEmail = (email) => {
+  const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
   // Define the frontend URL for email verification (change this to your actual frontend URL)
   const verificationUrl = `https://checksnbalances.us/verifyToken/${token}`;
@@ -35,7 +35,7 @@ const sendVerificationEmail = (email, username) => {
       Subject: { Data: 'Email Verification' },
       Body: {
         // Include both Text and Html versions for email clients that don't support HTML
-        Text: { Data: `YOO PLEASE WORK Please verify your email by visiting the following link: ${verificationUrl}` },
+        Text: { Data: `Please verify your email by visiting the following link: ${verificationUrl}` },
         Html: { Data: `<html><body><p>Please verify your email by clicking the following link: <a href="${verificationUrl}">Verify Email</a></p></body></html>` }
       }
     }
@@ -1135,9 +1135,13 @@ app.post('/api/register', async (req, res, next) =>
     const result = await db.collection('Users').insertOne(newUser);
 
     // Send verification email
-    await sendVerificationEmail(email, username);
+    await sendVerificationEmail(email);
   } catch(e) {
-    error = e.toString();
+    if (e.code === 11000) {
+      error = 'User with that email already exists.';
+    }
+    else
+      error = e.toString();
   }
 
   var ret = { error: error };
@@ -1153,14 +1157,12 @@ app.get('/api/verify-email', async (req, res) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const username = decoded.username;
-
-    console.log(username);
+    const email = decoded.email;
 
     // Update user verification status
     const db = client.db('POOSBigProject');
     await db.collection('Users').updateOne(
-      { Login: username },
+      { Login: email },
       { $set: { Verified: true } }
     );
 
