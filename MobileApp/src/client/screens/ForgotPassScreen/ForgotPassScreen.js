@@ -6,12 +6,15 @@ import Background from '../../../../assets/images/background.png';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import FloatingLabelInput from '../../components/FloatingLabelInput';
-
+import  Modal  from 'react-native-modal';
 
 const ForgotPassScreen = () => {
     const [email, setEmail] = useState('');
     const [emptyInputs, setEmptyInputs] = useState([]);
     const [error, setError] = useState('');
+    const [validEmail, setValidEmail] = useState(true);
+    const [isSuccessModalVisible, setIsSuccessModalVisible] = useState(false);
+
 
     const navigation = useNavigation();
 
@@ -21,6 +24,7 @@ const ForgotPassScreen = () => {
         //reset error
         setError(null);
         setEmptyInputs([]);
+        setValidEmail(true);
         //Validation to see if all fields are filled
         const inputs = [email];
         const emptyInputIndex = inputs.reduce((acc, input, index) => {
@@ -30,12 +34,20 @@ const ForgotPassScreen = () => {
             return acc;
         }, []);
 
+        // Regular expression to check for '@' in the email
+        const isValidEmailFormat = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
         if(emptyInputIndex.length > 0){
             const inputNames = ['Email'];
             setEmptyInputs(emptyInputIndex);
             const emptyFields = emptyInputIndex.map(index => inputNames[index]);
             setError(`Please Fill out: ${emptyFields.join(', ')}`);
             console.log('All fields are not filled out');
+            return;
+        }
+        else if (!isValidEmailFormat) {
+            setError('Missing @domain in email');
+            setValidEmail(false);
             return;
         }
 
@@ -60,8 +72,7 @@ const ForgotPassScreen = () => {
                 setError("An error occurred while sending the reset link.");
             } else {
                 console.log("Password reset link sent successfully!");
-                // Optionally, navigate the user to a confirmation screen
-                // navigation.navigate('ResetLinkSentConfirmation');
+                setIsSuccessModalVisible(true);
             }
         })
         .catch(error => {
@@ -90,7 +101,7 @@ const ForgotPassScreen = () => {
                             </View>
                         )}
                         <Text style={styles.normalText}>Input the email address you used to sign up for a password reset link sent to your email.</Text>
-                        <FloatingLabelInput style={[styles.input, emptyInputs.includes(0) && styles.inputError,]} label="Email" value={email} onChangeText={setEmail}/>
+                        <FloatingLabelInput style={[styles.input, emptyInputs.includes(0) && styles.inputError, !validEmail && styles.inputError,]} label="Email" value={email} onChangeText={setEmail}/>
                         
                         <TouchableOpacity onPress={onResetPressed} style={styles.button}>
                             <Text style={styles.buttonText}>Send Reset Link</Text>
@@ -98,6 +109,24 @@ const ForgotPassScreen = () => {
                     </View>
                 </View>
             </ScrollView>
+            <Modal isVisible={isSuccessModalVisible} style={styles.modal}>
+                <View style={styles.modalContainer}>
+                    <View style={[styles.whiteBox, styles.modalContent]}>
+                    <Text style={styles.modalText}>
+                        If the email exists,{"\n"} a reset link was sent!
+                    </Text>
+                    <TouchableOpacity
+                        style={[styles.button, styles.modalButton]}
+                        onPress={() => {
+                        setIsSuccessModalVisible(false);
+                        navigation.navigate('SignIn');
+                        }}
+                    >
+                        <Text style={[styles.buttonText, styles.modalButtonText]}>Return to Login</Text>
+                    </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
         </View>
     );
 };
@@ -126,6 +155,7 @@ const styles = StyleSheet.create({
     logoContainer: {
         flex: 1,
         alignItems: 'center',
+        justifyContent: 'flex-end',
     },
     logo: {
         width: '70%',
@@ -160,6 +190,7 @@ const styles = StyleSheet.create({
         color: 'white',
         fontWeight: 'bold',
         textAlign: 'center',
+        fontSize: 19,
     },
     inputError: {
         borderColor: 'red',
@@ -179,6 +210,35 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         textAlign: 'center',
         marginBottom: 10,
+        fontSize: 15,
+    },
+    modal: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        margin: 0,
+    },
+    modalContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    modalContent: {
+        width: '100%',
+        backgroundColor: 'white',
+        padding: 30,
+        borderRadius: 10,
+        alignItems: 'center',
+    },
+    modalText: {
+        fontSize: 24,
+        marginBottom: 20,
+        textAlign: 'center',
+    },
+    modalButton: {
+        backgroundColor: '#04ACD9DD',
+    },
+    modalButtonText: {
+        fontSize: 22,
     },
 });
 
