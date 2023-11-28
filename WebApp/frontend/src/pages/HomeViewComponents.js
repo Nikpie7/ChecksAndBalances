@@ -2,9 +2,11 @@ import {
   react, useEffect, useState
 } from 'react';
 import { MdOutlineClose, MdOutlineInfo, MdOutlineLogin, MdOutlineArrowDownward, MdOutlineArrowBack } from 'react-icons/md';
+import { FaGithub } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import * as emailValidator from 'email-validator';
+import smallLogo from '../assets/smallLogo.png';
 
 import Card from '../components/Card';
 import authService from '../utils/authService'
@@ -15,6 +17,9 @@ import profilePic_Juni from '../assets/teammatePhotos/Juni.png';
 import profilePic_Tim from '../assets/teammatePhotos/Tim.png';
 import profilePic_Nikolai from '../assets/teammatePhotos/Nikolai.png';
 import profilePic_Matt from '../assets/teammatePhotos/Matt.png';
+import profilePic_Zak from '../assets/teammatePhotos/Zak.png';
+import profilePic_Kobe from '../assets/teammatePhotos/Kobe.png';
+import profilePic_Sam from '../assets/teammatePhotos/Sam.png';
 import FormInput from '../components/FormInput';
 
 const AboutUsButton = () => {
@@ -187,17 +192,23 @@ const AboutUsCard = ({visible, setVisible}) => {
           <h2 className="font-semibold text-2xl">
             About Checks & Balances
           </h2>
-          <button
-            onClick={() => setVisible(false)}
-          >
-            <MdOutlineClose className="text-2xl" />
-          </button>
+          <span className="flex justify-end items-center w-max gap-3">
+            <img src={smallLogo} className="h-12 object-contain justify-self-center" />
+            <button onClick={() => setVisible(false)} >
+              <MdOutlineClose className="text-2xl" />
+            </button>
+          </span>
         </span>
         <hr className="h-px my-4 bg-gray-200 border-0 dark:bg-gray-300" />
-        <p>Checks & Balances is a student project for UCF's Process of Object Oriented Design course of Fall 2023</p>
-        <a href="https://github.com/Nikpie7/ChecksAndBalances/">Github</a>
+        <p className="text-md text-center"><em className="font-semibold italics">Checks & Balances</em> is a student project created for the University of Central Florida's <em className="italics">Processes of Object Oriented Design</em> course of Fall 2023. Given eight weeks, we developed this website from scratch using the MERN technology stack and modern software development practices, with the goal of increasing the accessibility of crucial civic information to voters, especially to younger and underinformed demographics.</p>
+        <span className="flex w-full justify-center gap-1 py-4">
+          <p className="font-semibold">Github Repository:</p>
+          <a className="flex w-max items-center gap-1" href="https://github.com/Nikpie7/ChecksAndBalances/">
+            <FaGithub /><p className="text-blue-500">Nikpie7/ChecksAndBalances</p>
+          </a>
+        </span>
         <div
-          className="flex flex-wrap justify-center items-start gap-5"
+          className="flex flex-wrap justify-center items-start gap-5 pt-2"
         >
           <Teammate
             picture={profilePic_Juni}
@@ -219,7 +230,7 @@ const AboutUsCard = ({visible, setVisible}) => {
             picture={profilePic_Tim}
             description={{
               name: 'Tim Kovacs',
-              role: 'API '
+              role: 'Back End'
             }}
             linkedIn=''
           />
@@ -228,6 +239,30 @@ const AboutUsCard = ({visible, setVisible}) => {
             description={{
               name: 'Matt Trump',
               role: 'Mobile Front End'
+            }}
+            linkedIn=''
+          />
+          <Teammate
+            picture={profilePic_Zak}
+            description={{
+              name: 'Zak Antifit',
+              role: 'Web Front End'
+            }}
+            linkedIn=''
+          />
+          <Teammate
+            picture={profilePic_Kobe}
+            description={{
+              name: 'Kobe Conomon',
+              role: 'Mobile Front End'
+            }}
+            linkedIn=''
+          />
+          <Teammate
+            picture={profilePic_Sam}
+            description={{
+              name: 'Sam Elomari',
+              role: 'Back End'
             }}
             linkedIn=''
           />

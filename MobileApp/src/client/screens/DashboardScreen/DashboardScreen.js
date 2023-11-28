@@ -227,14 +227,12 @@ const DashboardScreen = () => {
             
             return <Icon name={iconName} size={size} color={color} />;
           },
+            "tabBarActiveTintColor": "red",
+            "tabBarInactiveTintColor": "gray",
+            "tabBarLabelStyle": {
+              "fontSize": 16
+            },
         })}
-        tabBarOptions={{
-          activeTintColor: 'red',
-          inactiveTintColor: 'gray',
-          labelStyle: {
-            fontSize: 16, // Adjust the font size for tab labels
-          },
-        }}
       >
             <Tab.Screen name="Interests" component={InterestsScreen}/>
             <Tab.Screen name="All Bills" component={VotesScreen}/>

@@ -19,14 +19,11 @@ schema
 const RegistrationCard = ({userData, className}) => {
   const navigate = useNavigate();
   const [loginCreds, setLoginCreds] = useState({
-    username: '',
     password: '',
     passwordConfirm: '',
     email: '',
     firstName: '',
     lastName: '',
-    address: '',
-    zipCode: ''
   });
   const [statusMessage, setStatusMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
@@ -68,23 +65,6 @@ const RegistrationCard = ({userData, className}) => {
         Create a new account
       </h2>
       <form className="mt-4" onSubmit={handleFormSubmit}>
-        <FormInput
-          name="username"
-          label="Username"
-          placeholder="Enter a username"
-          handleChange={handleFormChange}
-          credObj={loginCreds}
-        />
-        <NewPasswordInput passwordObj={loginCreds} setPasswordObj={handleFormChange} />
-        <FormInput
-          name="email"
-          label="Email address"
-          placeholder="Enter your email address"
-          handleChange={handleFormChange}
-          credObj={loginCreds}
-          onBlur={() => setEmailValid(emailValidator.validate(loginCreds.email))}
-          formStyling={emailValid || loginCreds.email === '' ? '' : 'border border-red-600'}
-        />
         <span className="max-h-min flex gap-2 justify-between">
           <FormInput
             name="firstName"
@@ -101,6 +81,16 @@ const RegistrationCard = ({userData, className}) => {
             credObj={loginCreds}
           />
         </span>
+        <FormInput
+          name="email"
+          label="Email address"
+          placeholder="Enter your email address"
+          handleChange={handleFormChange}
+          credObj={loginCreds}
+          onBlur={() => setEmailValid(emailValidator.validate(loginCreds.email))}
+          formStyling={emailValid || loginCreds.email === '' ? '' : 'border border-red-600'}
+        />
+        <NewPasswordInput passwordObj={loginCreds} setPasswordObj={handleFormChange} />
         <p className="text-red-500">{errorMessage}</p>
         <p>{statusMessage}</p>
       <hr className="h-px my-4 bg-gray-200 border-0 dark:bg-gray-300" />

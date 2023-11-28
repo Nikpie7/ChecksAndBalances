@@ -13,10 +13,11 @@ const StateFlag = ({stateId}) => {
 };
 
 const StateHeader = ({className, state, district}) => {
+  let districtNumber = district === null ? null : +district;
   const ordinal_suffix_of = i => { var j = i % 10, k = i % 100; if (j == 1 && k != 11) { return i + "st"; } if (j == 2 && k != 12) { return i + "nd"; } if (j == 3 && k != 13) { return i + "rd"; } return i + "th"; }
   const districtName =
-    district === 0 ? 'Congressional District At Large'
-    : district > 0 ? `${ordinal_suffix_of(district)} Congressional District`
+    districtNumber === 0 ? 'Congressional District At Large'
+    : districtNumber > 0 ? `${ordinal_suffix_of(districtNumber)} Congressional District`
     : '';
   return (
     <span className={`w-max flex justify-center items-center h-[10vh] gap-5 ${className}`}>
@@ -45,7 +46,7 @@ const StateDropdown = ({state, setState}) => {
       <option value="5">Colorado</option>
       <option value="6">Connecticut</option>
       <option value="7">Delaware</option>
-      <option value="8">District of Columbia</option>
+      {/* <option value="8">District of Columbia</option> */}
       <option value="9">Florida</option>
       <option value="10">Georgia</option>
       <option value="11">Hawaii</option>
