@@ -10,7 +10,6 @@ import PasswordComplex from '../../components/PasswordComplex/PasswordComplex';
 import Modal from 'react-native-modal';
 
 const SignUpScreen = () => {
-    const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [passwordRepeat, setPasswordRepeat] = useState('');
@@ -32,7 +31,7 @@ const SignUpScreen = () => {
         setValidEmail(true);
         setValidPass(true);
         //Validation to see if all fields are filled
-        const inputs = [username, password, passwordRepeat, email, firstName, lastName, streetAddress, zipCode];
+        const inputs = [password, passwordRepeat, email, firstName, lastName, streetAddress, zipCode];
         const emptyInputIndex = inputs.reduce((acc, input, index) => {
             if(input === ''){
                 acc.push(index);
@@ -43,7 +42,7 @@ const SignUpScreen = () => {
         const validationErrors = [];
 
         if(emptyInputIndex.length > 0){
-            const inputNames = ['Username', 'Password', 'Confirm Password', 'Email', 'First Name', 'Last Name', 'Street Address', 'Zip Code'];
+            const inputNames = ['Password', 'Confirm Password', 'Email', 'First Name', 'Last Name', 'Street Address', 'Zip Code'];
             const emptyFields = emptyInputIndex.map(index => inputNames[index]);
             validationErrors.push(`Please Fill out: ${emptyFields.join(', ')}`);
         }
@@ -91,7 +90,6 @@ const SignUpScreen = () => {
         //Passed Validation
         //gather up all fields
         bodyVariable = JSON.stringify({
-            "username": username,
             "password": password,
             "email": email,
             "firstName": firstName,
@@ -151,16 +149,14 @@ const SignUpScreen = () => {
                             ))}
                         </View>
                         )}
-
-                        <FloatingLabelInput style={[styles.input, emptyInputs.includes(0) && styles.inputError,]} label="Username" value={username} onChangeText={setUsername}/>
-                        <FloatingLabelInput style={[styles.input, emptyInputs.includes(1) && styles.inputError, !validPass && styles.inputError,]} label="Password" value={password} onChangeText={setPassword} secureTextEntry/>
+                        <FloatingLabelInput style={[styles.input, emptyInputs.includes(0) && styles.inputError, !validPass && styles.inputError,]} label="Password" value={password} onChangeText={setPassword} secureTextEntry/>
                         <PasswordComplex password={password}/>
-                        <FloatingLabelInput style={[styles.input, emptyInputs.includes(2) && styles.inputError, !validPass && styles.inputError,]} label="Confirm Password" value={passwordRepeat} onChangeText={setPasswordRepeat} secureTextEntry/>
-                        <FloatingLabelInput style={[styles.input, emptyInputs.includes(3) && styles.inputError, !validEmail && styles.inputError,]} label="Email" value={email} onChangeText={setEmail}/>
-                        <FloatingLabelInput style={[styles.input, emptyInputs.includes(4) && styles.inputError,]} label="First Name" value={firstName} onChangeText={setFirstName}/>
-                        <FloatingLabelInput style={[styles.input, emptyInputs.includes(5) && styles.inputError,]} label="Last Name" value={lastName} onChangeText={setLastName}/>
-                        <FloatingLabelInput style={[styles.input, emptyInputs.includes(6) && styles.inputError,]} label="Street Address, City, State" value={streetAddress} onChangeText={setStreetAddress}/>
-                        <FloatingLabelInput style={[styles.input, emptyInputs.includes(7) && styles.inputError,]} label="5 Digit Zip Code" value={zipCode} onChangeText={setZipCode}/>
+                        <FloatingLabelInput style={[styles.input, emptyInputs.includes(1) && styles.inputError, !validPass && styles.inputError,]} label="Confirm Password" value={passwordRepeat} onChangeText={setPasswordRepeat} secureTextEntry/>
+                        <FloatingLabelInput style={[styles.input, emptyInputs.includes(2) && styles.inputError, !validEmail && styles.inputError,]} label="Email" value={email} onChangeText={setEmail}/>
+                        <FloatingLabelInput style={[styles.input, emptyInputs.includes(3) && styles.inputError,]} label="First Name" value={firstName} onChangeText={setFirstName}/>
+                        <FloatingLabelInput style={[styles.input, emptyInputs.includes(4) && styles.inputError,]} label="Last Name" value={lastName} onChangeText={setLastName}/>
+                        <FloatingLabelInput style={[styles.input, emptyInputs.includes(5) && styles.inputError,]} label="Street Address, City, State" value={streetAddress} onChangeText={setStreetAddress}/>
+                        <FloatingLabelInput style={[styles.input, emptyInputs.includes(6) && styles.inputError,]} label="5 Digit Zip Code" value={zipCode} onChangeText={setZipCode}/>
                         
                         <TouchableOpacity onPress={onSignUpPressed} style={styles.button}>
                             <Text style={styles.buttonText}>Register</Text>
