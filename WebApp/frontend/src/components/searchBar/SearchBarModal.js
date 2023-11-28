@@ -35,7 +35,7 @@ const Modal = ({ isOpen, hasCloseBtn = true, onClose, children }) => {
 
   return (
     <div className="">
-    <dialog ref={modalRef} onKeyDown={handleKeyDown} className="modal w-3/5 ">
+    <dialog ref={modalRef} onKeyDown={handleKeyDown} className="modal w-3/5 absolute bottom-3/4">
       
       {/* {hasCloseBtn && (
         <button className="modal-close-btn" onClick={handleCloseModal}>

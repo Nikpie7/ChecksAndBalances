@@ -37,10 +37,17 @@ const initialBillModalData = {
 };
 
 const DashboardPage = () => {
+  // Bill modal with detailed info.
   const [billModalOpen, setBillModalOpen] = useState(false);
   const [clickedBillData, setClickedBillData] = useState(initialBillModalData);
+  
+  // Bill list.
   const [billTableToggle, setBillTableToggle] = useState("interests");
+  
+  // Searching.
   const [searchBarOpen, setSearchBarOpen] = useState(false);
+  const [searchResults, setSearchResults] = useState([]);
+
 
   const handleOpenBillModal = () => {
     setBillModalOpen(true);
@@ -104,6 +111,7 @@ const DashboardPage = () => {
         <FloatingSearchBar
           isOpen={searchBarOpen}
           onClose={handleCloseSearchBar}
+          setSearchResults={setSearchResults}
         />
       </div>
     </div>
@@ -129,11 +137,13 @@ const BillListTab = ({ setBillTableToggle }) => {
           value="Interests"
           className="peer hidden"
           onClick={handleInterestsToggle}
-          checked
+          // onChange={handleInterestsToggle}
+          checked          
         />
+        
         <label
-          for="Interests"
-          className="block cursor-pointer select-none rounded-xl p-2 text-center peer-checked:bg-blue-500 peer-checked:font-bold peer-checked:text-white"
+          htmlFor="Interests"
+          className="block cursor-pointer select-none rounded-xl p-2 text-center peer-checked:bg-blue-500 peer-checkeds:font-bold peer-checked:text-white"
         >
           Interests
         </label>
@@ -147,9 +157,10 @@ const BillListTab = ({ setBillTableToggle }) => {
           value="Reps"
           className="peer hidden"
           onClick={handleRepsToggle}
+          // onChange={handleRepsToggle}
         />
         <label
-          for="Reps"
+          htmlFor="Reps"
           className="block cursor-pointer select-none rounded-xl p-2 text-center peer-checked:bg-blue-500 peer-checked:font-bold peer-checked:text-white"
         >
           Reps
