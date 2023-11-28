@@ -15,6 +15,7 @@ import profilePic_Juni from '../assets/teammatePhotos/Juni.png';
 import profilePic_Tim from '../assets/teammatePhotos/Tim.png';
 import profilePic_Nikolai from '../assets/teammatePhotos/Nikolai.png';
 import profilePic_Matt from '../assets/teammatePhotos/Matt.png';
+import FormInput from '../components/FormInput';
 
 const AboutUsButton = () => {
   const navigate = useNavigate();
@@ -40,8 +41,9 @@ const LogInButton = () => {
 
 const LoginCard = ({visible, setVisible}) => {
   const navigate = useNavigate();
+  const [emailValid, setEmailValid] = useState(true);
   const [loginCreds, setLoginCreds] = useState({
-    username: '',
+    email: '',
     password: ''
   });
   const [errorMessage, setErrorMessage] = useState('');
@@ -95,10 +97,15 @@ const LoginCard = ({visible, setVisible}) => {
         </span>
         <hr className="h-px my-4 bg-gray-200 border-0 dark:bg-gray-300" />
         <form className="mt-4" onSubmit={handleFormSubmit}>
-          <div className="mb-4">
-            <label htmlFor="username" className="block text-lg">Username</label>
-            <input type="text" id="username" name="username" value={loginCreds.username} onChange={handleFormChange} className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500" placeholder="Your username" required />
-          </div>
+          <FormInput
+            name="email"
+            label="Email address"
+            placeholder="Your email address"
+            handleChange={handleFormChange}
+            credObj={loginCreds}
+            onBlur={() => setEmailValid(emailValidator.validate(loginCreds.email))}
+            formStyling={emailValid || loginCreds.email === '' ? '' : 'border border-red-600'}
+          />
           <div className="mb-4">
             <label htmlFor="password" className="block text-lg">Password</label>
             <input type="password" id="password" name="password" value={loginCreds.password} onChange={handleFormChange} className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500" placeholder="Your password" required />

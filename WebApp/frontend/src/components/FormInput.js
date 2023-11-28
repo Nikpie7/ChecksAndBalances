@@ -6,7 +6,7 @@ import {
 const FormInput = ({name, label, placeholder, handleChange, credObj, password, onFocus, onBlur, className, formStyling}) => {
   return (
     <div className={`mb-4 ${className}`}>
-      <label htmlFor={name} className="block">{label}</label>
+      <label htmlFor={name} className="text-lg block">{label}</label>
       <input
         type={password ? "password" : "text"}
         id={name}
