@@ -9,7 +9,6 @@ import FloatingLabelInput from '../../components/FloatingLabelInput';
 
 
 const ForgotPassScreen = () => {
-    const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [emptyInputs, setEmptyInputs] = useState([]);
     const [error, setError] = useState('');
@@ -19,8 +18,11 @@ const ForgotPassScreen = () => {
     
 
     const onResetPressed = () => {
+        //reset error
+        setError(null);
+        setEmptyInputs([]);
         //Validation to see if all fields are filled
-        const inputs = [username, email];
+        const inputs = [email];
         const emptyInputIndex = inputs.reduce((acc, input, index) => {
             if(input === ''){
                 acc.push(index);
@@ -29,7 +31,7 @@ const ForgotPassScreen = () => {
         }, []);
 
         if(emptyInputIndex.length > 0){
-            const inputNames = ['Username', 'Email'];
+            const inputNames = ['Email'];
             setEmptyInputs(emptyInputIndex);
             const emptyFields = emptyInputIndex.map(index => inputNames[index]);
             setError(`Please Fill out: ${emptyFields.join(', ')}`);
@@ -37,45 +39,35 @@ const ForgotPassScreen = () => {
             return;
         }
 
-        //Passed Validation
-        //gather up all fields
-        // bodyVariable = JSON.stringify({
-        //     "username": username,
-        //     "password": password,
-        //     "email": email,
-        //     "firstName": firstName,
-        //     "lastName": lastName,
-        //     "address": streetAddress,
-        //     "zipCode": zipCode,
-        // })
-        // console.log(bodyVariable);
+        bodyVariable = JSON.stringify({
+            "email":email
+        })
 
-        // //send data to server
-        // fetch('https://checksnbalances.us/api/register', {
-        //     method: 'POST',
-        //     headers: {
-        //         Accept: 'application/json',
-        //         'Content-Type': 'application/json',
-        //     },
-        //     body: bodyVariable,
-        // })
-        // .then(response => response.json())
-        // .then(data => {
-        //     console.log(data);
-        //     if(data.error == ""){
-        //         //redirect to log in screen
-        //         console.warn("Registration Complete! Check Email for Varification!");
-        //         navigation.navigate('SignIn');
-        //     }
-        //     else{
-        //         console.log("Email was not imputed correctly");
-        //         setError("Error: Email has incorect format\n(example@domain.com)");
-        //         setEmptyInputs([3])
-        //     }
-        // })
-        // .catch(error => {
-        // console.error(error);
-        // });
+        //send data to server
+        fetch('https://checksnbalances.us/api/send-password-reset', {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: bodyVariable,
+            
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                console.error('Error:', data.error);
+                setError("An error occurred while sending the reset link.");
+            } else {
+                console.log("Password reset link sent successfully!");
+                // Optionally, navigate the user to a confirmation screen
+                // navigation.navigate('ResetLinkSentConfirmation');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            setError("An error occurred while sending the reset link."); // Show an error message
+        });
     };
 
     return(
@@ -97,10 +89,8 @@ const ForgotPassScreen = () => {
                                 <Text style={styles.errorText}>{error}</Text>
                             </View>
                         )}
-                        <Text style={styles.normalText}>Input either your username or your email to get a password reset link sent to your email.</Text>
-                        <FloatingLabelInput style={[styles.input, emptyInputs.includes(0) && styles.inputError,]} label="Username" value={username} onChangeText={setUsername}/>
-                        <Text style={styles.normalText}>Or</Text>
-                        <FloatingLabelInput style={[styles.input, emptyInputs.includes(1) && styles.inputError,]} label="Email" value={email} onChangeText={setEmail}/>
+                        <Text style={styles.normalText}>Input the email address you used to sign up for a password reset link sent to your email.</Text>
+                        <FloatingLabelInput style={[styles.input, emptyInputs.includes(0) && styles.inputError,]} label="Email" value={email} onChangeText={setEmail}/>
                         
                         <TouchableOpacity onPress={onResetPressed} style={styles.button}>
                             <Text style={styles.buttonText}>Send Reset Link</Text>
