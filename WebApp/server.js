@@ -45,8 +45,8 @@ const sendVerificationEmail = (email, username) => {
 };
 
 
-const sendPasswordResetEmail = (email, username) => {
-  const token = jwt.sign({ username }, process.env.JWT_SECRET, { expiresIn: '1h' });
+const sendPasswordResetEmail = (email) => {
+  const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
   // Define the frontend URL for password reset
   const passwordResetUrl = `http://checksnbalances.us/resetPassword/${token}`;
@@ -125,8 +125,13 @@ const defaultInterests = [
 
 // Read Interests
 app.get('/api/readInterests', async (req, res) => {
+  // Takes in a token.
+  // Returns an array of the user's interests.
+  const { token } = req.query;
     try {
-        const { userId } = req.query;
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        var userId = decoded.id;
+
         const db = client.db('POOSBigProject');
         // const user = await db.collection('Users').findById(userId);
         const user = await db.collection('Users').findOne({ _id: new ObjectId(userId) });
@@ -196,12 +201,15 @@ app.get('/api/getBillVote', async (req, res, next) => {
   //let finalText = initText.concat("/", memberID)
 });
 
-// Update/Delete intersts (takes in userID and full array of new interests)
+// Update/Delete intersts (takes in token and full array of new interests)
 app.post('/api/updateInterests', async (req, res) => {
     try {
-        const { userId, interests } = req.body;
+        const { token, interests } = req.body;
         const db = client.db('POOSBigProject');
-
+        
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        var userId = decoded.id;
+        
         // Find the user in the Users collection by userId and update their interests
         const user = await db.collection('Users').findOneAndUpdate(
             { _id: new ObjectId(userId)},
@@ -374,7 +382,7 @@ app.post('/api/mongoBill', async (req, res, next) =>
   
     } catch(e) {
       if (e.code === 11000) {
-        error = 'User already exists';
+        error = 'Bill already exists';
       }
       else {
         error = e.toString();
@@ -985,12 +993,15 @@ app.post('/api/addcard', async (req, res, next) =>
 });
 
 app.post('/api/getReps', async (req, res, next) => {
-  // Incoming: Address
+  // Incoming: token
   // Outgoing: President, Senator1, Senator2, Representative
   try {
-    const { address } = req.body;
+    const { token } = req.body;
     const apiKey = process.env.GOOGLE_KEY;
 
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    var address = decoded.address;
+    
     const response = await axios.get('https://civicinfo.googleapis.com/civicinfo/v2/representatives', {
       params: {
         address,
@@ -1074,20 +1085,38 @@ app.post('/api/login', async (req, res, next) => {
 
     // Assign user details to variables
     var id = results[0]._id.toString();
-    var fn = results[0].FirstName;
-    var ln = results[0].LastName;
-    var em = results[0].Email;
-    var vf = results[0].Verified;
-    var ad = results[0].Address;
-    var zc = results[0].ZipCode;
+    var firstName = results[0].FirstName;
+    var lastName = results[0].LastName;
+    var email = results[0].Email;
+    var address = results[0].Address;
+  
+    var token = jwt.sign({ id, firstName, lastName, username, password, email, address }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
   } else {
     error = 'Login failed: Invalid username or password.';
     return res.status(401).json({ error: error });
   }
   
-  var ret = { id: id, firstName: fn, lastName: ln, email: em, verified: vf, address: ad, zipCode: zc, error: error };
+  var ret = { token: token };
   res.status(200).json(ret);
+});
+
+app.get('/api/getUser', async (req, res, next) => {
+  // incoming: token
+  // outgoing: firstName, lastName, email, address, error
+  try 
+  {
+    const {token} = req.query;
+  
+  const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+  var ret = { firstName: decoded.firstName, lastName: decoded.lastName, username: decoded.username, email: decoded.email, address: decoded.address };
+  res.status(200).json(ret)
+  }
+  catch{
+    error = 'Invalid JWT';
+    return res.status(401).json({ error: error });
+  }
 });
 
 
@@ -1143,16 +1172,16 @@ app.get('/api/verify-email', async (req, res) => {
 
 app.post('/api/send-password-reset', async (req, res, next) =>
 {
-  // incoming: username, email
+  // incoming: email
   // outgoing: id, error
 
-  const { username, email} = req.body;
+  const {email} = req.body;
   
   var error = '';
   
    try {
     // Send password reset email
-    await sendPasswordResetEmail(email, username);
+    await sendPasswordResetEmail(email);
   } catch(e) {
     error = e.toString();
   }
@@ -1297,14 +1326,14 @@ app.get('/api/getDistrict', async (request, response) => {
 });
 /* MAP API */
 
-
+// (WE HAVE NO IDEA WHAT THIS DOES, SO DON'T TOUCH)
 app.get('/*', function(req, res) {
   res.sendFile(path.join(__dirname, '/dist/index.html'), function(err) {
     if (err) {
       res.status(500).send(err)
     }
   })
-})
+});
 
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const uri = process.env.MONGODB_URI;
