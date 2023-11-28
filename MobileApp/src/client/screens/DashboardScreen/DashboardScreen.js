@@ -1,15 +1,15 @@
 /* eslint-disable prettier/prettier */
-import React, { useState, useContext } from 'react';
-import { View, Text, TouchableOpacity, TextInput, ScrollView, Image, DrawerLayoutAndroid, StyleSheet, useWindowDimensions } from 'react-native';
+import React, { useRef, useState, useContext } from 'react';
+import { View, Text, TouchableOpacity, TextInput, ScrollView, Image, DrawerLayoutAndroid, StyleSheet, Modal as RNModal } from 'react-native';
 import { useNavigation, NavigationContainer } from '@react-navigation/native';
 import { TabNavigator } from 'react-navigation';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import  Modal  from 'react-native-modal';
-import { CustomHamburgerIcon } from '../../components/HamburgerButton/CustomHamburgerIcon';
 import Background from '../../../../assets/images/background.png';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import pic from '../../../../assets/images/ProfileImage.png';
 import { UserContext } from '../../components/UserContext/UserContext';
+import Icon from 'react-native-vector-icons/Ionicons';
+import * as Keychain from 'react-native-keychain';
 
 function InterestsScreen() {
   return (
@@ -38,32 +38,37 @@ function AllBillsScreen() {
   );
 }
 
+const NavigationView = ({ onCloseDrawer, onLogOutPressed, onInterestsPressed }) => (
+  <View style={styles.navigationContainer}>
+    <TouchableOpacity style={styles.closeButton} onPress={onCloseDrawer}>
+      {/* Icon for close button */}
+      <Icon name="close" size={30} color="black" />
+    </TouchableOpacity>
+    <View style={styles.drawerButtons}>
+      <TouchableOpacity style={styles.drawerButton} onPress={onInterestsPressed}>
+        <Text>Change Interests</Text>
+      </TouchableOpacity>
+    </View>
+    <View style={styles.drawerButtons}>
+      <TouchableOpacity style={styles.drawerButton} onPress={onLogOutPressed}>
+        <Text>Log Out</Text>
+      </TouchableOpacity>
+    </View>
+    
+  </View>
+);
+
 const DashboardScreen = () => {
   const { user } = useContext(UserContext);
+  const drawer = useRef(null);
+  const [isLogoutModalVisible, setLogoutModalVisible] = useState(false);
 
   const navigation = useNavigation();
-  const [isProfileModalVisible, setProfileModalVisible] = useState(false);
-  const [isHamburgerModalVisible, setHamburgerModalVisible] = useState(false);
   const [activeTab, setActiveTab] = useState("Home");
 
   const congress = 118;
   const Tab = createBottomTabNavigator();
   
-
-  const {height} = useWindowDimensions();
-
-  const toggleProfileModal = () => {
-    setProfileModalVisible(!isProfileModalVisible);
-  };
-
-  const handleHamburgerPress = () => {
-    toggleHamburgerModal();
-  };
-
-  const handleProfilePress = () => {
-    // Show the profile options modal
-    toggleProfileModal();
-  };
 
   const handleOptionSelect = (option) => {
     // Handle the selected option
@@ -76,10 +81,6 @@ const DashboardScreen = () => {
   const handleSearch = () => {
     // TODO
     console.log('beans! Can\'t search quite yet but will be able to soon!');
-  };
-
-  const toggleHamburgerModal = () => {
-    setHamburgerModalVisible(!isHamburgerModalVisible);
   };
 
   const handleTabChange = (tab) => {
@@ -154,59 +155,88 @@ const DashboardScreen = () => {
     console.warn("Going to profile");
   };
   const onInterestsPressed = () => {
+    closeDrawer();
+    setTimeout(() => {
     navigation.navigate('Interests');
+    }, 300);
     console.warn("Going to interests page");
   }
 
+  const onLogOutPressed = () => {
+    closeDrawer();
+    setTimeout(() => {
+    setLogoutModalVisible(true);
+    }, 300);
+  }
+  const onLogOutCancelPressed = () => {
+    setLogoutModalVisible(false);
+  }
+  const onLogOutConfirmPressed = () => {
+    Keychain.resetGenericPassword();
+    navigation.navigate('SignIn');
+  }
+
+  const closeDrawer = () => {
+    if (drawer.current) {
+      drawer.current.closeDrawer();
+    }
+  };
+
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <Image source={Background} style={[styles.background]} resizeMode="cover"/>
+    <DrawerLayoutAndroid
+      ref={drawer}
+      drawerWidth={300}
+      drawerPosition={'right'}
+      renderNavigationView={() => <NavigationView onCloseDrawer={closeDrawer} onLogOutPressed={onLogOutPressed} onInterestsPressed={onInterestsPressed}/>}>
+      <SafeAreaView style={{ flex: 1 }}>
+        <Image source={Background} style={[styles.background]} resizeMode="cover"/>
 
-      {/* Header section */}
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 16 }}>
-        <TouchableOpacity onPress={onProfilePressed}>
-          {/* <Image source={pic} resizeMode='contain'/> */}
-          <View style={styles.userInfoContainer}>
-            <View style={styles.imageContainer}>
-              <Image source={pic} style={{ width: '100%', height: '100%' }} resizeMode='cover' />
+        {/* Header section */}
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 16 }}>
+          <TouchableOpacity onPress={onProfilePressed}>
+            {/* <Image source={pic} resizeMode='contain'/> */}
+            <View style={styles.userInfoContainer}>
+              <View style={styles.imageContainer}>
+                <Image source={pic} style={{ width: '100%', height: '100%' }} resizeMode='cover' />
+              </View>
+              <Text style={styles.user}>{user.firstName} {user.lastName}</Text>
             </View>
-            <Text style={styles.user}>{user.firstName} {user.lastName}</Text>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.hamburgerMenu} onPress={handleHamburgerPress}>
-          <View style={styles.hamburger}></View>
-          <View style={styles.hamburger}></View>
-          <View style={styles.hamburger}></View>
-        </TouchableOpacity>
-      </View>
-
-      {/* Search bar */}
-      <View>
-        <TextInput placeholder="Search..." style={ styles.searchBar } /*Add onclick *//>
-          <View source={ CustomHamburgerIcon }>
-            { CustomHamburgerIcon }
-          </View>
-      </View>
-
-      {/* Modal for hamburger menu options */}
-      <Modal isVisible={isHamburgerModalVisible} onBackdropPress={toggleHamburgerModal}>
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <TouchableOpacity onPress={onInterestsPressed}>
-            <Text>Change Interests</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => handleOptionSelect('Option 2')}>
-            <Text>Option 2</Text>
+          <TouchableOpacity onPress={() => drawer.current.openDrawer()}>
+            <Icon name="menu" size={40} color="black" />
           </TouchableOpacity>
         </View>
-      </Modal>
 
-      {/* Feed Section */}
-        <Tab.Navigator>
-          <Tab.Screen name="Interests" component={InterestsScreen}/>
-          <Tab.Screen name="Votes" component={VotesScreen}/>
-          <Tab.Screen name="All Bills" component={AllBillsScreen}/>
-        </Tab.Navigator>
+        {/* Search bar */}
+        <View>
+          <TextInput placeholder="Search..." style={ styles.searchBar } /*Add onclick *//>
+        </View>
+
+        {/* Feed Section */}
+          <Tab.Navigator>
+            <Tab.Screen name="Interests" component={InterestsScreen}/>
+            <Tab.Screen name="Votes" component={VotesScreen}/>
+            <Tab.Screen name="All Bills" component={AllBillsScreen}/>
+          </Tab.Navigator>
       </SafeAreaView>
+
+      <RNModal visible={isLogoutModalVisible} animationType="fade" transparent={true} onRequestClose={() => setLogoutModalVisible(false)}>
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Are you sure you want to log out?</Text>
+            <View style={styles.modalButtons}>
+              <TouchableOpacity style={styles.modalButton} onPress={onLogOutConfirmPressed}>
+                <Text style={styles.buttonText}>Confirm</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.modalButton} onPress={onLogOutCancelPressed}>
+                <Text style={styles.buttonText}>Cancel</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </RNModal>
+
+    </DrawerLayoutAndroid>
   );
 };
 
@@ -284,6 +314,71 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     width: '85%',
     backgroundColor: 'white',
+  },
+  navigationContainer: {
+    backgroundColor: '#ffffff',
+    flex: 1,
+  },
+  paragraph: {
+    padding: 16,
+    fontSize: 15,
+    textAlign: 'center',
+  },
+  drawerButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 18,
+    borderBottomWidth: 4,
+    borderBottomColor: '#ccc', // Adjust border color if needed
+  },
+  drawerButton: {
+    padding: 8,
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    padding: 8,
+    borderRadius: 20,
+    backgroundColor: 'lightgray',
+    zIndex: 1,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    padding: 20,
+    width: '80%',
+    alignItems: 'center',
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: '100%',
+  },
+  modalButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: '#333',
+    backgroundColor: '#eee',
+  },
+  buttonText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
 });
 

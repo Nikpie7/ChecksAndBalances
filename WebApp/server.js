@@ -22,8 +22,8 @@ const ses = new AWS.SES({ apiVersion: '2010-12-01' });
 
 const jwt = require('jsonwebtoken');
 
-const sendVerificationEmail = (email, username) => {
-  const token = jwt.sign({ username }, process.env.JWT_SECRET, { expiresIn: '1h' });
+const sendVerificationEmail = (email) => {
+  const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
   // Define the frontend URL for email verification (change this to your actual frontend URL)
   const verificationUrl = `https://checksnbalances.us/verifyToken/${token}`;
@@ -35,8 +35,8 @@ const sendVerificationEmail = (email, username) => {
       Subject: { Data: 'Email Verification' },
       Body: {
         // Include both Text and Html versions for email clients that don't support HTML
-        Text: { Data: `YOO PLEASE WORK Please verify your email by visiting the following link: ${verificationUrl}` },
-        Html: { Data: `<html><body><p>Please verify your email by clicking the following link: <a href="${verificationUrl}">Verify Email</a></p></body></html>` }
+        Text: { Data: `Please verify your email by visiting the following link: ${verificationUrl}` },
+        Html: { Data: `<html><body><p>Please verify your email by clicking the following link: <a href="${verificationUrl}">Verify Email</a></p><p>This link will expire in 1 hour.</p></body></html>` }
       }
     }
   };
@@ -1066,15 +1066,15 @@ app.get('/api/getBills', async (req, res, next) => {
 });
 
 app.post('/api/login', async (req, res, next) => {
-  // incoming: username, password
-  // outgoing: id, FirstName, LastName, Email, Verified, Address, ZipCode, error
+  // incoming: email, password
+  // outgoing: id, FirstName, LastName, Email, Verified, Address, error
 
   var error = '';
 
-  const { username, password } = req.body;
+  const { email, password } = req.body;
 
   const db = client.db('POOSBigProject');
-  const results = await db.collection('Users').find({ Login: username, Password: password }).toArray();
+  const results = await db.collection('Users').find({ Email: email, Password: password }).toArray();
 
   if (results.length > 0) {
     // Check if the user is verified
@@ -1087,13 +1087,12 @@ app.post('/api/login', async (req, res, next) => {
     var id = results[0]._id.toString();
     var firstName = results[0].FirstName;
     var lastName = results[0].LastName;
-    var email = results[0].Email;
     var address = results[0].Address;
   
-    var token = jwt.sign({ id, firstName, lastName, username, password, email, address }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    var token = jwt.sign({ id, firstName, lastName, password, email, address }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
   } else {
-    error = 'Invalid username or password.';
+    error = 'Invalid email or password.';
     return res.status(401).json({ error: error });
   }
   
@@ -1110,7 +1109,7 @@ app.get('/api/getUser', async (req, res, next) => {
   
   const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-  var ret = { firstName: decoded.firstName, lastName: decoded.lastName, username: decoded.username, email: decoded.email, address: decoded.address };
+  var ret = { firstName: decoded.firstName, lastName: decoded.lastName, email: decoded.email, address: decoded.address };
   res.status(200).json(ret)
   }
   catch{
@@ -1122,12 +1121,12 @@ app.get('/api/getUser', async (req, res, next) => {
 
 app.post('/api/register', async (req, res, next) =>
 {
-  // incoming: username, password, email, firstName, lastName, address, zipCode
+  // incoming: email, password, firstName, lastName, address
   // outgoing: id, error
 
-  const { firstName, lastName, username, email, password, address, zipCode } = req.body;
+  const { firstName, lastName, email, password, address } = req.body;
   
-  const newUser = {FirstName: firstName, LastName: lastName, Login: username, Email: email, Password: password, Address: address, Verified: false, ZipCode: zipCode, Interests: defaultInterests};
+  const newUser = {FirstName: firstName, LastName: lastName, Email: email, Password: password, Address: address, Verified: false, Interests: defaultInterests};
   var error = '';
   
    try {
@@ -1135,9 +1134,13 @@ app.post('/api/register', async (req, res, next) =>
     const result = await db.collection('Users').insertOne(newUser);
 
     // Send verification email
-    await sendVerificationEmail(email, username);
+    await sendVerificationEmail(email);
   } catch(e) {
-    error = e.toString();
+    if (e.code === 11000) {
+      error = 'User with that email already exists.';
+    }
+    else
+      error = e.toString();
   }
 
   var ret = { error: error };
@@ -1153,14 +1156,12 @@ app.get('/api/verify-email', async (req, res) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const username = decoded.username;
-
-    console.log(username);
+    const email = decoded.email;
 
     // Update user verification status
     const db = client.db('POOSBigProject');
     await db.collection('Users').updateOne(
-      { Login: username },
+      { Email: email },
       { $set: { Verified: true } }
     );
 
