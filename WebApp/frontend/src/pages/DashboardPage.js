@@ -56,16 +56,16 @@ const DashboardPage = () => {
         <div className="col-start-1 col-end-2 row-start-2 row-end-9">
           <SideBar />
         </div>
-        <div className="hidden lg:block lg:col-start-2 lg:col-end-3 lg:row-start-2 lg:row-end-9">
+        <div className="hidden lg:row-start-1 lg:mt-4 lg:block lg:col-start-2 lg:col-end-3 lg:row-start-2 lg:row-end-9">
           <WelcomeMessage />
         </div>
 
-        {/* <div className="col-start-3 col-end-9 row-start-1 row-end-2 ">
+        <div className="col-start-3 mt-4 col-span-2 lg:justify-start lg:mr-20">
           <BillListTab setBillTableToggle={setBillTableToggle} />
-        </div> */}
+        </div>
 
-        <div className="col-start-2 col-end-9 row-start-2 row-end-9 lg:col-start-3 lg:col-span-4 overflow-y-auto lg:my-10 lg:mr-20">
-        <BillListTab setBillTableToggle={setBillTableToggle} />
+        <div className="col-start-2 col-end-9 row-start-2 row-end-9 lg:col-start-3 lg:col-span-4 overflow-y-auto lg:mb-10 lg:mr-20">
+        
           {billTableToggle === "interests" && (
             <InterestBillList
               clickedBillData={clickedBillData}
@@ -102,9 +102,9 @@ const BillListTab = ({ setBillTableToggle }) => {
   };
 
   return (
-    <div className="grid grid-cols-2 gap-2 rounded-xl bg-gray-200">
+    <div className="grid grid-cols-2 rounded-xl bg-gray-200">
         <div >
-            <input type="radio" name="option" id="Interests" value="Interests" className="peer hidden" onClick={handleInterestsToggle} />
+            <input type="radio" name="option" id="Interests" value="Interests" className="peer hidden" onClick={handleInterestsToggle} checked/>
             <label for="Interests" className="block cursor-pointer select-none rounded-xl p-2 text-center peer-checked:bg-blue-500 peer-checked:font-bold peer-checked:text-white">Interests</label>
         </div>
 
