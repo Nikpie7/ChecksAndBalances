@@ -4,8 +4,20 @@ import {
 } from 'react';
 import FormInput from './FormInput.js';
 import authService from '../utils/authService.js';
+import * as emailValidator from 'email-validator';
+import NewPasswordInput from './NewPasswordInput.js';
+import passwordValidator from 'password-validator';
+import { useNavigate } from 'react-router-dom';
+const schema = new passwordValidator();
+schema
+.is().min(8)                                    // Minimum length 8
+.is().max(100)                                  // Maximum length 100
+.has().uppercase()                              // Must have uppercase letters
+.has().lowercase()                              // Must have lowercase letters
+.has().digits()                                // Must have digits
 
-const RegistrationCard = ({className}) => {
+const RegistrationCard = ({userData, className}) => {
+  const navigate = useNavigate();
   const [loginCreds, setLoginCreds] = useState({
     username: '',
     password: '',
@@ -16,6 +28,9 @@ const RegistrationCard = ({className}) => {
     address: '',
     zipCode: ''
   });
+  const [statusMessage, setStatusMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [emailValid, setEmailValid] = useState(true);
   const handleFormChange = event => {
     const { name, value } = event.target;
     setLoginCreds({
@@ -27,17 +42,26 @@ const RegistrationCard = ({className}) => {
     event.preventDefault();
     console.log(loginCreds);
     if (loginCreds.password.localeCompare(loginCreds.passwordConfirm) !== 0) {
-      alert('Passwords do not match');
+      setErrorMessage('Passwords do not match');
+      return;
+    }
+    if (!emailValidator.validate(loginCreds.email)) {
+      setErrorMessage('Invalid email');
+      return;
+    }
+    if (!schema.validate(loginCreds.password)) {
+      setErrorMessage('Password does not meet complexity requirements');
       return;
     }
     delete loginCreds.passwordConfirm;
+    // FORMAT LOGINCREDS OBJECT
     authService.postRegister(loginCreds)
       .then(userData => {
-        alert('Registration successful! Please log in.');
-        window.location.href = './';
+        navigate('/dashboard');
       })
-      .catch(error => console.log(error));
+      .catch(error => setErrorMessage(error.toString()));
   }
+  console.log(emailValid);
   return (
     <div className={`w-[30rem] p-8 shadow-lg bg-white rounded-xl ${className}`}>
       <h2 className="font-semibold text-2xl">
@@ -51,28 +75,15 @@ const RegistrationCard = ({className}) => {
           handleChange={handleFormChange}
           credObj={loginCreds}
         />
-        <FormInput
-          name="password"
-          label="Password"
-          placeholder="Enter a password"
-          handleChange={handleFormChange}
-          credObj={loginCreds}
-          password
-        />
-        <FormInput
-          name="passwordConfirm"
-          label="Confirm password"
-          placeholder="Re-enter password"
-          handleChange={handleFormChange}
-          credObj={loginCreds}
-          password
-        />
+        <NewPasswordInput passwordObj={loginCreds} setPasswordObj={handleFormChange} />
         <FormInput
           name="email"
           label="Email address"
           placeholder="Enter your email address"
           handleChange={handleFormChange}
           credObj={loginCreds}
+          onBlur={() => setEmailValid(emailValidator.validate(loginCreds.email))}
+          formStyling={emailValid || loginCreds.email === '' ? '' : 'border border-red-600'}
         />
         <span className="max-h-min flex gap-2 justify-between">
           <FormInput
@@ -90,29 +101,14 @@ const RegistrationCard = ({className}) => {
             credObj={loginCreds}
           />
         </span>
-        <span className="flex justify-between">
-          <FormInput
-            name="address"
-            label="Street address"
-            placeholder="123 Main Street, Orlando, FL"
-            handleChange={handleFormChange}
-            credObj={loginCreds}
-            className="min-w-[75%]"
-          />
-          <FormInput
-            name="zipCode"
-            label="Zip code"
-            placeholder="12345"
-            handleChange={handleFormChange}
-            credObj={loginCreds}
-            className="max-w-lg w-full ml-2"
-          />
-        </span>
-        <hr className="h-px my-4 bg-gray-200 border-0 dark:bg-gray-300" />
+        <p className="text-red-500">{errorMessage}</p>
+        <p>{statusMessage}</p>
+      <hr className="h-px my-4 bg-gray-200 border-0 dark:bg-gray-300" />
         <button
           type="submit"
-          className="w-full py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none"
+          className="w-full font-semibold py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none"
         >
+
           Register
         </button>
       </form>

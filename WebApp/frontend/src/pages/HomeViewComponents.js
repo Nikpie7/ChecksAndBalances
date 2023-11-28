@@ -1,14 +1,15 @@
 import {
-  react, useState
+  react, useEffect, useState
 } from 'react';
-import logo from '../assets/headerLogo.png';
-import { MdOutlineClose, MdOutlineInfo, MdOutlineLogin, MdOutlineArrowDownward } from 'react-icons/md';
+import { MdOutlineClose, MdOutlineInfo, MdOutlineLogin, MdOutlineArrowDownward, MdOutlineArrowBack } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
+import * as emailValidator from 'email-validator';
 
-import axios from 'axios';
 import Card from '../components/Card';
 import authService from '../utils/authService'
 
+import logo from '../assets/headerLogo.png';
 
 import profilePic_Juni from '../assets/teammatePhotos/Juni.png';
 import profilePic_Tim from '../assets/teammatePhotos/Tim.png';
@@ -38,10 +39,19 @@ const LogInButton = () => {
 };
 
 const LoginCard = ({visible, setVisible}) => {
+  const navigate = useNavigate();
   const [loginCreds, setLoginCreds] = useState({
     username: '',
     password: ''
   });
+  const [errorMessage, setErrorMessage] = useState('');
+  const [resetVisible, setResetVisible] = useState(false);
+  useEffect(() => {
+    if (!visible) {
+      setErrorMessage('');
+      setResetVisible(false);
+    }
+  }, [visible]);
   const handleFormChange = event => {
     const { name, value } = event.target;
     setLoginCreds({
@@ -54,21 +64,25 @@ const LoginCard = ({visible, setVisible}) => {
     console.log(loginCreds);
     authService.postLogin(loginCreds)
       .then(userData => {
-        if (userData.id === -1) {
-          alert('Invalid username and/or password');
-        }
-        sessionStorage.setItem('userData', JSON.stringify(userData));
-        window.location.href = './cards';
+        console.log(userData);
+        // if (userData.id === -1) {
+        //   alert('Invalid username and/or password');
+        // }
+        // sessionStorage.setItem('userData', JSON.stringify(userData));
+        // navigate('/Dashboard');
       })
-      .catch(error => console.log(error));
+      .catch(error => {
+        setErrorMessage(error.response.data.error);
+      });
   }
 
   if (!visible)
     return null;
 
   return (
-    <div onClick={() => setVisible(false)} className="w-[100vw] h-[100vh] bg-black bg-opacity-25 absolute z-10 inset-0">
+    <div onClick={e => { if (e.target === e.currentTarget) setVisible(false);} } className="w-[100vw] h-[100vh] bg-black bg-opacity-25 absolute z-10 inset-0">
       <Card className="fixed inset-1/2 -translate-x-1/2 -translate-y-1/2 w-1/3 h-min">
+        {!resetVisible ? <>
         <span className="flex justify-between items-center">
           <h2 className="font-semibold text-2xl">
             Sign in to Checks & Balances
@@ -82,50 +96,77 @@ const LoginCard = ({visible, setVisible}) => {
         <hr className="h-px my-4 bg-gray-200 border-0 dark:bg-gray-300" />
         <form className="mt-4" onSubmit={handleFormSubmit}>
           <div className="mb-4">
-            <label htmlFor="username" className="block text-gray-700">
-              Username
-            </label>
-            <input
-              type="text"
-              id="username"
-              name="username"
-              value={loginCreds.username}
-              onChange={handleFormChange}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500"
-              placeholder="Your username"
-              required
-            />
+            <label htmlFor="username" className="block text-lg">Username</label>
+            <input type="text" id="username" name="username" value={loginCreds.username} onChange={handleFormChange} className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500" placeholder="Your username" required />
           </div>
           <div className="mb-4">
-            <label htmlFor="password" className="block text-gray-700">
-              Password
-            </label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              value={loginCreds.password}
-              onChange={handleFormChange}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500"
-              placeholder="Your password"
-              required
-            />
+            <label htmlFor="password" className="block text-lg">Password</label>
+            <input type="password" id="password" name="password" value={loginCreds.password} onChange={handleFormChange} className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500" placeholder="Your password" required />
           </div>
-          <a>
-            Forgot password?
-          </a>
+          <p className="text-red-500">{errorMessage}</p>
           <hr className="h-px my-4 bg-gray-200 border-0 dark:bg-gray-300" />
-          <button
-            type="submit"
-            className="w-full py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none"
-          >
-            Login
-          </button>
-        </form>
+          <span className="flex justify-between items-center">
+            <a onClick={() => setResetVisible(true)} className="text-blue-500 text-lg hover:cursor-pointer">Forgot password?</a>
+            <button type="submit" className="w-1/4 py-2 text-white bg-blue-500 rounded-lg font-semibold hover:bg-blue-600 focus:outline-none">Login</button>
+          </span>
+        </form></>
+        : <ResetPasswordForm setVisible={setVisible} setResetVisible={setResetVisible} />
+        }
       </Card>
     </div>
   );
 };
+
+const ResetPasswordForm = ({setVisible, setResetVisible}) => {
+  const [resetEmail, setResetEmail] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [statusMessage, setStatusMessage] = useState('');
+  const handleResetSubmit = e => {
+    e.preventDefault();
+    if (!emailValidator.validate(resetEmail)) {
+      setErrorMessage('Please enter a valid email address.');
+      return;
+    }
+    authService.sendResetEmail({email: resetEmail})
+      .then(response => {
+        console.log(response.error);
+        if (response.error === '') {
+          setErrorMessage('');
+          setStatusMessage('Email has been sent. Please check your inbox.');
+          return;
+        }
+        setErrorMessage(response.error);
+      })
+      .catch(error => {
+        setErrorMessage(error.error);
+      });
+  }
+  return (
+    <><span className="flex justify-between items-center">
+      <h2 className="font-semibold text-2xl">
+        Reset password
+      </h2>
+      <button onClick={() => setVisible(false)} > <MdOutlineClose className="text-2xl" /></button>
+    </span>
+    <p className="pt-2">Please enter the email associated with your account to obtain a reset link.</p>
+    <hr className="h-px my-4 bg-gray-200 border-0 dark:bg-gray-300" />
+    <form className="mt-4" onSubmit={handleResetSubmit}>
+      <div className="mb-4">
+        <label htmlFor="email" className="block text-lg">Email</label>
+        <input type="text" id="email" name="email" value={resetEmail} onChange={e => setResetEmail(e.target.value)} className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500" placeholder="Your email" required />
+      </div>
+      <p className="text-red-500 mb-4">{errorMessage}</p>
+      <p className="mb-4">{statusMessage}</p>
+      <span className="flex justify-between items-center">
+        <button type="button" className="flex text-blue-500 w-max items-center gap-1" onClick={() => setResetVisible(false)} >
+          <MdOutlineArrowBack className="text-xl" />
+          <p className="text-lg">Back to login</p>
+        </button>
+        <button type="submit" className="w-max px-4 py-2 text-white bg-blue-500 rounded-lg font-semibold hover:bg-blue-600 focus:outline-none">Send reset link</button>
+      </span>
+    </form></>
+  );
+}
 
 const AboutUsCard = ({visible, setVisible}) => {
 
@@ -133,7 +174,7 @@ const AboutUsCard = ({visible, setVisible}) => {
     return null;
 
   return (
-    <div onClick={() => setVisible(false)} className="w-[100vw] h-[100vh] bg-black bg-opacity-25 absolute z-10 inset-0">
+    <div onClick={ e => { if (e.target === e.currentTarget) setVisible(false);} } className="w-[100vw] h-[100vh] bg-black bg-opacity-25 absolute z-10 inset-0">
       <Card className="fixed inset-1/2 -translate-x-1/2 -translate-y-1/2 w-7/12 h-min">
         <span className="flex justify-between items-center">
           <h2 className="font-semibold text-2xl">

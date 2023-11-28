@@ -46,6 +46,7 @@ const sendVerificationEmail = (email, username) => {
 
 
 const sendPasswordResetEmail = (email) => {
+  console.log(email);
   const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
   // Define the frontend URL for password reset
@@ -55,15 +56,14 @@ const sendPasswordResetEmail = (email) => {
     Source: 'noreply@checksnbalances.us', // Your verified email in SES
     Destination: { ToAddresses: [email] },
     Message: {
-      Subject: { Data: 'Password Reset' },
+      Subject: { Data: 'Password reset' },
       Body: {
         // Include both Text and Html versions for email clients that don't support HTML
         Text: { Data: `Please reset your password by visiting the following link: ${passwordResetUrl}` },
-        Html: { Data: `<html><body><p>Please reset your password by visiting the following link: <a href="${passwordResetUrl}">Reset Password</a></p></body></html>` }
+        Html: { Data: `<html><body><p>Please reset your password by visiting the following link: <a href="${passwordResetUrl}">Reset Password</a></p><p>This link will expire in 1 hour.</p></body></html>` }
       }
     }
   };
-
   return ses.sendEmail(params).promise();
 };
 
@@ -1080,7 +1080,7 @@ app.post('/api/login', async (req, res, next) => {
     // Check if the user is verified
     if (!results[0].Verified) {
       error = 'Account not verified. Please check your email for the verification link.';
-      return res.status(401).json({ error: error });
+      return res.status(403).json({ error: error });
     }
 
     // Assign user details to variables
@@ -1093,7 +1093,7 @@ app.post('/api/login', async (req, res, next) => {
     var token = jwt.sign({ id, firstName, lastName, username, password, email, address }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
   } else {
-    error = 'Login failed: Invalid username or password.';
+    error = 'Invalid username or password.';
     return res.status(401).json({ error: error });
   }
   
@@ -1193,11 +1193,7 @@ app.post('/api/send-password-reset', async (req, res, next) =>
 
 
 app.get('/api/password-reset', async (req, res) => {
-  
   const { token, newPassword } = req.query;
-  console.error(token);
-
-  console.log(token);
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
