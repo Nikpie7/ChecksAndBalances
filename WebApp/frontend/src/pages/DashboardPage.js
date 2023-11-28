@@ -1,12 +1,11 @@
 import React, { useState, createContext } from "react";
 
-import NavBar from "../components/NavBar.js";
 import InterestBillList from "../components/billList/InterestBillList.js";
 import RepBillList from "../components/billList/RepBillList.js";
 import SideBar from "../components/SideBar.js";
 import WelcomeMessage from "../components/WelcomeMessage.js";
 import BillModal from "../components/BillModal.js";
-import SearchIcon from "../components/SearchIcon.js";
+import SearchIcon from "../components/searchBar/SearchIcon.js";
 import FloatingSearchBar from "../components/searchBar/FloatingSearchBar.js";
 import SearchResultList from "../components/searchBar/SearchResultList.js";
 
@@ -116,13 +115,16 @@ const DashboardPage = () => {
           setBillModalOpen={setBillModalOpen}
           setClickedBillData={setClickedBillData}
         />
-        {searchResults && searchResults.length > 0 && (
-          <SearchResultList
-            searchResults={searchResults}
-            setBillModalOpen={setBillModalOpen}
-            setClickedBillData={setClickedBillData}
-          />
-        )}
+        
+          {searchResults && searchResults.length > 0 && (
+            <SearchResultList
+              setSearchBarOpen={setSearchBarOpen}
+              searchResults={searchResults}
+              setBillModalOpen={setBillModalOpen}
+              setClickedBillData={setClickedBillData}
+            />
+          )}
+        
       </div>
     </div>
   );
@@ -177,45 +179,6 @@ const BillListTab = ({ setBillTableToggle }) => {
         </label>
       </div>
     </div>
-
-    // <div className="w-2/3">
-    //   <div className="relative right-0">
-    //     <ul
-    //       className="relative flex list-none flex-wrap rounded-xl bg-blue-gray-50/60 p-1"
-    //       data-tabs="tabs"
-    //     >
-    //       {/* Interests toggle */}
-    //       <li
-    //         className="z-30 flex-auto text-center"
-    //         onClick={handleInterestsToggle}
-    //       >
-    //         <a
-    //           className="text-slate-700 z-30 mb-0 flex w-full cursor-pointer items-center justify-center rounded-lg border-0 bg-inherit px-0 py-1 transition-all ease-in-out"
-    //           data-tab-target=""
-    //           role="tab"
-    //           aria-selected="true"
-    //           href="#top"
-    //         >
-    //           <InterestsSvg className/>
-    //           <span className="ml-1">Interests</span>
-    //         </a>
-    //       </li>
-    //       {/* Reps toggle */}
-    //       <li className="z-30 flex-auto text-center" onClick={handleRepsToggle}>
-    //         <a
-    //           className="text-slate-700 z-30 mb-0 flex w-full cursor-pointer items-center justify-center rounded-lg border-0 bg-inherit px-0 py-1 transition-all ease-in-out"
-    //           data-tab-target=""
-    //           role="tab"
-    //           aria-selected="false"
-    //           href="#top"
-    //         >
-    //           <RepsSvg />
-    //           <span className="ml-1">Reps</span>
-    //         </a>
-    //       </li>
-    //     </ul>
-    //   </div>
-    // </div>
   );
 };
 
