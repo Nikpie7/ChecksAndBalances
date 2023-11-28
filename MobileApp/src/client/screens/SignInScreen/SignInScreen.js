@@ -20,7 +20,7 @@ const SignInScreen = () => {
     const onLogInPressed = () => {
         setError(null);
         setVerifError(false);
-        bodyVariable = JSON.stringify({"username": username,"password": password,})
+        bodyVariable = JSON.stringify({"email": username,"password": password,})
         
         console.log(bodyVariable);
         //Validate the user
