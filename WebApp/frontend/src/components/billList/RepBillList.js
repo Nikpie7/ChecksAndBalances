@@ -30,53 +30,52 @@ const CONGRESS_NUM = 118;
 // Used to help pass state hooks for bill data down to child component
 const MyContext = createContext();
 
-const BillTable = ({ setClickedBillData, handleOpenBillModal }) => {
-  const [billTableToggle, setBillTableToggle] = useState('interests');
-  const [interestsBills, setInterestsBills] = useState([]);
-  const [repBills, setrepBills] = useState([]);
-
-
+const RepBillList = ({ setClickedBillData, handleOpenBillModal }) => {
   const {
-    data: interests,
+    data: reps,
     isLoading,
     isError,
-  } = useQuery(["interestsData", USER_TOKEN], () =>
-    dashboardService.getReadInterests(USER_TOKEN)
+  } = useQuery(["repsData", USER_TOKEN], () =>
+    dashboardService.getGetReps(USER_TOKEN)
   );
 
   if (isLoading) return <LoadingWheel />;
   if (isError) return <p>Error...</p>;
 
   // TODO: ADD BETTER STYLE IF USER HAS NO INTERESTS
-  if (interests === undefined) {
-    return <h1>Unable to load interests :(</h1>;
+  if (reps === undefined) {
+    return <h1>Unable to load your representative's bills. :(</h1>;
   }
 
-  let userInterestsTemp = [];
+  // Hold all user's politician.
+  const userPoliticians = [];
 
-  // Iterate through all interests and save ones user follows.
-  for (let i = 0; i < interests.Interests.length; i++) {
-    if (interests.Interests[i].value) {
-      userInterestsTemp.push(interests.Interests[i].InterestName);
-    }
-  }
+  const removeMiddleName = (politician) => {
+    // Break string at whitespace.
+    let strTokens = politician.split(" ");
 
-  if (userInterestsTemp.length === 0) {
-    return <h1>You have not interests. You should add some :)</h1>;
-  }
+
+    return strTokens[0] + " " + strTokens[strTokens.length - 1];
+  };
+
+  // Add to list for grouped query.
+  userPoliticians.push(removeMiddleName(reps.Senator1));
+  userPoliticians.push(removeMiddleName(reps.Senator2));
+  userPoliticians.push(removeMiddleName(reps.Representative));
 
   return (
     <div>
       <MyContext.Provider value={{ setClickedBillData, handleOpenBillModal }}>
         {/* LegistlationList */}
-        <BillList userInterests={userInterestsTemp} />
+        <BillList politicians={userPoliticians} />
       </MyContext.Provider>
     </div>
   );
 };
 
 const BillList = (props) => {
-  const userInterests = props.userInterests;
+  const politicians = props.politicians;
+
   let billListTemp = [];
 
   // Get bills for user's interests.
@@ -86,8 +85,8 @@ const BillList = (props) => {
     isError,
   } = useQuery(["billsData", interestsCategories], () =>
     Promise.all(
-      userInterests.map(async (interest) =>
-        dashboardService.postSearchBillsByInterest({ Interest: interest })
+      politicians.map(async (politician) =>
+        dashboardService.postSearchBillsSponsors({ member: politician })
       )
     )
   );
@@ -112,11 +111,16 @@ const BillList = (props) => {
   // Reverse so it's in descending order.
   billListTemp.reverse();
 
+  // Remove possible duplicates by converting to a set.
+  let billObjects = billListTemp.map(JSON.stringify);
+  let billSet = new Set(billObjects);
+  let billList = Array.from(billSet).map(JSON.parse);
+
   return (
     <div className="grid justify-normal">
       <ul>
         {/* Iterate through each interest. */}
-        {billListTemp.map((bill) => (
+        {billList.map((bill) => (
           <Bill key={bill._id} currBill={bill} />
         ))}
       </ul>
@@ -150,4 +154,4 @@ const Bill = (props) => {
   );
 };
 
-export default BillTable;
+export default RepBillList;
