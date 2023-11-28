@@ -7,17 +7,6 @@ import dashboardService from "../utils/dashboardService.js";
 import LoadingWheel from "./LoadingWheel.js";
 
 const BillModal = ({ isOpen, onClose, billData }) => {
-  // const focusInputRef = useRef(null);
-  // const [billState, setBillState] = useState(initialBillModalData);
-
-  // useEffect(() => {
-  //   if (isOpen && focusInputRef.current) {
-  //     setTimeout(() => {
-  //       focusInputRef.current.focus();
-  //     }, 0);
-  //   }
-  // }, [isOpen]);
-
   // Check if bill title is empty.
   if (billData.title === "") return <div></div>;
 

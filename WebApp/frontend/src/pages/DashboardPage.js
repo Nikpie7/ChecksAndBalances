@@ -6,6 +6,8 @@ import RepBillList from "../components/billList/RepBillList.js";
 import SideBar from "../components/SideBar.js";
 import WelcomeMessage from "../components/WelcomeMessage.js";
 import BillModal from "../components/BillModal.js";
+import SearchIcon from "../components/SearchIcon.js";
+import FloatingSearchBar from "../components/searchBar/FloatingSearchBar.js";
 
 // SVGs.
 import { ReactComponent as RepsSvg } from "../assets/reps_tab_icon.svg";
@@ -35,17 +37,25 @@ const initialBillModalData = {
 };
 
 const DashboardPage = () => {
-  const [isBillModalOpen, setIsBillModalOpen] = useState(false);
+  const [billModalOpen, setBillModalOpen] = useState(false);
   const [clickedBillData, setClickedBillData] = useState(initialBillModalData);
-
   const [billTableToggle, setBillTableToggle] = useState("interests");
+  const [searchBarOpen, setSearchBarOpen] = useState(false);
 
   const handleOpenBillModal = () => {
-    setIsBillModalOpen(true);
+    setBillModalOpen(true);
   };
 
   const handleCloseBillModal = () => {
-    setIsBillModalOpen(false);
+    setBillModalOpen(false);
+  };
+
+  const handleOpenSearchBar = () => {
+    setSearchBarOpen(true);
+  };
+
+  const handleCloseSearchBar = () => {
+    setSearchBarOpen(false);
   };
 
   return (
@@ -53,6 +63,14 @@ const DashboardPage = () => {
       {/* <NavBar /> */}
       {/* Outer div holding side bar and table */}
       <div className="grid grid-cols-8 grid-rows-8 lg:grid-cols-4 h-full">
+        <div className="lg:col-start-1 lg:col-end-2 row-start-1 row-end-2 m-2 lg:m-2">
+          <SearchIcon setSearchBarOpen={setSearchBarOpen} />
+        </div>
+
+        <div className="col-start-3 col-span-5 lg:col-start-3 lg:col-span-2 justify-center lg:justify-start mt-4 lg:mr-20">
+          <BillListTab setBillTableToggle={setBillTableToggle} />
+        </div>
+
         <div className="col-start-1 col-end-2 row-start-2 row-end-9">
           <SideBar />
         </div>
@@ -60,12 +78,7 @@ const DashboardPage = () => {
           <WelcomeMessage />
         </div>
 
-        <div className="col-start-3 mt-4 col-span-2 lg:justify-start lg:mr-20">
-          <BillListTab setBillTableToggle={setBillTableToggle} />
-        </div>
-
         <div className="col-start-2 col-end-9 row-start-2 row-end-9 lg:col-start-3 lg:col-span-4 overflow-y-auto lg:mb-10 lg:mr-20">
-        
           {billTableToggle === "interests" && (
             <InterestBillList
               clickedBillData={clickedBillData}
@@ -83,9 +96,14 @@ const DashboardPage = () => {
         </div>
 
         <BillModal
-          isOpen={isBillModalOpen}
+          isOpen={billModalOpen}
           onClose={handleCloseBillModal}
           billData={clickedBillData}
+        />
+
+        <FloatingSearchBar
+          isOpen={searchBarOpen}
+          onClose={handleCloseSearchBar}
         />
       </div>
     </div>
@@ -103,20 +121,41 @@ const BillListTab = ({ setBillTableToggle }) => {
 
   return (
     <div className="grid grid-cols-2 rounded-xl bg-gray-200">
-        <div >
-            <input type="radio" name="option" id="Interests" value="Interests" className="peer hidden" onClick={handleInterestsToggle} checked/>
-            <label for="Interests" className="block cursor-pointer select-none rounded-xl p-2 text-center peer-checked:bg-blue-500 peer-checked:font-bold peer-checked:text-white">Interests</label>
-        </div>
+      <div>
+        <input
+          type="radio"
+          name="option"
+          id="Interests"
+          value="Interests"
+          className="peer hidden"
+          onClick={handleInterestsToggle}
+          checked
+        />
+        <label
+          for="Interests"
+          className="block cursor-pointer select-none rounded-xl p-2 text-center peer-checked:bg-blue-500 peer-checked:font-bold peer-checked:text-white"
+        >
+          Interests
+        </label>
+      </div>
 
-        <div >
-            <input type="radio" name="option" id="Reps" value="Reps" className="peer hidden" onClick={handleRepsToggle} />
-            <label for="Reps" className="block cursor-pointer select-none rounded-xl p-2 text-center peer-checked:bg-blue-500 peer-checked:font-bold peer-checked:text-white">Reps</label>
-        </div>
+      <div>
+        <input
+          type="radio"
+          name="option"
+          id="Reps"
+          value="Reps"
+          className="peer hidden"
+          onClick={handleRepsToggle}
+        />
+        <label
+          for="Reps"
+          className="block cursor-pointer select-none rounded-xl p-2 text-center peer-checked:bg-blue-500 peer-checked:font-bold peer-checked:text-white"
+        >
+          Reps
+        </label>
+      </div>
     </div>
-
-
-
-
 
     // <div className="w-2/3">
     //   <div className="relative right-0">
