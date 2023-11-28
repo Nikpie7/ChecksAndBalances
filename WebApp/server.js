@@ -1201,14 +1201,12 @@ app.get('/api/password-reset', async (req, res) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const username = decoded.username;
-
-    console.log(username);
+    const email = decoded.email;
 
     // Reset user password
     const db = client.db('POOSBigProject');
     await db.collection('Users').updateOne(
-      { Login: username },
+      { Email: email },
       { $set: { Password: newPassword } }
     );
 
