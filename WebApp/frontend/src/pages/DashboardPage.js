@@ -8,6 +8,7 @@ import WelcomeMessage from "../components/WelcomeMessage.js";
 import BillModal from "../components/BillModal.js";
 import SearchIcon from "../components/SearchIcon.js";
 import FloatingSearchBar from "../components/searchBar/FloatingSearchBar.js";
+import SearchResultList from "../components/searchBar/SearchResultList.js";
 
 // SVGs.
 import { ReactComponent as RepsSvg } from "../assets/reps_tab_icon.svg";
@@ -40,14 +41,13 @@ const DashboardPage = () => {
   // Bill modal with detailed info.
   const [billModalOpen, setBillModalOpen] = useState(false);
   const [clickedBillData, setClickedBillData] = useState(initialBillModalData);
-  
+
   // Bill list.
   const [billTableToggle, setBillTableToggle] = useState("interests");
-  
+
   // Searching.
   const [searchBarOpen, setSearchBarOpen] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
-
 
   const handleOpenBillModal = () => {
     setBillModalOpen(true);
@@ -111,8 +111,18 @@ const DashboardPage = () => {
         <FloatingSearchBar
           isOpen={searchBarOpen}
           onClose={handleCloseSearchBar}
+          searchResults={searchResults}
           setSearchResults={setSearchResults}
+          setBillModalOpen={setBillModalOpen}
+          setClickedBillData={setClickedBillData}
         />
+        {searchResults && searchResults.length > 0 && (
+          <SearchResultList
+            searchResults={searchResults}
+            setBillModalOpen={setBillModalOpen}
+            setClickedBillData={setClickedBillData}
+          />
+        )}
       </div>
     </div>
   );
@@ -138,9 +148,9 @@ const BillListTab = ({ setBillTableToggle }) => {
           className="peer hidden"
           onClick={handleInterestsToggle}
           // onChange={handleInterestsToggle}
-          checked          
+          defaultChecked
         />
-        
+
         <label
           htmlFor="Interests"
           className="block cursor-pointer select-none rounded-xl p-2 text-center peer-checked:bg-blue-500 peer-checkeds:font-bold peer-checked:text-white"

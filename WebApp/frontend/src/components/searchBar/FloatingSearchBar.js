@@ -1,31 +1,41 @@
 import React, { useRef, useEffect, useState } from "react";
-import { useQuery } from "react-query";
+import { useQuery, useLazyQuery } from "react-query";
 
 import SearchBarModal from "./SearchBarModal.js";
 import dashboardService from "../../utils/dashboardService.js";
 import LoadingWheel from "../LoadingWheel.js";
+import SearchResultList from "./SearchResultList.js";
 
-const FloatingSearchBar = ({ isOpen, onClose, setSearchResults }) => {
+const FloatingSearchBar = ({
+  isOpen,
+  onClose,
+  searchResults,
+  setSearchResults,
+  setBillModalOpen,
+  setClickedBillData,
+}) => {
   const [input, setInput] = useState("");
 
-  const SearchResults = (value) => {
-    const {
-      data: results,
-      isLoading,
-      isError,
-    } = useQuery(["userSearchData", value], () =>
-      dashboardService.postSearchBillsBasic(value)
-    );
+  const {
+    data: userResults,
+    isLoading,
+    isError,
+  } = useQuery(
+    ["userSearchData", input],
+    () => dashboardService.postSearchBillsBasic({input: input})
+  );
+
+  const handleChange = (value) => {
+    setInput(value);
 
     if (isLoading) return <LoadingWheel />;
     if (isError) return <p>Error...</p>;
 
-    setSearchResults(results);
-  };
+    if (userResults === undefined) return;
 
-  const handleChange = (value) => {
-    setInput(value);
-    SearchResults(value);
+    if (userResults.length === 0) return;
+
+    setSearchResults(userResults.response)
   };
 
   return (
@@ -60,7 +70,6 @@ const FloatingSearchBar = ({ isOpen, onClose, setSearchResults }) => {
               placeholder="Search bills..."
               value={input}
               onChange={(e) => handleChange(e.target.value)}
-              required
             />
             <button
               type="submit"
@@ -71,6 +80,7 @@ const FloatingSearchBar = ({ isOpen, onClose, setSearchResults }) => {
           </div>
         </form>
       </div>
+      
     </SearchBarModal>
   );
 };
