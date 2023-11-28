@@ -6,21 +6,27 @@ import Background from '../../../../assets/images/background.png';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import FloatingLabelInput from '../../components/FloatingLabelInput';
-
+import  Modal  from 'react-native-modal';
 
 const ForgotPassScreen = () => {
-    const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [emptyInputs, setEmptyInputs] = useState([]);
     const [error, setError] = useState('');
+    const [validEmail, setValidEmail] = useState(true);
+    const [isSuccessModalVisible, setIsSuccessModalVisible] = useState(false);
+
 
     const navigation = useNavigation();
 
     
 
     const onResetPressed = () => {
+        //reset error
+        setError(null);
+        setEmptyInputs([]);
+        setValidEmail(true);
         //Validation to see if all fields are filled
-        const inputs = [username, email];
+        const inputs = [email];
         const emptyInputIndex = inputs.reduce((acc, input, index) => {
             if(input === ''){
                 acc.push(index);
@@ -28,54 +34,51 @@ const ForgotPassScreen = () => {
             return acc;
         }, []);
 
+        // Regular expression to check for '@' in the email
+        const isValidEmailFormat = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
         if(emptyInputIndex.length > 0){
-            const inputNames = ['Username', 'Email'];
+            const inputNames = ['Email'];
             setEmptyInputs(emptyInputIndex);
             const emptyFields = emptyInputIndex.map(index => inputNames[index]);
             setError(`Please Fill out: ${emptyFields.join(', ')}`);
             console.log('All fields are not filled out');
             return;
         }
+        else if (!isValidEmailFormat) {
+            setError('Missing @domain in email');
+            setValidEmail(false);
+            return;
+        }
 
-        //Passed Validation
-        //gather up all fields
-        // bodyVariable = JSON.stringify({
-        //     "username": username,
-        //     "password": password,
-        //     "email": email,
-        //     "firstName": firstName,
-        //     "lastName": lastName,
-        //     "address": streetAddress,
-        //     "zipCode": zipCode,
-        // })
-        // console.log(bodyVariable);
+        bodyVariable = JSON.stringify({
+            "email":email
+        })
 
-        // //send data to server
-        // fetch('https://checksnbalances.us/api/register', {
-        //     method: 'POST',
-        //     headers: {
-        //         Accept: 'application/json',
-        //         'Content-Type': 'application/json',
-        //     },
-        //     body: bodyVariable,
-        // })
-        // .then(response => response.json())
-        // .then(data => {
-        //     console.log(data);
-        //     if(data.error == ""){
-        //         //redirect to log in screen
-        //         console.warn("Registration Complete! Check Email for Varification!");
-        //         navigation.navigate('SignIn');
-        //     }
-        //     else{
-        //         console.log("Email was not imputed correctly");
-        //         setError("Error: Email has incorect format\n(example@domain.com)");
-        //         setEmptyInputs([3])
-        //     }
-        // })
-        // .catch(error => {
-        // console.error(error);
-        // });
+        //send data to server
+        fetch('https://checksnbalances.us/api/send-password-reset', {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: bodyVariable,
+            
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                console.error('Error:', data.error);
+                setError("An error occurred while sending the reset link.");
+            } else {
+                console.log("Password reset link sent successfully!");
+                setIsSuccessModalVisible(true);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            setError("An error occurred while sending the reset link."); // Show an error message
+        });
     };
 
     return(
@@ -97,10 +100,8 @@ const ForgotPassScreen = () => {
                                 <Text style={styles.errorText}>{error}</Text>
                             </View>
                         )}
-                        <Text style={styles.normalText}>Input either your username or your email to get a password reset link sent to your email.</Text>
-                        <FloatingLabelInput style={[styles.input, emptyInputs.includes(0) && styles.inputError,]} label="Username" value={username} onChangeText={setUsername}/>
-                        <Text style={styles.normalText}>Or</Text>
-                        <FloatingLabelInput style={[styles.input, emptyInputs.includes(1) && styles.inputError,]} label="Email" value={email} onChangeText={setEmail}/>
+                        <Text style={styles.normalText}>Input the email address you used to sign up for a password reset link sent to your email.</Text>
+                        <FloatingLabelInput style={[styles.input, emptyInputs.includes(0) && styles.inputError, !validEmail && styles.inputError,]} label="Email" value={email} onChangeText={setEmail}/>
                         
                         <TouchableOpacity onPress={onResetPressed} style={styles.button}>
                             <Text style={styles.buttonText}>Send Reset Link</Text>
@@ -108,6 +109,24 @@ const ForgotPassScreen = () => {
                     </View>
                 </View>
             </ScrollView>
+            <Modal isVisible={isSuccessModalVisible} style={styles.modal}>
+                <View style={styles.modalContainer}>
+                    <View style={[styles.whiteBox, styles.modalContent]}>
+                    <Text style={styles.modalText}>
+                        If the email exists,{"\n"} a reset link was sent!
+                    </Text>
+                    <TouchableOpacity
+                        style={[styles.button, styles.modalButton]}
+                        onPress={() => {
+                        setIsSuccessModalVisible(false);
+                        navigation.navigate('SignIn');
+                        }}
+                    >
+                        <Text style={[styles.buttonText, styles.modalButtonText]}>Return to Login</Text>
+                    </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
         </View>
     );
 };
@@ -136,6 +155,7 @@ const styles = StyleSheet.create({
     logoContainer: {
         flex: 1,
         alignItems: 'center',
+        justifyContent: 'flex-end',
     },
     logo: {
         width: '70%',
@@ -170,6 +190,7 @@ const styles = StyleSheet.create({
         color: 'white',
         fontWeight: 'bold',
         textAlign: 'center',
+        fontSize: 19,
     },
     inputError: {
         borderColor: 'red',
@@ -189,6 +210,35 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         textAlign: 'center',
         marginBottom: 10,
+        fontSize: 15,
+    },
+    modal: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        margin: 0,
+    },
+    modalContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    modalContent: {
+        width: '100%',
+        backgroundColor: 'white',
+        padding: 30,
+        borderRadius: 10,
+        alignItems: 'center',
+    },
+    modalText: {
+        fontSize: 24,
+        marginBottom: 20,
+        textAlign: 'center',
+    },
+    modalButton: {
+        backgroundColor: '#04ACD9DD',
+    },
+    modalButtonText: {
+        fontSize: 22,
     },
 });
 

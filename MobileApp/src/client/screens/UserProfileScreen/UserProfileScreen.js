@@ -33,11 +33,9 @@ const UserProfileScreen = () => {
         {/* User Details */}
         <View style={styles.detailsContainer}>
           {/* Render user details here */}
-          <Text style={styles.detail}>UserID: {user.userID}</Text>
+          <Text style={styles.detail}>Username: {user.username}</Text>
           <Text style={styles.detail}>Email: {user.email}</Text>
-          <Text style={styles.detail}>Verified?: {user.verified}</Text>
           <Text style={styles.detail}>Address: {user.address}</Text>
-          <Text style={styles.detail}>Zip: {user.zip}</Text>
           {/* Add other user details */}
         </View>
       </View>

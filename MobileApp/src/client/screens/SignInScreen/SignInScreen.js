@@ -35,28 +35,36 @@ const SignInScreen = () => {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            if(data.id){
-                const userData = {
-                    firstName: data.firstName,
-                    lastName: data.lastName,
-                    userID: data.id,
-                    email: data.email,
-                    address: data.address,
-                    zip: data.zipCode,
-                    verified: data.verified,
-                };
+            if(data.token){
+                //get basic user data from token
+                fetch(`https://checksnbalances.us/api/getUser?token=${data.token}`)
+                .then(userResponse => userResponse.json())
+                .then(userData => {
+                    const updatedUserData = {
+                        firstName: userData.firstName,
+                        lastName: userData.lastName,
+                        username: userData.username,
+                        email: userData.email,
+                        address: userData.address,
+                        token: data.token,
+                    };
 
-                //then go to home page
-                console.warn("Successfully Logged In!");
+                    //then go to home page
+                    console.warn("Successfully Logged In!");
                 
-                Keychain.setGenericPassword(username, password).then(() => {
-                    console.log("Credentials saved successfully!")
-                    updateUser(userData);
-                    navigation.navigate('Dashboard');
+                    Keychain.setGenericPassword(username, password).then(() => {
+                        console.log("Credentials saved successfully!")
+                        updateUser(updatedUserData);
+                        navigation.navigate('Dashboard');
+                    })
+                    .catch(error => {
+                        console.log("Failed to save credentials", error);
+                        setError(error);
+                    });
                 })
                 .catch(error => {
-                    console.log("Failed to save credentials", error);
-                    setError(error);
+                    console.error("Error fetching user data:", error);
+                    navigation.navigate('SignIn');
                 });
             }
             else{
@@ -181,6 +189,7 @@ const styles = StyleSheet.create({
         color: 'white',
         fontWeight: 'bold',
         textAlign: 'center',
+        fontSize: 19,
     },
     noAccountContainer: {
         flexDirection: 'row',
