@@ -35,8 +35,8 @@ const RepBillList = ({ setClickedBillData, handleOpenBillModal }) => {
     data: reps,
     isLoading,
     isError,
-  } = useQuery(["repsData", USER_TOKEN], () =>
-    dashboardService.getGetReps(USER_TOKEN)
+  } =  useQuery(["repsData", USER_TOKEN], () =>
+    dashboardService.postGetReps(USER_TOKEN)
   );
 
   if (isLoading) return <LoadingWheel />;

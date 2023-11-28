@@ -30,7 +30,7 @@ const CONGRESS_NUM = 118;
 // Used to help pass state hooks for bill data down to child component
 const MyContext = createContext();
 
-const InterestBillList = ({ setClickedBillData, handleOpenBillModal }) => {
+const InterestBillList = ({ clickedBillData, setClickedBillData, handleOpenBillModal }) => {
   const {
     data: interests,
     isLoading,
@@ -62,7 +62,7 @@ const InterestBillList = ({ setClickedBillData, handleOpenBillModal }) => {
 
   return (
     <div>
-      <MyContext.Provider value={{ setClickedBillData, handleOpenBillModal }}>
+      <MyContext.Provider value={{ clickedBillData, setClickedBillData, handleOpenBillModal }}>
         {/* LegistlationList */}
         <BillList userInterests={userInterestsTemp} />
       </MyContext.Provider>
@@ -107,11 +107,16 @@ const BillList = (props) => {
   // Reverse so it's in descending order.
   billListTemp.reverse();
 
+   // Remove possible duplicates by converting to a set.
+   let billObjects = billListTemp.map(JSON.stringify);
+   let billSet = new Set(billObjects);
+   let billList = Array.from(billSet).map(JSON.parse);
+
   return (
     <div className="grid justify-normal">
       <ul>
         {/* Iterate through each interest. */}
-        {billListTemp.map((bill) => (
+        {billList.map((bill) => (
           <Bill key={bill._id} currBill={bill} />
         ))}
       </ul>
