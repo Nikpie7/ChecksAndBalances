@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import React, { useRef, useState, useContext } from 'react';
+import React, { useEffect, useRef, useState, useContext } from 'react';
 import { View, Text, TouchableOpacity, TextInput, ScrollView, Image, DrawerLayoutAndroid, StyleSheet, Modal as RNModal } from 'react-native';
 import { useNavigation, NavigationContainer } from '@react-navigation/native';
 import { TabNavigator } from 'react-navigation';
@@ -39,7 +39,18 @@ const initialBillModalData = {
 };
 
 function InterestsScreen() {
+  const navigation = useNavigation();
   const queryClient = new QueryClient();
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      // Refresh the BillTable when the InterestsScreen is focused again
+      setRefreshKey((prevKey) => prevKey + 1);
+    });
+
+    return unsubscribe;
+  }, [navigation]);
 
   // const [billModalOpen, setBillModalOpen] = useState(false);
   // const [clickedBillData, setClickedBillData] = useState(initialBillModalData);
@@ -60,7 +71,7 @@ function InterestsScreen() {
           {/* <RepBillTable clickedBillData={clickedBillData}
               setClickedBillData={setClickedBillData}
               handleOpenBillModal={handleOpenBillModal}/> */}
-          <BillTable />
+          <BillTable key={refreshKey}/>
         </QueryClientProvider>
         {/* <BillModal
           isOpen={billModalOpen}
@@ -222,10 +233,28 @@ const DashboardScreen = () => {
         </View>
 
       {/* Feed Section */}
-        <Tab.Navigator>
+        <Tab.Navigator screenOptions={({ route }) => ({
+          tabBarIcon: ({ focused, color, size }) => {
+            let iconName;
+            if (route.name === 'Bills by Interest') {
+              iconName = focused ? 'heart' : 'heart';
+            } else if (route.name === 'All Bills') {
+              iconName = focused ? 'document' : 'copy';
+            } else if (route.name === 'Representatives') {
+              iconName = focused ? 'body' : 'man';
+            }
+
+            return <Icon name={iconName} size={size} color={color} />;
+          },
+            "tabBarActiveTintColor": "red",
+            "tabBarInactiveTintColor": "gray",
+            "tabBarLabelStyle": {
+              "fontSize": 12
+            },
+        })}>
           <Tab.Screen name="Bills by Interest" component={InterestsScreen} icon={<Icon name="home" size={24} />}/>
-          <Tab.Screen name="Bills by Representative" component={RepresentativesScreen} icon={<Icon name="home" size={24} />}/>
-          <Tab.Screen name="My Representatives" component={MyRepresentativesScreen} icon={<Icon name="home" size={24} />} />
+          <Tab.Screen name="All Bills" component={RepresentativesScreen} icon={<Icon name="home" size={24} />}/>
+          <Tab.Screen name="Representatives" component={MyRepresentativesScreen} icon={<Icon name="home" size={24} />} />
         </Tab.Navigator>
       </SafeAreaView>
 
