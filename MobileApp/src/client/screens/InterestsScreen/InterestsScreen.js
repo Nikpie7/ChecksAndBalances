@@ -8,6 +8,7 @@ import { UserContext } from '../../components/UserContext/UserContext';
 const InterestsScreen = () => {
     const { user } = useContext(UserContext);
     const [userInterests, setUserInterests] = useState([]);
+
     const navigation = useNavigation();
 
     const interestsData = [
@@ -27,52 +28,58 @@ const InterestsScreen = () => {
         { id: 14, title: 'Health', image: require('../../../../assets/images/ProfileImage.png') },
     ];
 
-    // Function to add or remove interests
+    // Fetch user interests when the component mounts
+    useEffect(() => {
+        fetchInterests();
+    }, []);
+
+    const fetchInterests = () => {
+        fetch(`https://checksnbalances.us/api/readInterests?token=${user.token}`)
+            .then(response => response.json())
+            .then(data => {
+                setUserInterests(data.Interests || []);
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    };
+
     const toggleInterest = (interest) => {
         const index = userInterests.findIndex((item) => item.InterestName === interest.title);
+        const updatedInterests = [...userInterests];
 
         if (index === -1) {
-        setUserInterests([...userInterests, { InterestName: interest.title, value: true }]);
+            // Add the interest if it doesn't exist
+            updatedInterests.push({ InterestName: interest.title, value: true });
         } else {
-        const updatedInterests = [...userInterests];
-        updatedInterests.splice(index, 1);
-        setUserInterests(updatedInterests);
+            // Remove the interest if it exists
+            updatedInterests.splice(index, 1);
         }
+
+        setUserInterests(updatedInterests);
+        updateUserInterests(updatedInterests);
     };
 
-    const getInterests = () => {
-        fetch(`https://checksnbalances.us/api/readInterests?token=${user.token}`)
-        .then(response => response.json())
-        .then(data => {
-            console.log(data);
-            setUserInterests(data.Interests);
-        })
-        .catch(error => {
-            console.error(error);
-        });
-    };
-
-    // Function to update user interests on the server
     const updateUserInterests = () => {
-        const updatedInterests = interestsData.map((interest) => {
-        const isSelected = userInterests.some(
-            (userInterest) => userInterest.InterestName === interest.title && userInterest.value === true
-        );
-        return {
-            InterestName: interest.title,
-            value: isSelected,
-        };
+        const interestsToSend = interestsData.map((interest) => {
+            const isSelected = userInterests.some(
+                (userInterest) => userInterest.InterestName === interest.title && userInterest.value === true
+            );
+            return {
+                InterestName: interest.title,
+                value: isSelected, // Set value based on whether the interest is selected
+            };
         });
     
         fetch('https://checksnbalances.us/api/updateInterests', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            token: user.token,
-            interests: updatedInterests,
-        }),
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                token: user.token,
+                interests: interestsToSend,
+            }),
         })
         .then((response) => response.json())
         .then((data) => {
@@ -83,38 +90,30 @@ const InterestsScreen = () => {
         });
     };
 
-    useEffect(() => {
-        getInterests();
-    }, []);
-
-    useEffect(() => {
-        updateUserInterests();
-    }, [userInterests]);
-
     const renderInterests = () => {
         return interestsData.map((interest, index) => {
-          const isInterestSelected = userInterests.find(
-            userInterest => userInterest.InterestName === interest.title && userInterest.value === true
-          );
-    
-          return (
-            <TouchableOpacity
-              key={interest.id}
-              style={[
-                styles.interestButton,
-                index % 2 !== 0 ? styles.marginLeft : null,
-                isInterestSelected ? styles.selectedInterest : null,
-              ]}
-              onPress={() => toggleInterest(interest)}
-            >
-              <Image source={interest.image} style={styles.interestImage} />
-              <Text style={[styles.interestTitle, isInterestSelected ? styles.selectedTitle : null]}>
-                {interest.title}
-              </Text>
-            </TouchableOpacity>
-          );
+            const isSelected = userInterests.some(
+                (userInterest) => userInterest.InterestName === interest.title && userInterest.value === true
+            );
+
+            return (
+                <TouchableOpacity
+                    key={interest.id}
+                    style={[
+                        styles.interestButton,
+                        index % 2 !== 0 ? styles.marginLeft : null,
+                        isSelected ? styles.selectedInterest : null,
+                    ]}
+                    onPress={() => toggleInterest(interest)}
+                >
+                    <Image source={interest.image} style={styles.interestImage} />
+                    <Text style={[styles.interestTitle, isSelected ? styles.selectedTitle : null]}>
+                        {interest.title}
+                    </Text>
+                </TouchableOpacity>
+            );
         });
-      };
+    };
 
     return(
         <View style={styles.container}>
@@ -126,7 +125,7 @@ const InterestsScreen = () => {
             </TouchableOpacity>
             <ScrollView contentContainerStyle={styles.scrollContainer}>
                 <View style={styles.logoContainer}>
-                    <Text style={styles.logoText}>Interests</Text>
+                    <Text style={styles.logoText}>Your Interests</Text>
                 </View>
                 <View style={styles.whiteBox}>{renderInterests()}</View>
             </ScrollView>
