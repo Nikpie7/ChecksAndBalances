@@ -12,20 +12,20 @@ const InterestsScreen = () => {
     const navigation = useNavigation();
 
     const interestsData = [
-        { id: 1, title: 'Agriculture', image: require('../../../../assets/images/ProfileImage.png') },
-        { id: 2, title: 'Spending', image: require('../../../../assets/images/ProfileImage.png') },
-        { id: 3, title: 'Military & National Defense', image: require('../../../../assets/images/ProfileImage.png') },
-        { id: 4, title: 'Veterans', image: require('../../../../assets/images/ProfileImage.png') },
-        { id: 5, title: 'Taxation', image: require('../../../../assets/images/ProfileImage.png') },
-        { id: 6, title: 'Finance', image: require('../../../../assets/images/ProfileImage.png') },
-        { id: 7, title: 'Education', image: require('../../../../assets/images/ProfileImage.png') },
-        { id: 8, title: 'Labor', image: require('../../../../assets/images/ProfileImage.png') },
-        { id: 9, title: 'Energy', image: require('../../../../assets/images/ProfileImage.png') },
-        { id: 10, title: 'Science & Tech', image: require('../../../../assets/images/ProfileImage.png') },
-        { id: 11, title: 'Governmental Reform', image: require('../../../../assets/images/ProfileImage.png') },
-        { id: 12, title: 'Foreign Affairs', image: require('../../../../assets/images/ProfileImage.png') },
-        { id: 13, title: 'Infrastructure', image: require('../../../../assets/images/ProfileImage.png') },
-        { id: 14, title: 'Health', image: require('../../../../assets/images/ProfileImage.png') },
+        { id: 1, title: 'Agriculture', image: require('../../../../assets/images/agriculture.png') },
+        { id: 2, title: 'Spending', image: require('../../../../assets/images/Spending.png') },
+        { id: 3, title: 'Military & National Defense', image: require('../../../../assets/images/Military.png') },
+        { id: 4, title: 'Veterans', image: require('../../../../assets/images/Veteran.png') },
+        { id: 5, title: 'Taxation', image: require('../../../../assets/images/Taxation.png') },
+        { id: 6, title: 'Finance', image: require('../../../../assets/images/Finance.png') },
+        { id: 7, title: 'Education', image: require('../../../../assets/images/Education.png') },
+        { id: 8, title: 'Labor', image: require('../../../../assets/images/Labor.png') },
+        { id: 9, title: 'Energy', image: require('../../../../assets/images/Energy.png') },
+        { id: 10, title: 'Science & Tech', image: require('../../../../assets/images/Science.png') },
+        { id: 11, title: 'Governmental Reform', image: require('../../../../assets/images/Reform.png') },
+        { id: 12, title: 'Foreign Affairs', image: require('../../../../assets/images/Foreign.png') },
+        { id: 13, title: 'Infrastructure', image: require('../../../../assets/images/Infrastructure.png') },
+        { id: 14, title: 'Health', image: require('../../../../assets/images/Health.png') },
     ];
 
     useEffect(() => {
