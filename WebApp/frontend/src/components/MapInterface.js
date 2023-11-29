@@ -57,7 +57,7 @@ const MapInterface = ({userData, setUserData}) => {
         map?.invalidateSize();
         newMapState = {
           ...mapState,
-          key: 'nation',
+          key: path,
           className: "h-[75vh]",
           geoJSON: stateJSON,
           markerLocation: null,
@@ -77,7 +77,7 @@ const MapInterface = ({userData, setUserData}) => {
         newMapState = {
           ...mapState,
           className: "h-[70vh]",
-          key: 'state',
+          key: path,
           geoJSON: stateDistrictJSON,
           markerLocation: null,
           geoJSONEventHandlers: {
@@ -90,7 +90,17 @@ const MapInterface = ({userData, setUserData}) => {
       case '/interests':
         newMapState = {
           ...mapState,
-          key: 'district',
+          key: path,
+          markerLocation: userData.coords,
+          geoJSON: districtJSON.features.find(feature => feature.properties.STATEFP == stateIndexToFP(userData.state) && feature.properties.CD118FP == userData.district),
+          geoJSONEventHandlers: {},
+          mapEventHandlers: {zoomend: () => setTileLayerVisible(true) }
+        };
+        break;
+      case '/createAccount':
+        newMapState = {
+          ...mapState,
+          key: path,
           markerLocation: userData.coords,
           geoJSON: districtJSON.features.find(feature => feature.properties.STATEFP == stateIndexToFP(userData.state) && feature.properties.CD118FP == userData.district),
           geoJSONEventHandlers: {},
@@ -102,20 +112,15 @@ const MapInterface = ({userData, setUserData}) => {
   }, [location.pathname])
   useEffect(() => {
     if (map) {
-      if (mapState.key !== 'district')
+      map.invalidateSize();
+      if (mapState.key !== '/district' || mapState.key !== '/createAccount')
         map.flyToBounds(L.geoJSON(mapState.geoJSON).getBounds());
       else
         map.flyToBounds(L.geoJSON(districtJSON.features.find(feature => feature.properties.STATEFP == stateIndexToFP(userData.state) && feature.properties.CD118FP == userData.district)).getBounds());
       map._renderer.options.padding = 10;
-      map.invalidateSize();
       map.on('zoomend', mapState.mapEventHandlers.zoomend);
     }
-  }, [mapState])
-  // useEffect(() => {
-  //   console.log(map._size);
-  //   map?.invalidateSize();
-  // }, [map?._size?.x]);
-  console.log(map);
+  }, [mapState]);
 
   const stateIndexToFP = stateIndex => stateJSON.features[stateIndex].properties.STATEFP;
   const nationBounds = L.latLngBounds([22, -134], [50, -64]);

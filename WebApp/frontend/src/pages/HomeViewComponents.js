@@ -200,7 +200,7 @@ const AboutUsCard = ({visible, setVisible}) => {
           </span>
         </span>
         <hr className="h-px my-4 bg-gray-200 border-0 dark:bg-gray-300" />
-        <p className="text-md text-center"><em className="font-semibold italics">Checks & Balances</em> is a student project created for the University of Central Florida's <em className="italics">Processes of Object Oriented Design</em> course of Fall 2023. Given eight weeks, we developed this website from scratch using the MERN technology stack and modern software development practices, with the goal of increasing the accessibility of crucial civic information to voters, especially to young and underinformed demographics.</p>
+        <p className="text-md text-center"><em className="font-semibold italics">Checks & Balances</em> is a student project created for the University of Central Florida's <em className="italics">Processes of Object Oriented Design</em> course of Fall 2023. Given eight weeks, we developed this website from scratch using the MERN technology stack and modern software development practices, with the goal of increasing the accessibility of crucial civic information to voters, especially to younger and underinformed demographics.</p>
         <span className="flex w-full justify-center gap-1 py-4">
           <p className="font-semibold">Github Repository:</p>
           <a className="flex w-max items-center gap-1" href="https://github.com/Nikpie7/ChecksAndBalances/">
