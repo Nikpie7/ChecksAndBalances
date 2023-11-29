@@ -130,3 +130,13 @@ content-type: application/json
         {"InterestName": "Health", "value": false}
     ]
 }
+###
+POST http://localhost:5001/api/login
+content-type: application/json
+
+{
+    "email": "Tester2@test.com",
+    "password": "!Test123"
+}
+###
+GET http://localhost:5001/api/getUser?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1NjY4Mjk1OWFmZGY5ODc5NDljY2NmZSIsImZpcnN0TmFtZSI6IlRlc3QyIiwibGFzdE5hbWUiOiJUZXN0MiIsInBhc3N3b3JkIjoiIVRlc3QxMjMiLCJlbWFpbCI6IlRlc3RlcjJAdGVzdC5jb20iLCJhZGRyZXNzIjoiNDAwMCBDZW50cmFsIEZsb3JpZGEgQmx2ZC4gT3JsYW5kbywgRkwgMzI4MTYiLCJpYXQiOjE3MDEyOTEzOTAsImV4cCI6MTcwMTM3Nzc5MH0.h8_LeAOtijRDkuHmHfJgy4mbJ-JnEwyXueHGi06gHqc

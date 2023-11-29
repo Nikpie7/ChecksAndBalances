@@ -1148,6 +1148,38 @@ app.post('/api/register', async (req, res, next) =>
     res.status(400).json(ret);
   }
 });
+app.post('/api/registerWithInterests', async (req, res, next) =>
+{
+  // incoming: email, password, firstName, lastName, address, interests
+  // outgoing: id, error
+  console.log('TEST');
+  const { firstName, lastName, email, password, address, interests } = req.body;
+  console.log(interests);
+  
+  const newUser = {FirstName: firstName, LastName: lastName, Email: email, Password: password, Address: address, Verified: false, Interests: interests};
+  var error = '';
+  
+   try {
+    const db = client.db('POOSBigProject');
+    const result = await db.collection('Users').insertOne(newUser);
+
+    // Send verification email
+    await sendVerificationEmail(email);
+
+    var ret = { error: error };
+    res.status(200).json(ret);
+  } catch(e) {
+    if (e.code === 11000) {
+      error = 'User with that email already exists.';
+      console.log('ERRORERRORERRORERRORERRORERRORERRORERRORERRORERROR')
+    }
+    else
+      error = e.toString();
+
+    var ret = { error: error };
+    res.status(400).json(ret);
+  }
+});
 
 app.get('/api/verify-email', async (req, res) => {
   
