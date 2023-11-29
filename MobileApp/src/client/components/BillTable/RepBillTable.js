@@ -10,6 +10,7 @@ import representativesList from './representativesList.json';
 
 // TODO: Remove later
 const ADDRESS = '4000 Central Florida Blvd. Orlando, FL 32816';
+const USER_ID = {token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1NjY4Mjk1OWFmZGY5ODc5NDljY2NmZSIsImZpcnN0TmFtZSI6IlRlc3QyIiwibGFzdE5hbWUiOiJUZXN0MiIsInBhc3N3b3JkIjoiIVRlc3QxMjMiLCJlbWFpbCI6IlRlc3RlcjJAdGVzdC5jb20iLCJhZGRyZXNzIjoiNDAwMCBDZW50cmFsIEZsb3JpZGEgQmx2ZC4gT3JsYW5kbywgRkwgMzI4MTYiLCJpYXQiOjE3MDEyNzYxNzQsImV4cCI6MTcwMTM2MjU3NH0.VXDPrxC2B5Rr6dM4j28Ying9hap75Cas0vehI629w84" };
 
 const queryClient = new QueryClient();
 const MyContext = createContext();
