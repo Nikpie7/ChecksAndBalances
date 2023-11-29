@@ -20,7 +20,7 @@ const LoadingScreen = () => {
                 const credentials = await Keychain.getGenericPassword();
                 //if credentials exist, try to log in
                 if(credentials){
-                    bodyVariable = JSON.stringify({"username": credentials.username,"password": credentials.password,})
+                    bodyVariable = JSON.stringify({"email": credentials.username,"password": credentials.password,})
                     //Validate the user
                     fetch('https://checksnbalances.us/api/login', {
                         method: 'POST',
@@ -33,21 +33,28 @@ const LoadingScreen = () => {
                     .then(response => response.json())
                     .then(data => {
                         console.log(data);
-                        if(data.id){
-                            const userData = {
-                                firstName: data.firstName,
-                                lastName: data.lastName,
-                                userID: data.id,
-                                email: data.email,
-                                address: data.address,
-                                zip: data.zipCode,
-                                verified: data.verified,
-                            };
+                        if(data.token){
+                            //get basic user data from token
+                            fetch(`https://checksnbalances.us/api/getUser?token=${data.token}`)
+                            .then(userResponse => userResponse.json())
+                            .then(userData => {
+                                const updatedUserData = {
+                                    firstName: userData.firstName,
+                                    lastName: userData.lastName,
+                                    email: userData.email,
+                                    address: userData.address,
+                                    token: data.token,
+                                };
 
-                            //then go to home page
-                            console.warn("Successfully Logged In!");
-                            updateUser(userData);
-                            navigation.navigate('Dashboard');
+                                //then go to home page
+                                console.warn("Successfully Logged In!");
+                                updateUser(updatedUserData);
+                                navigation.navigate('Dashboard');
+                            })
+                            .catch(error => {
+                                console.error("Error fetching user data:", error);
+                                navigation.navigate('SignIn');
+                            });
                         }
                         else{
                             navigation.navigate('SignIn');

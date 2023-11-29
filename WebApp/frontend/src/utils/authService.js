@@ -4,16 +4,8 @@ const baseUrl =
     ? "http://localhost:5001"
     : "https://checksnbalances.us";
 
-const postLogin = (request) => {
-  return axios
-    .post(`${baseUrl}/api/login`, request)
-    .then((response) => {
-      console.log(response);
-      return response.data;
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+const postLogin = async (request) => {
+  return await axios.post(`${baseUrl}/api/login`, request);
 };
 
 const postRegister = (request) => {
@@ -28,7 +20,7 @@ const postRegister = (request) => {
     });
 };
 
-const postSendPasswordReset = (request) => {
+const sendResetEmail = (request) => {
   return axios
     .post(`${baseUrl}/api/send-password-reset`, request)
     .then((response) => {
@@ -40,22 +32,15 @@ const postSendPasswordReset = (request) => {
     });
 }
 
-const postPasswordReset = (request) => {
-  return axios
+const resetPassword = async (request) => {
+  return await axios
     .get(`${baseUrl}/api/password-reset`, {
       params: {
         token: request.token,
         newPassword: request.newPassword
       }
-    })
-    .then((response) => {
-      console.log(response);
-      return response.data;
-      // setTimeout(() => history.push('/login'), 3000); // Uncomment if you want to redirect after reset
-    })
-    .catch((error) => {
-      console.log(error);
     });
 };
 
-export default { postLogin, postRegister, postPasswordReset, postSendPasswordReset };
+export default { postLogin, postRegister, sendResetEmail, resetPassword };
+ 

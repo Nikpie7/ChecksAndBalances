@@ -22,8 +22,8 @@ const ses = new AWS.SES({ apiVersion: '2010-12-01' });
 
 const jwt = require('jsonwebtoken');
 
-const sendVerificationEmail = (email, username) => {
-  const token = jwt.sign({ username }, process.env.JWT_SECRET, { expiresIn: '1h' });
+const sendVerificationEmail = (email) => {
+  const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
   // Define the frontend URL for email verification (change this to your actual frontend URL)
   const verificationUrl = `https://checksnbalances.us/verifyToken/${token}`;
@@ -35,8 +35,8 @@ const sendVerificationEmail = (email, username) => {
       Subject: { Data: 'Email Verification' },
       Body: {
         // Include both Text and Html versions for email clients that don't support HTML
-        Text: { Data: `YOO PLEASE WORK Please verify your email by visiting the following link: ${verificationUrl}` },
-        Html: { Data: `<html><body><p>Please verify your email by clicking the following link: <a href="${verificationUrl}">Verify Email</a></p></body></html>` }
+        Text: { Data: `Please verify your email by visiting the following link: ${verificationUrl}` },
+        Html: { Data: `<html><body><p>Please verify your email by clicking the following link: <a href="${verificationUrl}">Verify Email</a></p><p>This link will expire in 1 hour.</p></body></html>` }
       }
     }
   };
@@ -45,8 +45,8 @@ const sendVerificationEmail = (email, username) => {
 };
 
 
-const sendPasswordResetEmail = (email, username) => {
-  const token = jwt.sign({ username }, process.env.JWT_SECRET, { expiresIn: '1h' });
+const sendPasswordResetEmail = (email) => {
+  const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
   // Define the frontend URL for password reset
   const passwordResetUrl = `http://checksnbalances.us/resetPassword/${token}`;
@@ -55,15 +55,14 @@ const sendPasswordResetEmail = (email, username) => {
     Source: 'noreply@checksnbalances.us', // Your verified email in SES
     Destination: { ToAddresses: [email] },
     Message: {
-      Subject: { Data: 'Password Reset' },
+      Subject: { Data: 'Password reset' },
       Body: {
         // Include both Text and Html versions for email clients that don't support HTML
         Text: { Data: `Please reset your password by visiting the following link: ${passwordResetUrl}` },
-        Html: { Data: `<html><body><p>Please reset your password by visiting the following link: <a href="${passwordResetUrl}">Reset Password</a></p></body></html>` }
+        Html: { Data: `<html><body><p>Please reset your password by visiting the following link: <a href="${passwordResetUrl}">Reset Password</a></p><p>This link will expire in 1 hour.</p></body></html>` }
       }
     }
   };
-
   return ses.sendEmail(params).promise();
 };
 
@@ -125,8 +124,13 @@ const defaultInterests = [
 
 // Read Interests
 app.get('/api/readInterests', async (req, res) => {
+  // Takes in a token.
+  // Returns an array of the user's interests.
+  const { token } = req.query;
     try {
-        const { userId } = req.query;
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        var userId = decoded.id;
+
         const db = client.db('POOSBigProject');
         // const user = await db.collection('Users').findById(userId);
         const user = await db.collection('Users').findOne({ _id: new ObjectId(userId) });
@@ -196,12 +200,15 @@ app.get('/api/getBillVote', async (req, res, next) => {
   //let finalText = initText.concat("/", memberID)
 });
 
-// Update/Delete intersts (takes in userID and full array of new interests)
+// Update/Delete intersts (takes in token and full array of new interests)
 app.post('/api/updateInterests', async (req, res) => {
     try {
-        const { userId, interests } = req.body;
+        const { token, interests } = req.body;
         const db = client.db('POOSBigProject');
-
+        
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        var userId = decoded.id;
+        
         // Find the user in the Users collection by userId and update their interests
         const user = await db.collection('Users').findOneAndUpdate(
             { _id: new ObjectId(userId)},
@@ -374,7 +381,7 @@ app.post('/api/mongoBill', async (req, res, next) =>
   
     } catch(e) {
       if (e.code === 11000) {
-        error = 'User already exists';
+        error = 'Bill already exists';
       }
       else {
         error = e.toString();
@@ -985,12 +992,15 @@ app.post('/api/addcard', async (req, res, next) =>
 });
 
 app.post('/api/getReps', async (req, res, next) => {
-  // Incoming: Address
+  // Incoming: token
   // Outgoing: President, Senator1, Senator2, Representative
   try {
-    const { address } = req.body;
+    const { token } = req.body;
     const apiKey = process.env.GOOGLE_KEY;
 
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    var address = decoded.address;
+    
     const response = await axios.get('https://civicinfo.googleapis.com/civicinfo/v2/representatives', {
       params: {
         address,
@@ -1055,50 +1065,67 @@ app.get('/api/getBills', async (req, res, next) => {
 });
 
 app.post('/api/login', async (req, res, next) => {
-  // incoming: username, password
-  // outgoing: id, FirstName, LastName, Email, Verified, Address, ZipCode, error
+  // incoming: email, password
+  // outgoing: id, FirstName, LastName, Email, Verified, Address, error
 
   var error = '';
 
-  const { username, password } = req.body;
+  const { email, password } = req.body;
 
   const db = client.db('POOSBigProject');
-  const results = await db.collection('Users').find({ Login: username, Password: password }).toArray();
+  const results = await db.collection('Users').find({ Email: email, Password: password }).toArray();
 
   if (results.length > 0) {
     // Check if the user is verified
     if (!results[0].Verified) {
       error = 'Account not verified. Please check your email for the verification link.';
-      return res.status(401).json({ error: error });
+      return res.status(403).json({ error: error });
     }
 
     // Assign user details to variables
     var id = results[0]._id.toString();
-    var fn = results[0].FirstName;
-    var ln = results[0].LastName;
-    var em = results[0].Email;
-    var vf = results[0].Verified;
-    var ad = results[0].Address;
-    var zc = results[0].ZipCode;
+    var firstName = results[0].FirstName;
+    var lastName = results[0].LastName;
+    var address = results[0].Address;
+  
+    var token = jwt.sign({ id, firstName, lastName, password, email, address }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
   } else {
-    error = 'Login failed: Invalid username or password.';
+    error = 'Invalid email or password.';
     return res.status(401).json({ error: error });
   }
   
-  var ret = { id: id, firstName: fn, lastName: ln, email: em, verified: vf, address: ad, zipCode: zc, error: error };
+  var ret = { token: token };
   res.status(200).json(ret);
+});
+
+app.get('/api/getUser', async (req, res, next) => {
+  // incoming: token
+  // outgoing: firstName, lastName, email, address, error
+  try 
+  {
+    const {token} = req.query;
+  
+  const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+  var ret = { firstName: decoded.firstName, lastName: decoded.lastName, email: decoded.email, address: decoded.address };
+  res.status(200).json(ret)
+  }
+  catch{
+    error = 'Invalid JWT';
+    return res.status(401).json({ error: error });
+  }
 });
 
 
 app.post('/api/register', async (req, res, next) =>
 {
-  // incoming: username, password, email, firstName, lastName, address, zipCode
+  // incoming: email, password, firstName, lastName, address
   // outgoing: id, error
 
-  const { firstName, lastName, username, email, password, address, zipCode } = req.body;
+  const { firstName, lastName, email, password, address } = req.body;
   
-  const newUser = {FirstName: firstName, LastName: lastName, Login: username, Email: email, Password: password, Address: address, Verified: false, ZipCode: zipCode, Interests: defaultInterests};
+  const newUser = {FirstName: firstName, LastName: lastName, Email: email, Password: password, Address: address, Verified: false, Interests: defaultInterests};
   var error = '';
   
    try {
@@ -1106,9 +1133,13 @@ app.post('/api/register', async (req, res, next) =>
     const result = await db.collection('Users').insertOne(newUser);
 
     // Send verification email
-    await sendVerificationEmail(email, username);
+    await sendVerificationEmail(email);
   } catch(e) {
-    error = e.toString();
+    if (e.code === 11000) {
+      error = 'User with that email already exists.';
+    }
+    else
+      error = e.toString();
   }
 
   var ret = { error: error };
@@ -1124,14 +1155,12 @@ app.get('/api/verify-email', async (req, res) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const username = decoded.username;
-
-    console.log(username);
+    const email = decoded.email;
 
     // Update user verification status
     const db = client.db('POOSBigProject');
     await db.collection('Users').updateOne(
-      { Login: username },
+      { Email: email },
       { $set: { Verified: true } }
     );
 
@@ -1143,16 +1172,16 @@ app.get('/api/verify-email', async (req, res) => {
 
 app.post('/api/send-password-reset', async (req, res, next) =>
 {
-  // incoming: username, email
+  // incoming: email
   // outgoing: id, error
 
-  const { username, email} = req.body;
+  const {email} = req.body;
   
   var error = '';
   
    try {
     // Send password reset email
-    await sendPasswordResetEmail(email, username);
+    await sendPasswordResetEmail(email);
   } catch(e) {
     error = e.toString();
   }
@@ -1164,22 +1193,16 @@ app.post('/api/send-password-reset', async (req, res, next) =>
 
 
 app.get('/api/password-reset', async (req, res) => {
-  
   const { token, newPassword } = req.query;
-  console.error(token);
-
-  console.log(token);
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const username = decoded.username;
-
-    console.log(username);
+    const email = decoded.email;
 
     // Reset user password
     const db = client.db('POOSBigProject');
     await db.collection('Users').updateOne(
-      { Login: username },
+      { Email: email },
       { $set: { Password: newPassword } }
     );
 
@@ -1214,13 +1237,97 @@ app.post('/api/searchcards', async (req, res, next) =>
   res.status(200).json(ret);
 });
 
+
+/* MAP API */
+const { Client } = require('@googlemaps/google-maps-services-js');
+const googleMaps = new Client({});
+const Geocodio = require('geocodio-library-node');
+const geocodio = new Geocodio(process.env.GEOCODIO_KEY);
+app.get('/api/geocode', (request, response) => {
+  const {address, state} = request.query;
+  // console.log(`Address: ${address} State: ${state}`)
+
+  googleMaps.geocode({
+    params: {
+      components: `administrative_area:${state}`,
+      address: address,
+      key: process.env.GOOGLE_MAPS_KEY
+    }
+  })
+  .then(mapsRes => {
+    if (mapsRes.data.status === 'ZERO_RESULTS') {
+      // console.log('No results');
+      response.status(200).send('');
+      return;
+    }
+    // console.log('Found result: ' + mapsRes.data.results.formatted_address);
+    // console.log(mapsRes.data);
+    const latLngBounds = [];
+    latLngBounds[0] = mapsRes.data.results[0].geometry.location.lat;
+    latLngBounds[1] = mapsRes.data.results[0].geometry.location.lng;
+    response.status(200).send(latLngBounds);
+  })
+  .catch(error => {
+    console.log(error);
+    response.status(500);
+  });
+
+})
+app.get('/api/predictAddress', (request, response) => {
+  const {address, state, stateOrigin} = request.query;
+  console.log(`Address: ${address} State: ${state}`)
+
+  if (address === '') {
+    console.log('Empty response');
+    response.status(200).send('');
+    return;
+  }
+
+  googleMaps.placeAutocomplete({
+    params: {
+      components: `country:us`,
+      input: `${address}, ${state}`,
+      location: stateOrigin, 
+      radius: 100000,
+      key: process.env.GOOGLE_MAPS_KEY
+    }
+  })
+  .then(mapsRes => {
+    if (mapsRes.data.status !== 'OK') {
+      response.status(200).send([]);
+      return;
+    }
+    // mapsRes.data.predictions.filter(prediction => {
+      
+    // });
+    response.status(200).send(mapsRes.data.predictions);
+  })
+  .catch(error => {
+    console.log(error);
+    response.status(500);
+  });
+})
+app.get('/api/getDistrict', async (request, response) => {
+  console.log(request.query.coords)
+  const coords = request.query.coords;
+  console.log(coords.toString());
+  const districtNumber = await geocodio.reverse(`${coords[0]},${coords[1]}`, ['cd'])
+    .then(geocodioRes => {
+      return geocodioRes.results[0].fields.congressional_districts[0].district_number;
+    });
+  console.log(`District number: ${districtNumber}`);
+  response.status(200).json(districtNumber);
+});
+/* MAP API */
+
+// (WE HAVE NO IDEA WHAT THIS DOES, SO DON'T TOUCH)
 app.get('/*', function(req, res) {
   res.sendFile(path.join(__dirname, '/dist/index.html'), function(err) {
     if (err) {
       res.status(500).send(err)
     }
   })
-})
+});
 
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const uri = process.env.MONGODB_URI;

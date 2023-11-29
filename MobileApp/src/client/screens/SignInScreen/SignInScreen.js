@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import * as Keychain from 'react-native-keychain';
 import {View, Text, Image, StyleSheet, TextInput, TouchableOpacity, ScrollView} from 'react-native'
 import Logo from '../../../../assets/images/logo.png';
@@ -10,7 +10,7 @@ import { UserContext } from '../../components/UserContext/UserContext';
 const SignInScreen = () => {
     const {updateUser} = useContext(UserContext);
 
-    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState(null);
     const [verifError, setVerifError] = useState(false);
@@ -20,7 +20,7 @@ const SignInScreen = () => {
     const onLogInPressed = () => {
         setError(null);
         setVerifError(false);
-        bodyVariable = JSON.stringify({"username": username,"password": password,})
+        bodyVariable = JSON.stringify({"email": email,"password": password,})
         
         console.log(bodyVariable);
         //Validate the user
@@ -35,28 +35,35 @@ const SignInScreen = () => {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            if(data.id){
-                const userData = {
-                    firstName: data.firstName,
-                    lastName: data.lastName,
-                    userID: data.id,
-                    email: data.email,
-                    address: data.address,
-                    zip: data.zipCode,
-                    verified: data.verified,
-                };
+            if(data.token){
+                //get basic user data from token
+                fetch(`https://checksnbalances.us/api/getUser?token=${data.token}`)
+                .then(userResponse => userResponse.json())
+                .then(userData => {
+                    const updatedUserData = {
+                        firstName: userData.firstName,
+                        lastName: userData.lastName,
+                        email: userData.email,
+                        address: userData.address,
+                        token: data.token,
+                    };
 
-                //then go to home page
-                console.warn("Successfully Logged In!");
+                    //then go to home page
+                    console.warn("Successfully Logged In!");
                 
-                Keychain.setGenericPassword(username, password).then(() => {
-                    console.log("Credentials saved successfully!")
-                    updateUser(userData);
-                    navigation.navigate('Dashboard');
+                    Keychain.setGenericPassword(email, password).then(() => {
+                        console.log("Credentials saved successfully!")
+                        updateUser(updatedUserData);
+                        navigation.navigate('Dashboard');
+                    })
+                    .catch(error => {
+                        console.log("Failed to save credentials", error);
+                        setError(error);
+                    });
                 })
                 .catch(error => {
-                    console.log("Failed to save credentials", error);
-                    setError(error);
+                    console.error("Error fetching user data:", error);
+                    navigation.navigate('SignIn');
                 });
             }
             else{
@@ -104,7 +111,7 @@ const SignInScreen = () => {
                                 <Text style={styles.errorText}>{error}</Text>
                             </View>
                         )}
-                        <FloatingLabelInput style={[styles.input, (error && !verifError) && styles.inputError]} label="Username" value={username} onChangeText={setUsername}/>
+                        <FloatingLabelInput style={[styles.input, (error && !verifError) && styles.inputError]} label="Email" value={email} onChangeText={setEmail}/>
                         <FloatingLabelInput style={[styles.input, (error && !verifError) && styles.inputError]} label="Password" value={password} onChangeText={setPassword} secureTextEntry/>
                         
                         <TouchableOpacity onPress={onForgotPressed} style={styles.forgotPassContainer}>
@@ -181,6 +188,7 @@ const styles = StyleSheet.create({
         color: 'white',
         fontWeight: 'bold',
         textAlign: 'center',
+        fontSize: 19,
     },
     noAccountContainer: {
         flexDirection: 'row',

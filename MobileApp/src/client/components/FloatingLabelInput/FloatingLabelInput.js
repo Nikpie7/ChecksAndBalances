@@ -29,7 +29,7 @@ const FloatingLabelInput = ({ label, value, onChangeText, secureTextEntry, style
     }),
     color: animatedIsFocused.interpolate({
       inputRange: [0, 1],
-      outputRange: ['#aaa', '#000'],
+      outputRange: ['#666', '#000'],
     }),
   };
 
