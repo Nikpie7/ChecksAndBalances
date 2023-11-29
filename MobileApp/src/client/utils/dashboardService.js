@@ -7,9 +7,27 @@ const baseURL = 'https://checksnbalances.us';
     // : "https://checksnbalances.us";
 
 const getGetUser = (request) => {
-  console.log('reading interests');
+  console.log('getting users');
   return axios
     .get(`${baseURL}/api/getUser`, {
+      params: {
+        token: request.token,
+      },
+    })
+    .then((response) => {
+      console.log(response);
+      return response.data;
+    })
+    .catch((error) => {
+      console.log('error :(');
+      console.log(error);
+    });
+};
+
+const getGetReps = (request) => {
+  console.log('getting reps');
+  return axios
+    .get(`${baseURL}/api/getReps`, {
       params: {
         token: request.token,
       },
@@ -136,17 +154,17 @@ const postGetReps = (request) => {
     });
 };
 
-// const postSearchBillsSponsors = (request) => {
-//   return axios
-//     .post(`${baseURL}/api/searchBillsSponsors`, request)
-//     .then((response) => {
-//       console.log(response);
-//       return response.data;
-//     })
-//     .catch((error) => {
-//       console.log(error);
-//     });
-// };
+const postSearchBillsSponsors = (request) => {
+  return axios
+    .post(`${baseURL}/api/searchBillsSponsors`, request)
+    .then((response) => {
+      console.log(response);
+      return response.data;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
 
 export default {
     getReadInterests,
@@ -156,5 +174,7 @@ export default {
     getGetBillSummaries,
     postSearchBillsByInterest,
     postGetReps,
-    // postSearchBillsSponsors,
+    getGetUser,
+    getGetReps,
+    postSearchBillsSponsors,
 };

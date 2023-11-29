@@ -8,39 +8,12 @@ import interestsCategories from './interestsCategories.json';
 import representativesList from './representativesList.json';
 
 // TODO: Remove later
-const USER_ID = {token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1NjY4Mjk1OWFmZGY5ODc5NDljY2NmZSIsImZpcnN0TmFtZSI6IlRlc3QyIiwibGFzdE5hbWUiOiJUZXN0MiIsInBhc3N3b3JkIjoiIVRlc3QxMjMiLCJlbWFpbCI6IlRlc3RlcjJAdGVzdC5jb20iLCJhZGRyZXNzIjoiNDAwMCBDZW50cmFsIEZsb3JpZGEgQmx2ZC4gT3JsYW5kbywgRkwgMzI4MTYiLCJpYXQiOjE3MDEyMzQwOTAsImV4cCI6MTcwMTIzNzY5MH0.f9KhxiTteu_LkMh3uQQ_4-ktZyMm0KU8sRjBunAy59c" };
+const USER_ID = {token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1NjY4Mjk1OWFmZGY5ODc5NDljY2NmZSIsImZpcnN0TmFtZSI6IlRlc3QyIiwibGFzdE5hbWUiOiJUZXN0MiIsInBhc3N3b3JkIjoiIVRlc3QxMjMiLCJlbWFpbCI6IlRlc3RlcjJAdGVzdC5jb20iLCJhZGRyZXNzIjoiNDAwMCBDZW50cmFsIEZsb3JpZGEgQmx2ZC4gT3JsYW5kbywgRkwgMzI4MTYiLCJpYXQiOjE3MDEyMzg1NTQsImV4cCI6MTcwMTI0MjE1NH0.O-EIuX7VJwNM_qvYFAC0SK1t884CRhW-NDKInkDphrg" };
 const ADDRESS = '4000 Central Florida Blvd. Orlando, FL 32816';
 
 const queryClient = new QueryClient();
 
 const CONGRESS_NUM = 118;
-
-// const BillTableReps = () => {
-//   const {
-//     data: reps,
-//     isLoading,
-//     isError,
-//   } = useQuery(["repsData", USER_ID], () =>
-//       dashboardService.postGetReps(ADDRESS)
-//   );
-
-// if (isLoading) return <Text>Loading...</Text>;
-// if (isError) return <Text>Error...</Text>;
-
-// let userRepsTemp = [];
-
-// for (let i = 0; i < reps.Interests.length; i++) {
-//     if (reps.Interests[i].value) {
-//         userInterestsTemp.push(reps.Interests[i].InterestName);
-//     }
-// }
-
-// return (
-//     <ScrollView>
-//         <BillList userReps={userRepsTemp} />
-//     </ScrollView>
-// );
-// }
 
 const BillTable = () => {
     const {

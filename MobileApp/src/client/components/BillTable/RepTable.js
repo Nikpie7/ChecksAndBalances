@@ -9,18 +9,10 @@ import representativesList from './representativesList.json';
 // TODO import user's representatives
 
 // TODO: Remove later
-const USER_ID = {token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1NjY4Mjk1OWFmZGY5ODc5NDljY2NmZSIsImZpcnN0TmFtZSI6IlRlc3QyIiwibGFzdE5hbWUiOiJUZXN0MiIsInBhc3N3b3JkIjoiIVRlc3QxMjMiLCJlbWFpbCI6IlRlc3RlcjJAdGVzdC5jb20iLCJhZGRyZXNzIjoiNDAwMCBDZW50cmFsIEZsb3JpZGEgQmx2ZC4gT3JsYW5kbywgRkwgMzI4MTYiLCJpYXQiOjE3MDEyMzQwOTAsImV4cCI6MTcwMTIzNzY5MH0.f9KhxiTteu_LkMh3uQQ_4-ktZyMm0KU8sRjBunAy59c" };
+const USER_ID = {token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1NjY4Mjk1OWFmZGY5ODc5NDljY2NmZSIsImZpcnN0TmFtZSI6IlRlc3QyIiwibGFzdE5hbWUiOiJUZXN0MiIsInBhc3N3b3JkIjoiIVRlc3QxMjMiLCJlbWFpbCI6IlRlc3RlcjJAdGVzdC5jb20iLCJhZGRyZXNzIjoiNDAwMCBDZW50cmFsIEZsb3JpZGEgQmx2ZC4gT3JsYW5kbywgRkwgMzI4MTYiLCJpYXQiOjE3MDEyMzg1NTQsImV4cCI6MTcwMTI0MjE1NH0.O-EIuX7VJwNM_qvYFAC0SK1t884CRhW-NDKInkDphrg" };
 const ADDRESS = '4000 Central Florida Blvd. Orlando, FL 32816';
 
 const queryClient = new QueryClient();
-
-const numReps = 4;
-
-// get user's reps data
-// populate bill format
-// populate billList
-// format billTable
-// import RepBillTable in dashboardScreen.js
 
 const RepTable = () => {
     const {
@@ -33,6 +25,12 @@ const RepTable = () => {
 
     if (isLoading) return <Text>Loading...</Text>;
     if (isError) return <Text>Error...</Text>;
+
+    if (reps === undefined) {
+        return (
+            <Text>Unable to load your representative's bills</Text>
+        );
+    }
 
     return (
         <ScrollView>
