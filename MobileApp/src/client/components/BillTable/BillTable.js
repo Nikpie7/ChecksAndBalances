@@ -9,7 +9,6 @@ import Background from '../../../../assets/images/background.png';
 
 // TODO: Remove later
 const ADDRESS = '4000 Central Florida Blvd. Orlando, FL 32816';
-const USER_ID = {token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1NjZmNDYyYmZmNDQ1MzY4MjQzZWZjYSIsImZpcnN0TmFtZSI6IktvYmUiLCJsYXN0TmFtZSI6IkNvbm9tb24iLCJwYXNzd29yZCI6IkJhU0ViQWxsLiwvMjUxIiwiZW1haWwiOiJrY29ub21vbkBnbWFpbC5jb20iLCJhZGRyZXNzIjpudWxsLCJpYXQiOjE3MDEyNjc0MTEsImV4cCI6MTcwMTM1MzgxMX0.EJn8oHhXF8iydPLYMwF0Cgjdr04OrKCqgMpt8xRHnHk" };
 
 const queryClient = new QueryClient();
 const MyContext = createContext();
