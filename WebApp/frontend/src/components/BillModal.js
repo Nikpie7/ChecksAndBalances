@@ -12,14 +12,21 @@ const BillModal = ({ isOpen, onClose, billData }) => {
 
   return (
     <Modal hasCloseBtn={true} isOpen={isOpen} onClose={onClose}>
-      <div>
-        <Title title={billData.Title} />
+      <div className="ml-2">
+        <div className="grid grid-cols-10 grid-rows-1">
+          <div className="col-start-1 col-span-9">
+            <Title title={billData.Title} />
+          </div>
+          <div className="col-start-10">
+            <LastUpdated lastUpdated={billData.LastUpdated} />
+          </div>
+        </div>
         <TypeAndCommittee
-          type={billData.billType}
+          type={billData.BillType}
           number={billData.BillNumber}
           committee={billData.Committee}
         />
-        <LastUpdated lastUpdated={billData.LastUpdated} />
+
         <CongressNum congressNum={billData.CongressNum} />
         <Summary
           congressNum={billData.CongressNum}
@@ -29,6 +36,7 @@ const BillModal = ({ isOpen, onClose, billData }) => {
         <Sponsor sponsor={billData.Sponsor} />
         <Cosponsors cosponsors={billData.Cosponsors} />
         <RelatedInterest relatedInterest={billData.RelatedInterest} />
+        <AccessVotes />
       </div>
     </Modal>
   );
@@ -38,10 +46,9 @@ const Title = (props) => {
   const title = props.title;
 
   return (
-    <div>
-      <h1>
-        <b>Title:</b>
-        {title}
+    <div className="mb-4">
+      <h1 className="text-4xl">
+        <b>{title}</b>
       </h1>
     </div>
   );
@@ -52,11 +59,19 @@ const TypeAndCommittee = (props) => {
   const number = props.number;
   const committee = props.committee;
 
+  let billType = type.toUpperCase();
+
+  let temp = billType.split('');
+
+  let finalBillType = temp.join('.');
+  
+
   return (
-    <div>
+    <div className="mb-2">
       <h2>
-        <b>Type+Committee:</b> {type}.{number}, {committee}
+        <b><u>Bill Type & number</u>: </b>{finalBillType}.{number}
       </h2>
+      <h2><b><u>Committee</u>: </b>{committee}</h2>
     </div>
   );
 };
@@ -65,9 +80,10 @@ const LastUpdated = (props) => {
   const lastUpdated = props.lastUpdated;
 
   return (
-    <div>
+    <div className="mb-2">
       <h3>
-        <b>Last updated:</b>
+        <b><u>Last updated</u>:</b>
+        <br/>
         {lastUpdated}
       </h3>
     </div>
@@ -81,10 +97,9 @@ const CongressNum = (props) => {
   // TODO: Make superscript
 
   return (
-    <div>
+    <div className="mb-2">
       <h1>
-        <b>Congress Num:</b>
-        {congressNum}th Congress
+        <b><u>Congress Number</u>: </b>{congressNum}th Congress
       </h1>
     </div>
   );
@@ -120,11 +135,13 @@ const Summary = (props) => {
   if (summary === undefined) {
     return <div></div>;
   } else if (summary.summaries.length === 0) {
-    return <div>No Summary</div>;
+    return <div className="mb-2">No Summary</div>;
   } else {
     return (
-      <div>
-        <h1><b>Summary:</b></h1>
+      <div className="mb-2">
+        <h1>
+          <b><u>Summary</u>:</b>
+        </h1>
         {/* Format string into html object. */}
         <div dangerouslySetInnerHTML={{ __html: summary.summaries[0].text }} />
       </div>
@@ -136,8 +153,10 @@ const Sponsor = (props) => {
   const sponsor = props.sponsor;
 
   return (
-    <div>
-      <h1><b>Sponsor:</b> {sponsor}</h1>
+    <div className="mb-2">
+      <h1>
+        <b><u>Sponsor</u>:</b> {sponsor}
+      </h1>
     </div>
   );
 };
@@ -146,10 +165,12 @@ const Cosponsors = (props) => {
   const cosponsors = props.cosponsors;
 
   return (
-    <div>
-      <h1><b>Cosponsor:</b></h1>
+    <div className="mb-2">
+      <h1>
+        <b><u>Cosponsor(s)</u>:</b>
+      </h1>
       {cosponsors.map((cosponsor) => (
-        <h2 key={cosponsor}>{cosponsor},</h2>
+        <div><h2 key={cosponsor}>{cosponsor},</h2></div>
       ))}
     </div>
   );
@@ -160,7 +181,10 @@ const RelatedInterest = (props) => {
 
   return (
     <div>
-      <h1><b>Related Interest: </b>{relatedInterest}</h1>
+      <h1>
+        <b><u>Related Interest</u>: </b>
+        {relatedInterest}
+      </h1>
     </div>
   );
 };
@@ -178,6 +202,8 @@ const RelatedSubjects = (props) => {
 };
 
 const AccessVotes = (props) => {
+  
+  
   return <div></div>;
 };
 

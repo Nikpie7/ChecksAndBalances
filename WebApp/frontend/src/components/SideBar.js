@@ -32,7 +32,7 @@ const SideBar = () => {
   }
 
   return (
-    <div id="SideBar" className="">
+    <div id="SideBar" className="ml-14 mr-14 mt-14 rounded-xl">
       <PoliticianName politician={reps.Senator1} title="Senator" />
       <PoliticianName politician={reps.Senator2} title="Senator" />
       <PoliticianName politician={reps.Representative} title="Representative" />
@@ -46,8 +46,8 @@ const PoliticianName = (props) => {
 
   return (
     <div>
-      <h1>{title}:</h1>
-      <h2 className="indent-4">{politician}</h2>
+      <h1 className="text-2xl m-2"><b>{title}:</b></h1>
+      <h2 className="indent-4 m-2">{politician}</h2>
     </div>
   );
 };
