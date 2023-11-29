@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable react-native/no-inline-styles */
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useContext } from 'react';
 import { View, Text, TouchableOpacity, TextInput, ScrollView, Image, StyleSheet, useWindowDimensions } from 'react-native';
 import { useNavigation, NavigationContainer } from '@react-navigation/native';
 import { TabNavigator } from 'react-navigation';
@@ -12,6 +12,8 @@ import Logo from '../../../../assets/images/logo.png';
 import Background from '../../../../assets/images/background.png';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import BillTable from '../../components/BillTable/BillTable';
+import { UserContext } from '../../components/UserContext/UserContext';
+import Icon from 'react-native-vector-icons/Ionicons';
 import { useQuery, QueryClient, QueryClientProvider } from 'react-query';
 import BillModal from '../../components/BillModal/BillModal';
 
@@ -50,12 +52,34 @@ function MyRepresentativesScreen() {
   );
 }
 
+const NavigationView = ({ onCloseDrawer, onLogOutPressed, onInterestsPressed }) => (
+  <View style={styles.navigationContainer}>
+    <TouchableOpacity style={styles.closeButton} onPress={onCloseDrawer}>
+      {/* Icon for close button */}
+      <Icon name="close" size={30} color="black" />
+    </TouchableOpacity>
+    <View style={styles.drawerButtons}>
+      <TouchableOpacity style={styles.drawerButton} onPress={onInterestsPressed}>
+        <Text>Change Interests</Text>
+      </TouchableOpacity>
+    </View>
+    <View style={styles.drawerButtons}>
+      <TouchableOpacity style={styles.drawerButton} onPress={onLogOutPressed}>
+        <Text>Log Out</Text>
+      </TouchableOpacity>
+    </View>
+
+  </View>
+);
+
 const DashboardScreen = () => {
+  // const { user } = useContext(UserContext);
   const navigation = useNavigation();
   const [isProfileModalVisible, setProfileModalVisible] = useState(false);
   const [isHamburgerModalVisible, setHamburgerModalVisible] = useState(false);
   const [activeTab, setActiveTab] = useState("Home");
   const [displayBillModal, setDisplayBillModal] = useState(false);
+  const [isLogoutModalVisible, setLogoutModalVisible] = useState(false);
   // const [typeOfBill, setTypeOfBill] = useState('interests');
 
   const Tab = createBottomTabNavigator();
@@ -95,6 +119,38 @@ const DashboardScreen = () => {
   const toggleHamburgerModal = () => {
     setHamburgerModalVisible(!isHamburgerModalVisible);
   };
+
+  // const onProfilePressed = () => {
+  //   navigation.navigate('Profile');
+  //   console.warn("Going to profile");
+  // };
+  // const onInterestsPressed = () => {
+  //   closeDrawer();
+  //   setTimeout(() => {
+  //   navigation.navigate('Interests');
+  //   }, 300);
+  //   console.warn("Going to interests page");
+  // }
+
+  // const onLogOutPressed = () => {
+  //   closeDrawer();
+  //   setTimeout(() => {
+  //   setLogoutModalVisible(true);
+  //   }, 300);
+  // }
+  // const onLogOutCancelPressed = () => {
+  //   setLogoutModalVisible(false);
+  // }
+  // const onLogOutConfirmPressed = () => {
+  //   Keychain.resetGenericPassword();
+  //   navigation.navigate('SignIn');
+  // }
+
+  // const closeDrawer = () => {
+  //   if (drawer.current) {
+  //     drawer.current.closeDrawer();
+  //   }
+  // };
 
   return (
     <SafeAreaView style={{ flex: 1 }}>

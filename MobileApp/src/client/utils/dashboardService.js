@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import axios from 'axios';
 
 const baseURL = 'https://checksnbalances.us';
@@ -5,20 +6,38 @@ const baseURL = 'https://checksnbalances.us';
     // ? "http://localhost:5001"
     // : "https://checksnbalances.us";
 
-const getReadInterests = (request) => {
-  console.log("reading interests")
+const getGetUser = (request) => {
+  console.log('reading interests');
   return axios
-    .get(`${baseURL}/api/readInterests`, {
+    .get(`${baseURL}/api/getUser`, {
       params: {
-        userId: request.userId,
+        token: request.token,
       },
     })
     .then((response) => {
-      console.log(response)
+      console.log(response);
       return response.data;
     })
     .catch((error) => {
-      console.log("error :(");
+      console.log('error :(');
+      console.log(error);
+    });
+};
+
+const getReadInterests = (request) => {
+  console.log('reading interests');
+  return axios
+    .get(`${baseURL}/api/readInterests`, {
+      params: {
+        token: request.token,
+      },
+    })
+    .then((response) => {
+      console.log(response);
+      return response.data;
+    })
+    .catch((error) => {
+      console.log('error :(');
       console.log(error);
     });
 };
@@ -136,6 +155,6 @@ export default {
     getGetBillCommittees,
     getGetBillSummaries,
     postSearchBillsByInterest,
-    postGetReps
+    postGetReps,
     // postSearchBillsSponsors,
 };

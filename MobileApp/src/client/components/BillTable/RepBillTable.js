@@ -6,6 +6,7 @@ import { useQuery, QueryClient, QueryClientProvider } from 'react-query';
 import dashboardService from '../../utils/dashboardService';
 import interestsCategories from './interestsCategories.json';
 import representativesList from './representativesList.json';
+// TODO import user's representatives
 
 // TODO: Remove later
 const USER_ID = {token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1NjY4Mjk1OWFmZGY5ODc5NDljY2NmZSIsImZpcnN0TmFtZSI6IlRlc3QyIiwibGFzdE5hbWUiOiJUZXN0MiIsInBhc3N3b3JkIjoiIVRlc3QxMjMiLCJlbWFpbCI6IlRlc3RlcjJAdGVzdC5jb20iLCJhZGRyZXNzIjoiNDAwMCBDZW50cmFsIEZsb3JpZGEgQmx2ZC4gT3JsYW5kbywgRkwgMzI4MTYiLCJpYXQiOjE3MDEyMjYwNzgsImV4cCI6MTcwMTIyOTY3OH0.Sb3ZCTbdNkiqCOpPzv4wWZEys5Xth9xEW3C8HsN07Eo" };
@@ -42,7 +43,13 @@ const CONGRESS_NUM = 118;
 // );
 // }
 
-const BillTable = () => {
+// get user's reps data
+// populate bill format
+// populate billList
+// format billTable
+// import RepBillTable in dashboardScreen.js
+
+const RepBillTable = () => {
     const {
         data: interests,
         isLoading,
@@ -65,12 +72,12 @@ const BillTable = () => {
 
     return (
         <ScrollView>
-            <BillList userInterests={userInterestsTemp} />
+            <RepBillList userInterests={userInterestsTemp} />
         </ScrollView>
     );
 };
 
-const BillList = (props) => {
+const RepBillList = (props) => {
   // if (props === "interests") {
     const userInterests = props.userInterests;
     let billListTemp = [];
@@ -111,7 +118,7 @@ const BillList = (props) => {
             {billListTemp.map((bill) => (
                 <QueryClientProvider client={queryClient}>
                   <View style={{}}/>
-                    <Bill key={bill._id} currBill={bill} />
+                    <RepBill key={bill._id} currBill={bill} />
                 </QueryClientProvider>
             ))}
         </View>
@@ -167,7 +174,7 @@ const BillList = (props) => {
   // }  
 };
   
-  const Bill = (props) => {
+  const RepBill = (props) => {
     const bill = props.currBill;
   
     return (
@@ -178,4 +185,4 @@ const BillList = (props) => {
     );
   };
 
-  export default BillTable;
+  export default RepBillTable;
