@@ -72,7 +72,7 @@ const LoginCard = ({visible, setVisible}) => {
       .then(response => {
         // console.log(response);
         console.log(response.data.token);
-        sessionStorage.setItem('token', JSON.stringify(response.token));
+        sessionStorage.setItem('token', JSON.stringify(response.data.token));
         navigate('/Dashboard');
       })
       .catch(error => {

@@ -8,6 +8,7 @@ import * as emailValidator from 'email-validator';
 import NewPasswordInput from './NewPasswordInput.js';
 import passwordValidator from 'password-validator';
 import { useNavigate } from 'react-router-dom';
+import { updateInterests } from '../utils/onboardingService.js';
 const schema = new passwordValidator();
 schema
 .is().min(8)                                    // Minimum length 8
@@ -52,15 +53,18 @@ const RegistrationCard = ({userData, className}) => {
       setErrorMessage('Password does not meet complexity requirements');
       return;
     }
-    delete loginCreds.passwordConfirm;
+    // delete loginCreds.passwordConfirm;
     authService.postRegister(loginCreds)
-      .then(userData => {
+      .then(response => {
         alert('Registration successful! A verification email has been sent, please verify your email before logging in.');
         navigate('/');
       })
-      .catch(error => setErrorMessage(error.toString()));
+      .catch(error => {
+        console.log('jaaaaTest');
+        console.log(error.response.data.error);
+        setErrorMessage(error.response.data.error);
+      });
   }
-  console.log(emailValid);
   return (
     <div className={`w-[30rem] p-8 shadow-lg bg-white rounded-xl ${className}`}>
       <h2 className="font-semibold text-2xl">

@@ -9,15 +9,7 @@ const postLogin = async (request) => {
 };
 
 const postRegister = (request) => {
-  return axios
-    .post(`${baseUrl}/api/register`, request)
-    .then((response) => {
-      console.log(response);
-      return response.data;
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+  return axios.post(`${baseUrl}/api/registerWithInterests`, request);
 };
 
 const sendResetEmail = (request) => {
