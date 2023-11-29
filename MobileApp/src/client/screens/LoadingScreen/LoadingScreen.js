@@ -20,7 +20,7 @@ const LoadingScreen = () => {
                 const credentials = await Keychain.getGenericPassword();
                 //if credentials exist, try to log in
                 if(credentials){
-                    bodyVariable = JSON.stringify({"username": credentials.username,"password": credentials.password,})
+                    bodyVariable = JSON.stringify({"email": credentials.email,"password": credentials.password,})
                     //Validate the user
                     fetch('https://checksnbalances.us/api/login', {
                         method: 'POST',
@@ -41,7 +41,6 @@ const LoadingScreen = () => {
                                 const updatedUserData = {
                                     firstName: userData.firstName,
                                     lastName: userData.lastName,
-                                    username: userData.username,
                                     email: userData.email,
                                     address: userData.address,
                                     token: data.token,

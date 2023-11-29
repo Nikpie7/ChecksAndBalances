@@ -10,7 +10,7 @@ import { UserContext } from '../../components/UserContext/UserContext';
 const SignInScreen = () => {
     const {updateUser} = useContext(UserContext);
 
-    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState(null);
     const [verifError, setVerifError] = useState(false);
@@ -20,7 +20,7 @@ const SignInScreen = () => {
     const onLogInPressed = () => {
         setError(null);
         setVerifError(false);
-        bodyVariable = JSON.stringify({"username": username,"password": password,})
+        bodyVariable = JSON.stringify({"email": email,"password": password,})
         
         console.log(bodyVariable);
         //Validate the user
@@ -43,7 +43,6 @@ const SignInScreen = () => {
                     const updatedUserData = {
                         firstName: userData.firstName,
                         lastName: userData.lastName,
-                        username: userData.username,
                         email: userData.email,
                         address: userData.address,
                         token: data.token,
@@ -52,7 +51,7 @@ const SignInScreen = () => {
                     //then go to home page
                     console.warn("Successfully Logged In!");
                 
-                    Keychain.setGenericPassword(username, password).then(() => {
+                    Keychain.setGenericPassword(email, password).then(() => {
                         console.log("Credentials saved successfully!")
                         updateUser(updatedUserData);
                         navigation.navigate('Dashboard');
@@ -112,7 +111,7 @@ const SignInScreen = () => {
                                 <Text style={styles.errorText}>{error}</Text>
                             </View>
                         )}
-                        <FloatingLabelInput style={[styles.input, (error && !verifError) && styles.inputError]} label="Username" value={username} onChangeText={setUsername}/>
+                        <FloatingLabelInput style={[styles.input, (error && !verifError) && styles.inputError]} label="Email" value={email} onChangeText={setEmail}/>
                         <FloatingLabelInput style={[styles.input, (error && !verifError) && styles.inputError]} label="Password" value={password} onChangeText={setPassword} secureTextEntry/>
                         
                         <TouchableOpacity onPress={onForgotPressed} style={styles.forgotPassContainer}>

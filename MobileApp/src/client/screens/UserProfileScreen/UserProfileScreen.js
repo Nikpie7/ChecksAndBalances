@@ -22,7 +22,7 @@ const UserProfileScreen = () => {
       <View style={styles.profileContainer}>
         {/* Profile Image */}
         <View style={styles.imageContainer}>
-          <Image source={pic} style={styles.profileImage} resizeMode="cover" />
+          <Image source={pic} style={[styles.profileImage, {backgroundColor: 'transparent'}]} resizeMode="cover" />
         </View>
 
         {/* First and Last Name */}
@@ -33,7 +33,6 @@ const UserProfileScreen = () => {
         {/* User Details */}
         <View style={styles.detailsContainer}>
           {/* Render user details here */}
-          <Text style={styles.detail}>Username: {user.username}</Text>
           <Text style={styles.detail}>Email: {user.email}</Text>
           <Text style={styles.detail}>Address: {user.address}</Text>
           {/* Add other user details */}
@@ -62,24 +61,24 @@ const styles = StyleSheet.create({
   profileContainer: {
     backgroundColor: 'white',
     padding: 30,
-    borderRadius: 10,
+    borderRadius: 40,
     alignItems: 'center',
     marginTop: 100,
     width: '100%', // Adjust the width of the white box
   },
   imageContainer: {
-    backgroundColor: 'black',
+    backgroundColor: 'transparent',
     width: 160, // Decreased image size
     height: 160, // Decreased image size
-    borderRadius: 80, // Half of width and height for a circle
+    borderRadius: 100, // Half of width and height for a circle
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 20,
   },
   profileImage: {
-    width: '100%',
-    height: '100%',
-    borderRadius: 80,
+    width: '110%',
+    height: '110%',
+    borderRadius: 100,
   },
   name: {
     fontSize: 24,
@@ -88,6 +87,7 @@ const styles = StyleSheet.create({
   detailsContainer: {
     alignItems: 'flex-start',
     marginTop: 10,
+    alignItems: 'center',
   },
   detail: {
     fontSize: 16,

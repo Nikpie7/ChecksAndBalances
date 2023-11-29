@@ -213,17 +213,39 @@ const DashboardScreen = () => {
         </View>
 
         {/* Feed Section */}
-          <Tab.Navigator>
+          <Tab.Navigator screenOptions={({ route }) => ({
+          tabBarIcon: ({ focused, color, size }) => {
+            let iconName;
+
+            if (route.name === 'Interests') {
+              iconName = focused ? 'heart' : 'heart';
+            } else if (route.name === 'All Bills') {
+              iconName = focused ? 'document' : 'copy';
+            } else if (route.name === 'Representatives') {
+              iconName = focused ? 'body' : 'man';
+            }
+            
+            return <Icon name={iconName} size={size} color={color} />;
+          },
+        })}
+        tabBarOptions={{
+          activeTintColor: 'red',
+          inactiveTintColor: 'gray',
+          labelStyle: {
+            fontSize: 16, // Adjust the font size for tab labels
+          },
+        }}
+      >
             <Tab.Screen name="Interests" component={InterestsScreen}/>
-            <Tab.Screen name="Votes" component={VotesScreen}/>
-            <Tab.Screen name="All Bills" component={AllBillsScreen}/>
+            <Tab.Screen name="All Bills" component={VotesScreen}/>
+            <Tab.Screen name="Representatives" component={AllBillsScreen}/>
           </Tab.Navigator>
       </SafeAreaView>
 
       <RNModal visible={isLogoutModalVisible} animationType="fade" transparent={true} onRequestClose={() => setLogoutModalVisible(false)}>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Are you sure you want to log out?</Text>
+            <Text style={styles.modalTitle}>Are you sure you want to log out? {"\n"} Stored credentials will be reset!</Text>
             <View style={styles.modalButtons}>
               <TouchableOpacity style={styles.modalButton} onPress={onLogOutConfirmPressed}>
                 <Text style={styles.buttonText}>Confirm</Text>
@@ -258,7 +280,7 @@ const styles = StyleSheet.create({
     width: 50, // Adjust size as needed
     height: 50, // Adjust size as needed
     borderRadius: 25, // Half of the width and height to create a circle
-    backgroundColor: 'black',
+    backgroundColor: 'transparent',
     marginRight: 10,
     overflow: 'hidden',
     justifyContent: 'center',
@@ -371,14 +393,13 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
-    borderWidth: 1,
-    borderColor: '#333',
-    backgroundColor: '#eee',
+    backgroundColor: '#04ACD9DD'
   },
   buttonText: {
     fontSize: 16,
     fontWeight: 'bold',
     textAlign: 'center',
+    color: 'white',
   },
 });
 
