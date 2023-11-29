@@ -149,10 +149,10 @@ const SignUpScreen = () => {
                             ))}
                         </View>
                         )}
+                        <FloatingLabelInput style={[styles.input, emptyInputs.includes(2) && styles.inputError, !validEmail && styles.inputError,]} label="Email" value={email} onChangeText={setEmail}/>
                         <FloatingLabelInput style={[styles.input, emptyInputs.includes(0) && styles.inputError, !validPass && styles.inputError,]} label="Password" value={password} onChangeText={setPassword} secureTextEntry/>
                         <PasswordComplex password={password}/>
                         <FloatingLabelInput style={[styles.input, emptyInputs.includes(1) && styles.inputError, !validPass && styles.inputError,]} label="Confirm Password" value={passwordRepeat} onChangeText={setPasswordRepeat} secureTextEntry/>
-                        <FloatingLabelInput style={[styles.input, emptyInputs.includes(2) && styles.inputError, !validEmail && styles.inputError,]} label="Email" value={email} onChangeText={setEmail}/>
                         <FloatingLabelInput style={[styles.input, emptyInputs.includes(3) && styles.inputError,]} label="First Name" value={firstName} onChangeText={setFirstName}/>
                         <FloatingLabelInput style={[styles.input, emptyInputs.includes(4) && styles.inputError,]} label="Last Name" value={lastName} onChangeText={setLastName}/>
                         <FloatingLabelInput style={[styles.input, emptyInputs.includes(5) && styles.inputError,]} label="Street Address, City, State" value={streetAddress} onChangeText={setStreetAddress}/>

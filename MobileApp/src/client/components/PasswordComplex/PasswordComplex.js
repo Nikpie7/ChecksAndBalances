@@ -33,9 +33,10 @@ const styles = StyleSheet.create({
   indicators: {
     flexDirection: 'row',
     alignItems: 'center',
+    width: '100%',
   },
   indicator: {
-    width: 72,
+    width: '23%',
     height: 25,
     borderRadius: 12,
     marginHorizontal: 3.25,
