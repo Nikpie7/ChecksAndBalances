@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 
-const Modal = ({ isOpen, hasCloseBtn = true, onClose, children }) => {
+const SearchBarModal = ({ isOpen, hasCloseBtn = true, onClose, children }) => {
   const [isModalOpen, setModalOpen] = useState(isOpen);
   const modalRef = useRef(null);
 
@@ -37,15 +37,11 @@ const Modal = ({ isOpen, hasCloseBtn = true, onClose, children }) => {
     <div className="">
     <dialog ref={modalRef} onKeyDown={handleKeyDown} className="modal w-3/5 absolute bottom-3/4">
       
-      {/* {hasCloseBtn && (
-        <button className="modal-close-btn" onClick={handleCloseModal}>
-          Close
-        </button>
-      )} */}
+      
       {children}
     </dialog>
     </div>
   );
 };
 
-export default Modal;
+export default SearchBarModal;
