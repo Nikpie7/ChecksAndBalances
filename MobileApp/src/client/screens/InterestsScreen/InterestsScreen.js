@@ -28,7 +28,6 @@ const InterestsScreen = () => {
         { id: 14, title: 'Health', image: require('../../../../assets/images/ProfileImage.png') },
     ];
 
-    // Fetch user interests when the component mounts
     useEffect(() => {
         fetchInterests();
     }, []);
@@ -43,6 +42,10 @@ const InterestsScreen = () => {
                 console.error(error);
             });
     };
+    const leaveScreen = () => {
+        updateUserInterests();
+        navigation.navigate("Dashboard");
+    }
 
     const toggleInterest = (interest) => {
         const index = userInterests.findIndex((item) => item.InterestName === interest.title);
@@ -120,7 +123,7 @@ const InterestsScreen = () => {
             <View style={styles.background}>
                 <Image source={Background} resizeMode="cover" />
             </View>
-            <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+            <TouchableOpacity onPress={leaveScreen} style={styles.backButton}>
                 <Icon name="arrow-back" size={30} color="black" />
             </TouchableOpacity>
             <ScrollView contentContainerStyle={styles.scrollContainer}>
