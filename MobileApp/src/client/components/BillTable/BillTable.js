@@ -87,7 +87,7 @@ const BillList = (props) => {
         <View>
             {billListTemp.map((bill) => (
                 <QueryClientProvider client={queryClient}>
-                  <View style={{}}/>
+                  <View />
                     <Bill key={bill._id} currBill={bill} />
                 </QueryClientProvider>
             ))}
