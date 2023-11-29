@@ -46,7 +46,6 @@ const sendVerificationEmail = (email) => {
 
 
 const sendPasswordResetEmail = (email) => {
-  console.log(email);
   const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
   // Define the frontend URL for password reset
