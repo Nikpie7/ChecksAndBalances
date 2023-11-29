@@ -13,9 +13,10 @@ import alaskaJSON from '../assets/geoJSON/alaskaJSON.json';
 import hawaiiJSON from '../assets/geoJSON/hawaiiJSON.json';
 import { GeoJSON as LeafletGeoJSON, LatLngBounds } from 'leaflet';
 import * as L from 'leaflet';
-import { getSenators } from '../utils/onboardingService.js';
+import { getDistrict, getSenators } from '../utils/onboardingService.js';
 import { useLocation, useNavigate } from 'react-router-dom';
 import useMouse from '@react-hook/mouse-position';
+import {pointOnFeature} from '@turf/turf';
 
 const HoverTooltip = ({text, mouse}) => {
   return (<div style={{top: mouse.pageY - 40, left: mouse.pageX + 5}} className="fixed text-md z-[1000] bg-white opacity-100 p-1 rounded-lg">{text}</div>)
@@ -168,10 +169,17 @@ const MapInterface = ({userData, setUserData}) => {
   const stateIndexToFP = stateIndex => stateJSON.features[stateIndex].properties.STATEFP;
   const nationBounds = L.latLngBounds([22, -134], [50, -64]);
 
-  const onDistrictClick = properties => {
+  const onDistrictClick = async properties => {
+    console.log(properties.layer.feature);
+    const flippedCoords = pointOnFeature(properties.layer.feature).geometry.coordinates;
+    const actualCoords = [];
+    [actualCoords[1], actualCoords[0]] = flippedCoords;
+    const address = (await getDistrict(actualCoords)).formatted_address;
     setUserData({
       ...userData,
-      district: properties.layer.feature.properties.CD118FP
+      district: properties.layer.feature.properties.CD118FP,
+      coords: [0, 0],
+      address
     });
     setFlying(true);
     navigate('/interests');

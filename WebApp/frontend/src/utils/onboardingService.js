@@ -36,6 +36,15 @@ const getDistrict = async coords => {
     params: { coords }
   }
   const response = await axios.get(`${baseUrl}/api/getDistrict`, queryObj);
+  // console.log(response.data);
+  return response.data;
+};
+
+const getPlaceDetails = async place_id => {
+  const queryObj = {
+    params: { place_id }
+  }
+  const response = await axios.get(`${baseUrl}/api/getPlaceDetails`, queryObj);
   console.log(response.data);
   return response.data;
 };
@@ -51,4 +60,14 @@ const getSenators = async (state) => {
   }
 };
 
-export { getSenators, predictAddress, geocodeAddress, getDistrict };
+const updateInterests = async (interests, token) => {
+  try {
+    const response = await axios.post(`${baseUrl}/api/updateInterests`, { token, interests });
+    return response.data;
+  }
+  catch {
+    return null;
+  }
+};
+
+export { getSenators, predictAddress, geocodeAddress, getDistrict, getPlaceDetails, updateInterests };

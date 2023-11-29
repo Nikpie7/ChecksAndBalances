@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { MdOutlineRadioButtonChecked, MdOutlineRadioButtonUnchecked } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
+import { updateInterests } from "../utils/onboardingService";
 
-const InterestsCard = () => {
+const InterestsCard = ({userData, setUserData, token, edit}) => {
   const navigate = useNavigate();
   const [interests, setInterests] = useState([
     {"InterestName": "Agriculture", "value": false},
@@ -34,7 +35,22 @@ const InterestsCard = () => {
   }
 
   const handleSubmit = () => {
-    navigate('/createAccount');
+    if (edit) {
+      const newInterests = updateInterests(interests, token);
+      if (!newInterests) {
+        console.error('ERROR:(');
+        return;
+      }
+      // TODO????
+    }
+    else {
+      setUserData({
+        ...userData,
+        interests: [...interests]
+      });
+      navigate('/createAccount');
+      return;
+    }
   };
 
   return (

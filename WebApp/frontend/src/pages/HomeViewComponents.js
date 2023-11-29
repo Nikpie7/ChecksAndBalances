@@ -70,13 +70,10 @@ const LoginCard = ({visible, setVisible}) => {
     event.preventDefault();
     console.log(loginCreds);
     authService.postLogin(loginCreds)
-      .then(userData => {
-        console.log(userData);
-        // if (userData.id === -1) {
-        //   alert('Invalid username and/or password');
-        // }
-        // sessionStorage.setItem('userData', JSON.stringify(userData));
-        // navigate('/Dashboard');
+      .then(token => {
+        console.log(token);
+        sessionStorage.setItem('token', JSON.stringify(token));
+        navigate('/Dashboard');
       })
       .catch(error => {
         setErrorMessage(error.response.data.error);

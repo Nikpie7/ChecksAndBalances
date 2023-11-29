@@ -1249,7 +1249,7 @@ app.get('/api/geocode', (request, response) => {
 
   googleMaps.geocode({
     params: {
-      components: `administrative_area:${state}`,
+      // components: `administrative_area:${state}`,
       address: address,
       key: process.env.GOOGLE_MAPS_KEY
     }
@@ -1263,9 +1263,11 @@ app.get('/api/geocode', (request, response) => {
     // console.log('Found result: ' + mapsRes.data.results.formatted_address);
     // console.log(mapsRes.data);
     const latLngBounds = [];
-    latLngBounds[0] = mapsRes.data.results[0].geometry.location.lat;
-    latLngBounds[1] = mapsRes.data.results[0].geometry.location.lng;
-    response.status(200).send(latLngBounds);
+    latLngBounds[0] = +mapsRes.data.results[0].geometry.location.lat;
+    latLngBounds[1] = +mapsRes.data.results[0].geometry.location.lng;
+    console.log(mapsRes.data.results[0]);
+    mapsRes.data.results[0].geometry.coords = [...latLngBounds];
+    response.status(200).send(mapsRes.data.results[0]);
   })
   .catch(error => {
     console.log(error);
@@ -1307,16 +1309,36 @@ app.get('/api/predictAddress', (request, response) => {
     response.status(500);
   });
 })
+app.get('/api/getPlaceDetails', async (request, response) => {
+  const {place_id} = request.query;
+  try {
+    const placeDetails = await googleMaps.placeDetails({
+      params: {
+        place_id,
+        key: process.env.GOOGLE_MAPS_KEY
+      }
+    })
+    response.status(200).send(placeDetails.data.result);
+    return;
+  }
+  catch {
+    // console.log(response);
+    response.status(500);
+    return;
+  }
+});
 app.get('/api/getDistrict', async (request, response) => {
-  console.log(request.query.coords)
+  // console.log(request.query.coords)
   const coords = request.query.coords;
-  console.log(coords.toString());
-  const districtNumber = await geocodio.reverse(`${coords[0]},${coords[1]}`, ['cd'])
+  // console.log(coords.toString());
+  const results = await geocodio.reverse(`${coords[0]},${coords[1]}`, ['cd'])
     .then(geocodioRes => {
-      return geocodioRes.results[0].fields.congressional_districts[0].district_number;
+      // if (geocodioRes.results[0] === undefined) response.status(400);
+      console.log(geocodioRes.results[0]);
+      return geocodioRes.results[0];
+      // return geocodioRes.results[0].fields.congressional_districts[0].district_number;
     });
-  console.log(`District number: ${districtNumber}`);
-  response.status(200).json(districtNumber);
+  response.status(200).json(results);
 });
 /* MAP API */
 

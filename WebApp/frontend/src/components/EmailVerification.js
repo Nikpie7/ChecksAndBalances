@@ -1,11 +1,11 @@
 // EmailVerification.js 
 import React, { useEffect, useState } from 'react';
-import { useParams, useHistory } from 'react-router-dom';
+import { useParams, useHistory, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 function EmailVerification() {
   const { token } = useParams();
-  const history = null;
+  const navigate = useNavigate();
   const [message, setMessage] = useState('');
 
   console.log(token);
@@ -13,19 +13,22 @@ function EmailVerification() {
   useEffect(() => {
     axios.get(`https://checksnbalances.us/api/verify-email?token=${token}`)
       .then(response => {
-        setMessage('Email verified successfully. You can now login.');
+        alert('Email verified successfully! Redirecting to login page.');
+        navigate('/');
+        
+        // setMessage('Email verified successfully. You can now login.');
         // Redirect after a delay
         // setTimeout(() => history.push('/login'), 3000);
       })
       .catch(error => {
-        setMessage('Failed to verify email. Please try again.');
+        setMessage('Failed to verify email.');
       });
-  }, [token, history]);
+  }, [token]);
 
   return (
     <div>
-      <h1>Email Verification!!!!!!</h1>
-      <p>{message}</p>
+      {/* <h1>Email</h1>
+      <p>{message}</p> */}
     </div>
   );
 }
