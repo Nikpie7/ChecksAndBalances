@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { ReactComponent as SearchSvg } from "../assets/search_icon.svg";
+import { ReactComponent as SearchSvg } from "../../assets/search_icon.svg";
 
 const SearchIcon = ({setSearchBarOpen}) => {
   
