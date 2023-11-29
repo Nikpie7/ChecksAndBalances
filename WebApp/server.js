@@ -1134,16 +1134,19 @@ app.post('/api/register', async (req, res, next) =>
 
     // Send verification email
     await sendVerificationEmail(email);
+
+    var ret = { error: error };
+    res.status(200).json(ret);
   } catch(e) {
     if (e.code === 11000) {
       error = 'User with that email already exists.';
     }
     else
       error = e.toString();
-  }
 
-  var ret = { error: error };
-  res.status(200).json(ret);
+    var ret = { error: error };
+    res.status(400).json(ret);
+  }
 });
 
 app.get('/api/verify-email', async (req, res) => {
