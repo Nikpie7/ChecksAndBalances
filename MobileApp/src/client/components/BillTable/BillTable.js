@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import React, {react, useState, createContext, useRef, useContext } from 'react';
-import { Text, View, ScrollView, StyleSheet, Image } from 'react-native';
+import { Text, View, ScrollView, StyleSheet, Image, TouchableOpacity, Modal } from 'react-native';
 import { useQuery, QueryClient, QueryClientProvider } from 'react-query';
 
 import dashboardService from '../../utils/dashboardService';
@@ -104,16 +104,19 @@ const BillList = (props) => {
     const { setClickedBillData, handleOpenBillModal } = useContext(MyContext);
 
     const handleBillListClick = () => {
-      setClickedBillData(bill);
+      console.log('handling bill click');
       handleOpenBillModal();
+      setClickedBillData(bill);
+      console.log('handled open bill modal :O');
     };
 
     return (
-      <View style={ styles.billDiv }>
-        <Text className="md:text-lg line-clamp-2 xl:line-clamp-1" style={ styles.titles }
-          onClick={handleBillListClick}> {bill.Title}</Text>
+      <TouchableOpacity onPress={handleBillListClick}>
+        <View style={ styles.billDiv }>
+          <Text className="md:text-lg line-clamp-2 xl:line-clamp-1" style={ styles.titles }> {bill.Title}</Text>
       {/* <Text>{bill.BillType.toUpperCase()}.{bill.BillNumber}</Text> */}
-      </View>
+        </View>
+      </TouchableOpacity>
     );
   };
 

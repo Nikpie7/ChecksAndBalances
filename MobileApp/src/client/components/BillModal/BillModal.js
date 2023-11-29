@@ -1,9 +1,9 @@
 /* eslint-disable prettier/prettier */
 import { React, useState, useEffect, useRef } from 'react';
 import { View, Text } from 'react-native';
+import Modal from './Modal';
 import { useSelector } from 'react-redux';
 import { useQuery } from 'react-query';
-import Modal from './Modal';
 import dashboardService from '../../utils/dashboardService';
 
 import LoadingWheel from '../LoadingWheel/LoadingWheel';
