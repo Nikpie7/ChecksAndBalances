@@ -13,10 +13,31 @@ import { GeoJSON as LeafletGeoJSON, LatLngBounds } from 'leaflet';
 import * as L from 'leaflet';
 import { getSenators } from '../utils/onboardingService.js';
 import { useLocation, useNavigate } from 'react-router-dom';
+import useMouse from '@react-hook/mouse-position';
+
+const HoverTooltip = ({text, mouse}) => {
+  return (<div style={{top: mouse.pageY - 40, left: mouse.pageX + 5}} className="fixed text-md z-[1000] bg-white opacity-100 p-1 rounded-lg">{text}</div>)
+};
+const TrackMouse = ({text}) => {
+  const [mouse, setMouse] = useState({pageX: 0, pageY: 0});
+  useEffect(() => {
+    const handleMouseMove = (event) => {
+      setMouse({ pageX: event.clientX, pageY: event.clientY });
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => { window.removeEventListener('mousemove', handleMouseMove); };
+  }, []);
+  const divRef = useRef(null);
+  return text !== '' ? <HoverTooltip text={text} mouse={mouse} /> : null;
+};
+
 
 const MapInterface = ({userData, setUserData}) => {
   const [map, setMap] = useState(null);
+  const [tooltipText, setTooltipText] = useState('');
   const [tileLayerVisible, setTileLayerVisible] = useState(false);
+  const [hoveredFeature, setHoveredFeature] = useState(null);
+  const [flying, setFlying] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const noop = () => {};
@@ -28,23 +49,31 @@ const MapInterface = ({userData, setUserData}) => {
       ...userData,
       state: stateId
     });
+    setFlying(true);
     navigate('/district');
     return;
   }
   const onStateMouseOver = properties => {
-    const state = properties.layer.feature.properties.NAME;
-    return;
+    // console.log('Mouse Over');
+    setTooltipText(properties.layer.feature.properties.NAME)
+    setHoveredFeature(properties.layer.feature.properties);
   };
-  const onResize = properties => { console.log(properties.type); map?.invalidateSize(); };
+  const onMouseOut = () => {
+    // console.log('Mouse Out');
+    setHoveredFeature(null);
+    setTooltipText('')
+  };
+  const onResize = properties => { map?.invalidateSize(); };
 
   const [mapState, setMapState] = useState({
-    key: 'nation',
+    key: '/state',
     className: "h-[75vh]",
     geoJSON: stateJSON,
     markerLocation: null,
     geoJSONEventHandlers: {
       click: onStateClick,
       mouseover: onStateMouseOver,
+      mouseout: onMouseOut
     },
     mapEventHandlers: { resize: onResize }
   });
@@ -64,6 +93,7 @@ const MapInterface = ({userData, setUserData}) => {
           geoJSONEventHandlers: {
             click: onStateClick,
             mouseover: onStateMouseOver,
+            mouseout: onMouseOut
           },
           mapEventHandlers: {zoomend: noop}
         };
@@ -82,9 +112,10 @@ const MapInterface = ({userData, setUserData}) => {
           markerLocation: null,
           geoJSONEventHandlers: {
             click: onDistrictClick,
-            mouseover: onDistrictMouseOver
+            mouseover: onDistrictMouseOver,
+            mouseout: onMouseOut
           },
-          mapEventHandlers: {zoomend: () => setTileLayerVisible(false) }
+          mapEventHandlers: {zoomend: () => { setFlying(false); setTileLayerVisible(false); }}
         };
         break;
       case '/interests':
@@ -94,7 +125,7 @@ const MapInterface = ({userData, setUserData}) => {
           markerLocation: userData.coords,
           geoJSON: districtJSON.features.find(feature => feature.properties.STATEFP == stateIndexToFP(userData.state) && feature.properties.CD118FP == userData.district),
           geoJSONEventHandlers: {},
-          mapEventHandlers: {zoomend: () => setTileLayerVisible(true) }
+          mapEventHandlers: {zoomend: () => { setFlying(false); setTileLayerVisible(true); }}
         };
         break;
       case '/createAccount':
@@ -104,10 +135,11 @@ const MapInterface = ({userData, setUserData}) => {
           markerLocation: userData.coords,
           geoJSON: districtJSON.features.find(feature => feature.properties.STATEFP == stateIndexToFP(userData.state) && feature.properties.CD118FP == userData.district),
           geoJSONEventHandlers: {},
-          mapEventHandlers: {zoomend: () => setTileLayerVisible(true) }
+          mapEventHandlers: {zoomend: () => { setFlying(false); setTileLayerVisible(true); }}
         };
         break;
     };
+    setTooltipText('');
     setMapState(newMapState);
   }, [location.pathname])
   useEffect(() => {
@@ -130,13 +162,37 @@ const MapInterface = ({userData, setUserData}) => {
       ...userData,
       district: properties.layer.feature.properties.CD118FP
     });
+    setFlying(true);
     navigate('/interests');
     return;
   };
   const onDistrictMouseOver = properties => {
-    // console.log(properties.layer.feature.properties.CD118FP);
+    // console.log(properties.layer.feature.properties);
+    const districtNumber = +properties.layer.feature.properties.CD118FP;
+    setTooltipText(districtNumber === 0 ? 'District at Large' : 'District ' + districtNumber);
+    setHoveredFeature(properties.layer.feature.properties);
   };
+  const styleGeoJSON = feature => {
+    // console.log('Why thousands of these?');
+    // console.log(feature);
+    // return (mapState.key === '/state' && hoveredFeature.STATEFP === feature.STATEFP)
+    const hoverStyle = {
+      fillColor: "#3d40ff",
+      fillOpacity: 0.7
+    };
+    const neutralStyle = {
+      fillColor: "#3388ff",
+      fillOpacity: 0.2
+    };
+    return (mapState.key === '/state' && hoveredFeature && hoveredFeature.STATEFP === feature.properties.STATEFP
+      || mapState.key === '/district' && hoveredFeature && hoveredFeature.STATEFP === feature.properties.STATEFP && hoveredFeature.CD118FP === feature.properties.CD118FP)
+      ? hoverStyle
+      : neutralStyle;
+  }
+
   return (<div className={`w-full ${mapState.className}`}>
+    {/* <TooltipLayer text={tooltipText} className={mapState.className} /> */}
+    {flying ? null : <TrackMouse text={tooltipText} /> }
     <MapContainer
       className="w-full h-full"
       whenReady={mapRef => {
@@ -147,13 +203,14 @@ const MapInterface = ({userData, setUserData}) => {
       style={{
         backgroundColor: "white"
       }}
-      zoomend={mapState.mapEventHandlers?.zoomend}
+      // zoomend={mapState.mapEventHandlers?.zoomend}
       zoomSnap={0.1} zoomControl={false} boxZoom={false} doubleClickZoom={false} dragging={false} scrollWheelZoom={false} touchZoom={false}
     >
       <GeoJSON
         data={mapState.geoJSON}
         key={mapState.key}
         eventHandlers={mapState.geoJSONEventHandlers}
+        style={styleGeoJSON}
       >
         {mapState.markerLocation ? <Marker position={mapState.markerLocation} /> : null}
       </GeoJSON>
@@ -165,5 +222,6 @@ const MapInterface = ({userData, setUserData}) => {
     </MapContainer>
   </div>);
 };
+
 
 export default MapInterface;
