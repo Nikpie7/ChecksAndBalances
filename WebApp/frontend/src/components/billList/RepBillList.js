@@ -9,15 +9,18 @@ import {
 } from "react";
 import { useQuery } from "react-query";
 
-import interestsCategories from "./interestsCategories.json";
+import interestsCategories from "../interestsCategories.json";
 import "./BillTable.css";
 
-import dashboardService from "../utils/dashboardService.js";
-import LoadingWheel from "./LoadingWheel.js"
+import dashboardService from "../../utils/dashboardService.js";
+import LoadingWheel from "../LoadingWheel.js";
 
 // ONLY FOR TESTING!!!!
 // TODO: REMOVE THIS
-const USER_ID = { userId: "65580d043bdf8a775970f892" };
+const USER_TOKEN = {
+  token:
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1NjY4Mjk1OWFmZGY5ODc5NDljY2NmZSIsImZpcnN0TmFtZSI6IlRlc3QyIiwibGFzdE5hbWUiOiJUZXN0MiIsInBhc3N3b3JkIjoiIVRlc3QxMjMiLCJlbWFpbCI6IlRlc3RlcjJAdGVzdC5jb20iLCJhZGRyZXNzIjoiNDAwMCBDZW50cmFsIEZsb3JpZGEgQmx2ZC4gT3JsYW5kbywgRkwgMzI4MTYiLCJpYXQiOjE3MDExMTEwMTksImV4cCI6MTcwMTE5NzQxOX0.iKI-ltuvV0Fb5F68UvBdW5rt72HjM_N9FhI8yHwkXHk",
+};
 
 // Define the current Congress.
 // Would want to eventually update this to dynamic check
@@ -27,40 +30,52 @@ const CONGRESS_NUM = 118;
 // Used to help pass state hooks for bill data down to child component
 const MyContext = createContext();
 
-const BillTable = ({ setClickedBillData, handleOpenBillModal }) => {
-  // Get user's interests.
+const RepBillList = ({ setClickedBillData, handleOpenBillModal }) => {
   const {
-    data: interests,
+    data: reps,
     isLoading,
     isError,
-  } = useQuery(["interestsData", USER_ID], () =>
-    dashboardService.getReadInterests(USER_ID)
+  } =  useQuery(["repsData", USER_TOKEN], () =>
+    dashboardService.postGetReps(USER_TOKEN)
   );
 
   if (isLoading) return <LoadingWheel />;
   if (isError) return <p>Error...</p>;
 
-  let userInterestsTemp = [];
-
-  // Iterate through all interests and save ones user follows.
-  for (let i = 0; i < interests.Interests.length; i++) {
-    if (interests.Interests[i].value) {
-      userInterestsTemp.push(interests.Interests[i].InterestName);
-    }
+  // TODO: ADD BETTER STYLE IF USER HAS NO INTERESTS
+  if (reps === undefined) {
+    return <h1>Unable to load your representative's bills. :(</h1>;
   }
+
+  // Hold all user's politician.
+  const userPoliticians = [];
+
+  const removeMiddleName = (politician) => {
+    // Break string at whitespace.
+    let strTokens = politician.split(" ");
+
+
+    return strTokens[0] + " " + strTokens[strTokens.length - 1];
+  };
+
+  // Add to list for grouped query.
+  userPoliticians.push(removeMiddleName(reps.Senator1));
+  userPoliticians.push(removeMiddleName(reps.Senator2));
+  userPoliticians.push(removeMiddleName(reps.Representative));
 
   return (
     <div>
       <MyContext.Provider value={{ setClickedBillData, handleOpenBillModal }}>
         {/* LegistlationList */}
-        <BillList userInterests={userInterestsTemp} />
+        <BillList politicians={userPoliticians} />
       </MyContext.Provider>
     </div>
   );
 };
 
 const BillList = (props) => {
-  const userInterests = props.userInterests;
+  const politicians = props.politicians;
+
   let billListTemp = [];
 
   // Get bills for user's interests.
@@ -70,8 +85,8 @@ const BillList = (props) => {
     isError,
   } = useQuery(["billsData", interestsCategories], () =>
     Promise.all(
-      userInterests.map(async (interest) =>
-        dashboardService.postSearchBillsByInterest({ Interest: interest })
+      politicians.map(async (politician) =>
+        dashboardService.postSearchBillsSponsors({ member: politician })
       )
     )
   );
@@ -96,11 +111,16 @@ const BillList = (props) => {
   // Reverse so it's in descending order.
   billListTemp.reverse();
 
+  // Remove possible duplicates by converting to a set.
+  let billObjects = billListTemp.map(JSON.stringify);
+  let billSet = new Set(billObjects);
+  let billList = Array.from(billSet).map(JSON.parse);
+
   return (
     <div className="grid justify-normal">
       <ul>
         {/* Iterate through each interest. */}
-        {billListTemp.map((bill) => (
+        {billList.map((bill) => (
           <Bill key={bill._id} currBill={bill} />
         ))}
       </ul>
@@ -134,4 +154,4 @@ const Bill = (props) => {
   );
 };
 
-export default BillTable;
+export default RepBillList;

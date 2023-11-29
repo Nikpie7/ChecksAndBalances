@@ -1,12 +1,15 @@
-import axios from "axios";
-const baseUrl =
-  process.env.NODE_ENV === "development"
-    ? "http://localhost:5001"
-    : "https://checksnbalances.us";
+/* eslint-disable prettier/prettier */
+import axios from 'axios';
 
-const getReadInterests = (request) => {
+const baseURL = 'https://checksnbalances.us';
+    // process.env.NODE_ENV === "development"
+    // ? "http://localhost:5001"
+    // : "https://checksnbalances.us";
+
+const getGetUser = (request) => {
+  console.log('getting users');
   return axios
-    .get(`${baseUrl}/api/readInterests`, {
+    .get(`${baseURL}/api/getUser`, {
       params: {
         token: request.token,
       },
@@ -16,13 +19,50 @@ const getReadInterests = (request) => {
       return response.data;
     })
     .catch((error) => {
+      console.log('error :(');
+      console.log(error);
+    });
+};
+
+const getGetReps = (request) => {
+  console.log('getting reps');
+  return axios
+    .get(`${baseURL}/api/getReps`, {
+      params: {
+        token: request.token,
+      },
+    })
+    .then((response) => {
+      console.log(response);
+      return response.data;
+    })
+    .catch((error) => {
+      console.log('error :(');
+      console.log(error);
+    });
+};
+
+const getReadInterests = (request) => {
+  console.log('reading interests');
+  return axios
+    .get(`${baseURL}/api/readInterests`, {
+      params: {
+        token: request.token,
+      },
+    })
+    .then((response) => {
+      console.log(response);
+      return response.data;
+    })
+    .catch((error) => {
+      console.log('error :(');
       console.log(error);
     });
 };
 
 const getGetBillsByInterests = (request) => {
   return axios
-    .get(`${baseUrl}/api/getBillsByInterest`, {
+    .get(`${baseURL}/api/getBillsByInterest`, {
       params: {
         interest: request.interestName,
       },
@@ -38,7 +78,7 @@ const getGetBillsByInterests = (request) => {
 
 const getGetBillTitles = (request) => {
   return axios
-    .get(`${baseUrl}/api/getBillTitles`, {
+    .get(`${baseURL}/api/getBillTitles`, {
       params: {
         congress: request.congress,
         billType: request.billType,
@@ -56,7 +96,7 @@ const getGetBillTitles = (request) => {
 
 const getGetBillCommittees = (request) => {
   return axios
-    .get(`${baseUrl}/api/getBillCommittees`, {
+    .get(`${baseURL}/api/getBillCommittees`, {
       params: {
         congress: request.congress,
         billType: request.billType,
@@ -74,7 +114,7 @@ const getGetBillCommittees = (request) => {
 
 const getGetBillSummaries = (request) => {
   return axios
-    .get(`${baseUrl}/api/getBillSummaries`, {
+    .get(`${baseURL}/api/getBillSummaries`, {
       params: {
         congress: request.congress,
         billType: request.billType,
@@ -92,7 +132,7 @@ const getGetBillSummaries = (request) => {
 
 const postSearchBillsByInterest = (request) => {
   return axios
-    .post(`${baseUrl}/api/searchBillsByInterest`, request)
+    .post(`${baseURL}/api/searchBillsByInterest`, request)
     .then((response) => {
       console.log(response);
       return response.data;
@@ -104,7 +144,7 @@ const postSearchBillsByInterest = (request) => {
 
 const postGetReps = (request) => {
   return axios
-    .post(`${baseUrl}/api/getReps`, request)
+    .post(`${baseURL}/api/getReps`, request)
     .then((response) => {
       console.log(response);
       return response.data;
@@ -116,7 +156,7 @@ const postGetReps = (request) => {
 
 const postSearchBillsSponsors = (request) => {
   return axios
-    .post(`${baseUrl}/api/searchBillsSponsors`, request)
+    .post(`${baseURL}/api/searchBillsSponsors`, request)
     .then((response) => {
       console.log(response);
       return response.data;
@@ -125,28 +165,16 @@ const postSearchBillsSponsors = (request) => {
       console.log(error);
     });
 };
-
-const postSearchBillsBasic = (request) => {
-  return axios
-    .post(`${baseUrl}/api/searchBillsBasic`, request)
-    .then((response) => {
-      console.log(response);
-      return response.data;
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-};
-
 
 export default {
-  getReadInterests,
-  getGetBillsByInterests,
-  getGetBillTitles,
-  getGetBillCommittees,
-  getGetBillSummaries,
-  postSearchBillsByInterest,
-  postGetReps,
-  postSearchBillsSponsors,
-  postSearchBillsBasic
+    getReadInterests,
+    getGetBillsByInterests,
+    getGetBillTitles,
+    getGetBillCommittees,
+    getGetBillSummaries,
+    postSearchBillsByInterest,
+    postGetReps,
+    getGetUser,
+    getGetReps,
+    postSearchBillsSponsors,
 };
