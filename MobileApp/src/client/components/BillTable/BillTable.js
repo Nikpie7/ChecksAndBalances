@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import React, {react, useState} from 'react';
-import { Text, View, ScrollView } from 'react-native';
+import { Text, View, ScrollView, StyleSheet } from 'react-native';
 import { useQuery, QueryClient, QueryClientProvider } from 'react-query';
 
 import dashboardService from '../../utils/dashboardService';
@@ -9,6 +9,7 @@ import representativesList from './representativesList.json';
 
 // TODO: Remove later
 const ADDRESS = '4000 Central Florida Blvd. Orlando, FL 32816';
+const USER_ID = {token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1NjZmNDYyYmZmNDQ1MzY4MjQzZWZjYSIsImZpcnN0TmFtZSI6IktvYmUiLCJsYXN0TmFtZSI6IkNvbm9tb24iLCJwYXNzd29yZCI6IkJhU0ViQWxsLiwvMjUxIiwiZW1haWwiOiJrY29ub21vbkBnbWFpbC5jb20iLCJhZGRyZXNzIjpudWxsLCJpYXQiOjE3MDEyNDY5ODEsImV4cCI6MTcwMTI1MDU4MX0._Ln_vu4JTPaa7zW7rSZF-a9ivkgWCpQ4S670flz6X74" };
 
 const queryClient = new QueryClient();
 
@@ -99,10 +100,16 @@ const BillList = (props) => {
 
     return (
       <View>
-        <Text>{bill.Title}</Text>
+        <Text style={ styles.titles }> {bill.Title}</Text>
         <Text>{bill.BillType.toUpperCase()}.{bill.BillNumber}</Text>
       </View>
     );
   };
+
+  const styles = StyleSheet.create({
+    titles: {
+      fontSize: 20,
+    },
+  });
 
   export default BillTable;

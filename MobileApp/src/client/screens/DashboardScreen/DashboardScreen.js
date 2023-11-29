@@ -160,9 +160,9 @@ const DashboardScreen = () => {
 
       {/* Feed Section */}
         <Tab.Navigator>
-          <Tab.Screen name="Bills by Interest" component={InterestsScreen} />
-          <Tab.Screen name="Bills by Representative" component={RepresentativesScreen} />
-          <Tab.Screen name="My Representatives" component={MyRepresentativesScreen}/>
+          <Tab.Screen name="Bills by Interest" component={InterestsScreen} icon={<Icon name="home" size={24} />}/>
+          <Tab.Screen name="Bills by Representative" component={RepresentativesScreen} icon={<Icon name="home" size={24} />}/>
+          <Tab.Screen name="My Representatives" component={MyRepresentativesScreen} icon={<Icon name="home" size={24} />} />
         </Tab.Navigator>
       </SafeAreaView>
 
