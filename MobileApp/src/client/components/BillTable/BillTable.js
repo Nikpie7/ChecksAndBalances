@@ -1,21 +1,22 @@
 /* eslint-disable prettier/prettier */
-import React, {react, useState} from 'react';
-import { Text, View, ScrollView, StyleSheet } from 'react-native';
+import React, {react, useState, createContext, useRef, useContext } from 'react';
+import { Text, View, ScrollView, StyleSheet, Image } from 'react-native';
 import { useQuery, QueryClient, QueryClientProvider } from 'react-query';
 
 import dashboardService from '../../utils/dashboardService';
 import interestsCategories from './interestsCategories.json';
-import representativesList from './representativesList.json';
+import Background from '../../../../assets/images/background.png';
 
 // TODO: Remove later
 const ADDRESS = '4000 Central Florida Blvd. Orlando, FL 32816';
-const USER_ID = {token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1NjZmNDYyYmZmNDQ1MzY4MjQzZWZjYSIsImZpcnN0TmFtZSI6IktvYmUiLCJsYXN0TmFtZSI6IkNvbm9tb24iLCJwYXNzd29yZCI6IkJhU0ViQWxsLiwvMjUxIiwiZW1haWwiOiJrY29ub21vbkBnbWFpbC5jb20iLCJhZGRyZXNzIjpudWxsLCJpYXQiOjE3MDEyNDY5ODEsImV4cCI6MTcwMTI1MDU4MX0._Ln_vu4JTPaa7zW7rSZF-a9ivkgWCpQ4S670flz6X74" };
+const USER_ID = {token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1NjZmNDYyYmZmNDQ1MzY4MjQzZWZjYSIsImZpcnN0TmFtZSI6IktvYmUiLCJsYXN0TmFtZSI6IkNvbm9tb24iLCJwYXNzd29yZCI6IkJhU0ViQWxsLiwvMjUxIiwiZW1haWwiOiJrY29ub21vbkBnbWFpbC5jb20iLCJhZGRyZXNzIjpudWxsLCJpYXQiOjE3MDEyNjc0MTEsImV4cCI6MTcwMTM1MzgxMX0.EJn8oHhXF8iydPLYMwF0Cgjdr04OrKCqgMpt8xRHnHk" };
 
 const queryClient = new QueryClient();
+const MyContext = createContext();
 
 const CONGRESS_NUM = 118;
 
-const BillTable = () => {
+const BillTable = ({clickedBillData, setClickedBillData, handleOpenBillModal }) => {
     const {
         data: interests,
         isLoading,
@@ -42,7 +43,10 @@ const BillTable = () => {
 
     return (
         <ScrollView>
+          <MyContext.Provider value={{ clickedBillData, setClickedBillData, handleOpenBillModal }}>
+            {/* LegistlationList */}
             <BillList userInterests={userInterestsTemp} />
+          </MyContext.Provider>
         </ScrollView>
     );
 };
@@ -97,11 +101,18 @@ const BillList = (props) => {
 
   const Bill = (props) => {
     const bill = props.currBill;
+    const { setClickedBillData, handleOpenBillModal } = useContext(MyContext);
+
+    const handleBillListClick = () => {
+      setClickedBillData(bill);
+      handleOpenBillModal();
+    };
 
     return (
-      <View>
-        <Text style={ styles.titles }> {bill.Title}</Text>
-        <Text>{bill.BillType.toUpperCase()}.{bill.BillNumber}</Text>
+      <View style={ styles.billDiv }>
+        <Text className="md:text-lg line-clamp-2 xl:line-clamp-1" style={ styles.titles }
+          onClick={handleBillListClick}> {bill.Title}</Text>
+      {/* <Text>{bill.BillType.toUpperCase()}.{bill.BillNumber}</Text> */}
       </View>
     );
   };
@@ -109,6 +120,22 @@ const BillList = (props) => {
   const styles = StyleSheet.create({
     titles: {
       fontSize: 20,
+      textAlign: 'center',
+      fontFamily: 'headline',
+      color: 'black',
+    },
+    billDiv: {
+      backgroundColor: 'white',
+      borderColor: 'black',
+      borderWidth: 1,
+      borderTopEndRadius: 15,
+      borderBottomEndRadius: 15,
+      borderTopLeftRadius: 15,
+      borderBottomLeftRadius: 15,
+      justifyContent: 'center',
+      padding: 10,
+      marginTop: 10,
+      width: '97%',
     },
   });
 

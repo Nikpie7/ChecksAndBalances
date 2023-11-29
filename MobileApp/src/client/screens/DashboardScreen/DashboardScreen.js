@@ -22,6 +22,7 @@ function InterestsScreen() {
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
       {/* <BillModal /> */}
         <QueryClientProvider client={queryClient}>
+          <Image source={Background} style={[styles.background]} resizeMode="cover"/>
           <BillTable />
         </QueryClientProvider>
       {/* <Text fontSize={20}>All Interests!</Text> */}
@@ -35,9 +36,9 @@ function RepresentativesScreen() {
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
       {/* <BillModal /> */ }
         <QueryClientProvider client={queryClient}>
+          <Image source={Background} style={[styles.background]} resizeMode="cover"/>
           <RepBillTable/>
         </QueryClientProvider>
-        <Text>Bills by representative</Text>
     </View>
   );
 }
@@ -48,6 +49,7 @@ function MyRepresentativesScreen() {
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
       {/* <BillModal /> */}
         <QueryClientProvider client={queryClient}>
+          <Image source={Background} style={[styles.background]} resizeMode="cover"/>
           <RepTable />
         </QueryClientProvider>
       {/* <Text fontSize={20}>All Interests!</Text> */}

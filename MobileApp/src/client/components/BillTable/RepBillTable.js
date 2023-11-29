@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
-import React, {react, useState} from 'react';
-import { Text, View, ScrollView } from 'react-native';
+import React, {react, useState, createContext, useRef, useContext} from 'react';
+import { Text, View, ScrollView, StyleSheet } from 'react-native';
 import { useQuery, QueryClient, QueryClientProvider } from 'react-query';
 
 import dashboardService from '../../utils/dashboardService';
@@ -10,13 +10,14 @@ import representativesList from './representativesList.json';
 
 // TODO: Remove later
 const ADDRESS = '4000 Central Florida Blvd. Orlando, FL 32816';
-const USER_ID = {token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1NjZmNDYyYmZmNDQ1MzY4MjQzZWZjYSIsImZpcnN0TmFtZSI6IktvYmUiLCJsYXN0TmFtZSI6IkNvbm9tb24iLCJwYXNzd29yZCI6IkJhU0ViQWxsLiwvMjUxIiwiZW1haWwiOiJrY29ub21vbkBnbWFpbC5jb20iLCJhZGRyZXNzIjpudWxsLCJpYXQiOjE3MDEyNDY5ODEsImV4cCI6MTcwMTI1MDU4MX0._Ln_vu4JTPaa7zW7rSZF-a9ivkgWCpQ4S670flz6X74" };
+const USER_ID = {token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1NjY4Mjk1OWFmZGY5ODc5NDljY2NmZSIsImZpcnN0TmFtZSI6IlRlc3QyIiwibGFzdE5hbWUiOiJUZXN0MiIsInBhc3N3b3JkIjoiIVRlc3QxMjMiLCJlbWFpbCI6IlRlc3RlcjJAdGVzdC5jb20iLCJhZGRyZXNzIjoiNDAwMCBDZW50cmFsIEZsb3JpZGEgQmx2ZC4gT3JsYW5kbywgRkwgMzI4MTYiLCJpYXQiOjE3MDEyNjc4ODcsImV4cCI6MTcwMTM1NDI4N30.hvcPFCg3ngKatAyvx89TjeXmA_oUCt_tSM2LOGbODxU" };
 
 const queryClient = new QueryClient();
+const MyContext = createContext();
 
 const CONGRESS_NUM = 118;
 
-const RepBillTable = () => {
+const RepBillTable = ({clickedBillData, setClickedBillData, handleOpenBillModal }) => {
     const {
         data: reps,
         isLoading,
@@ -49,13 +50,15 @@ const RepBillTable = () => {
 
     return (
         <ScrollView>
+          <MyContext.Provider value={{ clickedBillData, setClickedBillData, handleOpenBillModal }}>
             <RepBillList politicians={userPoliticians} />
+          </MyContext.Provider>
         </ScrollView>
     );
 };
 
 const RepBillList = (props) => {
-    const userReps = props.userReps;
+    const politicians = props.politicians;
     let billListTemp = [];
 
     // Get bills for user's reps.
@@ -63,10 +66,10 @@ const RepBillList = (props) => {
       data: bills,
       isLoading,
       isError,
-    } = useQuery(['repsData', userReps], () =>
+    } = useQuery(['billsData', interestsCategories], () =>
       Promise.all(
-        userReps.map(async (rep) =>
-          dashboardService.postSearchBillsSponsors({ member: rep })
+        politicians.map(async (politician) =>
+          dashboardService.postSearchBillsSponsors({ member: politician })
         )
       )
     );
@@ -90,11 +93,15 @@ const RepBillList = (props) => {
     // Reverse so it's in descending order.
     billListTemp.reverse();
 
+    let billObjects = billListTemp.map(JSON.stringify);
+    let billSet = new Set(billObjects);
+    let billList = Array.from(billSet).map(JSON.parse);
+
     return (
         <View>
-            {billListTemp.map((bill) => (
+            {billList.map((bill) => (
                 <QueryClientProvider client={queryClient}>
-                  <View style={{}}/>
+                  <View/>
                     <RepBill key={bill._id} currBill={bill} />
                 </QueryClientProvider>
             ))}
@@ -104,13 +111,43 @@ const RepBillList = (props) => {
 
   const RepBill = (props) => {
     const bill = props.currBill;
+    const { setClickedBillData, handleOpenBillModal } = useContext(MyContext);
+
+    const handleBillListClick = () => {
+      setClickedBillData(bill);
+      handleOpenBillModal();
+    };
+
 
     return (
-      <View>
-        <Text>{bill.Title}</Text>
+      <View style={styles.billDiv}>
+        <Text className="md:text-lg line-clamp-2 xl:line-clamp-1" style={ styles.titles }
+          onClick={handleBillListClick}> {bill.Title}</Text>
         <Text>{bill.BillType.toUpperCase()}.{bill.BillNumber}</Text>
       </View>
     );
   };
+
+  const styles = StyleSheet.create({
+    titles: {
+      fontSize: 20,
+      textAlign: 'center',
+      fontFamily: 'headline',
+      color: 'black',
+    },
+    billDiv: {
+      backgroundColor: 'white',
+      borderColor: 'black',
+      borderWidth: 1,
+      borderTopEndRadius: 15,
+      borderBottomEndRadius: 15,
+      borderTopLeftRadius: 15,
+      borderBottomLeftRadius: 15,
+      justifyContent: 'center',
+      padding: 10,
+      marginTop: 10,
+      width: '97%',
+    },
+  });
 
   export default RepBillTable;
