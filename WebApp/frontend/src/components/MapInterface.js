@@ -9,6 +9,8 @@ import {
 import { MapContainer, Marker, GeoJSON, Pane, Popup, TileLayer, Tooltip, useMap, useMapEvents } from 'react-leaflet';
 import stateJSON from '../assets/geoJSON/cb_2022_us_state_5m.json';
 import districtJSON from '../assets/geoJSON/cb_2022_us_cd118_5m.json';
+import alaskaJSON from '../assets/geoJSON/alaskaJSON.json';
+import hawaiiJSON from '../assets/geoJSON/hawaiiJSON.json';
 import { GeoJSON as LeafletGeoJSON, LatLngBounds } from 'leaflet';
 import * as L from 'leaflet';
 import { getSenators } from '../utils/onboardingService.js';
@@ -100,10 +102,12 @@ const MapInterface = ({userData, setUserData}) => {
         break;
       case '/district':
         const stateFP = stateJSON.features[userData.state].properties.STATEFP;
-        const stateDistrictJSON = {
+        const stateDistrictJSON = userData.state === 1 ? alaskaJSON
+        : userData.state === 11 ? hawaiiJSON
+        : {
           type: 'FeatureCollection',
           features: districtJSON.features.filter(feature => feature.properties.STATEFP === stateFP)
-        }
+        };
         newMapState = {
           ...mapState,
           className: "h-[70vh]",
@@ -119,11 +123,18 @@ const MapInterface = ({userData, setUserData}) => {
         };
         break;
       case '/interests':
+        const selectedStateJSON = userData.state === 1 ? alaskaJSON
+        : userData.state === 11 ? hawaiiJSON
+        : {
+          type: 'FeatureCollection',
+          features: districtJSON.features.filter(feature => feature.properties.STATEFP === stateJSON.features[userData.state].properties.STATEFP)
+        }; 
+        const selectedDistrictJSON = selectedStateJSON.features.find(feature => feature.properties.STATEFP == stateIndexToFP(userData.state) && feature.properties.CD118FP == userData.district);
         newMapState = {
           ...mapState,
           key: path,
           markerLocation: userData.coords,
-          geoJSON: districtJSON.features.find(feature => feature.properties.STATEFP == stateIndexToFP(userData.state) && feature.properties.CD118FP == userData.district),
+          geoJSON: selectedDistrictJSON,
           geoJSONEventHandlers: {},
           mapEventHandlers: {zoomend: () => { setFlying(false); setTileLayerVisible(true); }}
         };
@@ -133,7 +144,7 @@ const MapInterface = ({userData, setUserData}) => {
           ...mapState,
           key: path,
           markerLocation: userData.coords,
-          geoJSON: districtJSON.features.find(feature => feature.properties.STATEFP == stateIndexToFP(userData.state) && feature.properties.CD118FP == userData.district),
+          // geoJSON: districtJSON.features.find(feature => feature.properties.STATEFP == stateIndexToFP(userData.state) && feature.properties.CD118FP == userData.district),
           geoJSONEventHandlers: {},
           mapEventHandlers: {zoomend: () => { setFlying(false); setTileLayerVisible(true); }}
         };
