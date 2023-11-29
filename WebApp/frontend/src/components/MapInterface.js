@@ -12,83 +12,15 @@ import districtJSON from '../assets/geoJSON/cb_2022_us_cd118_5m.json';
 import { GeoJSON as LeafletGeoJSON, LatLngBounds } from 'leaflet';
 import * as L from 'leaflet';
 import { getSenators } from '../utils/onboardingService.js';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const MapInterface = ({userData, setUserData}) => {
   const [map, setMap] = useState(null);
   const [tileLayerVisible, setTileLayerVisible] = useState(false);
   const navigate = useNavigate();
-  const [mapState, setMapState] = useState({});
+  const location = useLocation();
+  const noop = () => {};
 
-  useEffect(() => {
-    let newMapState = {};
-    if (userData.state === null) {
-      map?.invalidateSize();
-      newMapState = {
-        ...mapState,
-        key: 'nation',
-        className: "h-[75vh]",
-        geoJSON: stateJSON,
-        markerLocation: null,
-        eventHandlers: {
-          click: onStateClick,
-          mouseover: onStateMouseOver
-        }
-      };
-    }
-    else if (!userData.district) {
-      console.log('District selection');
-      const stateFP = stateJSON.features[userData.state].properties.STATEFP;
-      const stateDistrictJSON = {
-        type: 'FeatureCollection',
-        features: districtJSON.features.filter(feature => feature.properties.STATEFP === stateFP)
-      }
-      newMapState = {
-        ...mapState,
-        className: "h-[70vh]",
-        key: 'state',
-        geoJSON: stateDistrictJSON,
-        markerLocation: null,
-        eventHandlers: {
-          click: onDistrictClick,
-          mouseover: onDistrictMouseOver
-        }
-      };
-    }
-    else if (!userData.email) {
-      console.log('Interest selection');
-      setTimeout(() => setTileLayerVisible(true), 1900);
-      newMapState = {
-        ...mapState,
-        key: 'district',
-        markerLocation: userData.coords,
-        eventHandlers: {
-          zoomend: onZoomEnd
-        }
-      };
-    }
-    setMapState(newMapState);
-  }, [userData])
-  useEffect(() => {
-    if (map) {
-      if (mapState.key !== 'district')
-        map.flyToBounds(L.geoJSON(mapState.geoJSON).getBounds());
-      else
-        map.flyToBounds(L.geoJSON(districtJSON.features.find(feature => feature.properties.STATEFP == stateIndexToFP(userData.state) && feature.properties.CD118FP == userData.district)).getBounds());
-      map.invalidateSize();
-      map._renderer.options.padding = 10;
-    }
-  }, [mapState])
-
-  const stateIndexToFP = stateIndex => stateJSON.features[stateIndex].properties.STATEFP;
-  const nationBounds = L.latLngBounds([22, -134], [50, -64]);
-  // const geoJsonStyle = {
-
-  // };
-
-  const onZoomEnd = () => {
-    setTileLayerVisible(true);
-  };
   const onStateClick = properties => {
     const state = properties.layer.feature.properties.NAME;
     const stateId = stateJSON.features.findIndex(feature => feature.properties.NAME === state);
@@ -103,6 +35,91 @@ const MapInterface = ({userData, setUserData}) => {
     const state = properties.layer.feature.properties.NAME;
     return;
   };
+  const onResize = properties => { console.log(properties.type); map?.invalidateSize(); };
+
+  const [mapState, setMapState] = useState({
+    key: 'nation',
+    className: "h-[75vh]",
+    geoJSON: stateJSON,
+    markerLocation: null,
+    geoJSONEventHandlers: {
+      click: onStateClick,
+      mouseover: onStateMouseOver,
+    },
+    mapEventHandlers: { resize: onResize }
+  });
+
+  useEffect(() => {
+    let newMapState = {};
+    const path = location.pathname;
+    switch (path) {
+      case '/state':
+        map?.invalidateSize();
+        newMapState = {
+          ...mapState,
+          key: 'nation',
+          className: "h-[75vh]",
+          geoJSON: stateJSON,
+          markerLocation: null,
+          geoJSONEventHandlers: {
+            click: onStateClick,
+            mouseover: onStateMouseOver,
+          },
+          mapEventHandlers: {zoomend: noop}
+        };
+        break;
+      case '/district':
+        const stateFP = stateJSON.features[userData.state].properties.STATEFP;
+        const stateDistrictJSON = {
+          type: 'FeatureCollection',
+          features: districtJSON.features.filter(feature => feature.properties.STATEFP === stateFP)
+        }
+        newMapState = {
+          ...mapState,
+          className: "h-[70vh]",
+          key: 'state',
+          geoJSON: stateDistrictJSON,
+          markerLocation: null,
+          geoJSONEventHandlers: {
+            click: onDistrictClick,
+            mouseover: onDistrictMouseOver
+          },
+          mapEventHandlers: {zoomend: () => setTileLayerVisible(false) }
+        };
+        break;
+      case '/interests':
+        newMapState = {
+          ...mapState,
+          key: 'district',
+          markerLocation: userData.coords,
+          geoJSON: districtJSON.features.find(feature => feature.properties.STATEFP == stateIndexToFP(userData.state) && feature.properties.CD118FP == userData.district),
+          geoJSONEventHandlers: {},
+          mapEventHandlers: {zoomend: () => setTileLayerVisible(true) }
+        };
+        break;
+    };
+    setMapState(newMapState);
+  }, [location.pathname])
+  useEffect(() => {
+    if (map) {
+      if (mapState.key !== 'district')
+        map.flyToBounds(L.geoJSON(mapState.geoJSON).getBounds());
+      else
+        map.flyToBounds(L.geoJSON(districtJSON.features.find(feature => feature.properties.STATEFP == stateIndexToFP(userData.state) && feature.properties.CD118FP == userData.district)).getBounds());
+      map._renderer.options.padding = 10;
+      map.invalidateSize();
+      map.on('zoomend', mapState.mapEventHandlers.zoomend);
+    }
+  }, [mapState])
+  // useEffect(() => {
+  //   console.log(map._size);
+  //   map?.invalidateSize();
+  // }, [map?._size?.x]);
+  console.log(map);
+
+  const stateIndexToFP = stateIndex => stateJSON.features[stateIndex].properties.STATEFP;
+  const nationBounds = L.latLngBounds([22, -134], [50, -64]);
+
   const onDistrictClick = properties => {
     setUserData({
       ...userData,
@@ -112,9 +129,8 @@ const MapInterface = ({userData, setUserData}) => {
     return;
   };
   const onDistrictMouseOver = properties => {
-    console.log(properties.layer.feature.properties.CD118FP);
+    // console.log(properties.layer.feature.properties.CD118FP);
   };
-
   return (<div className={`w-full ${mapState.className}`}>
     <MapContainer
       className="w-full h-full"
@@ -126,14 +142,14 @@ const MapInterface = ({userData, setUserData}) => {
       style={{
         backgroundColor: "white"
       }}
+      zoomend={mapState.mapEventHandlers?.zoomend}
       zoomSnap={0.1} zoomControl={false} boxZoom={false} doubleClickZoom={false} dragging={false} scrollWheelZoom={false} touchZoom={false}
     >
       <GeoJSON
         data={mapState.geoJSON}
         key={mapState.key}
-        eventHandlers={mapState.eventHandlers}
+        eventHandlers={mapState.geoJSONEventHandlers}
       >
-        {/* <Marker position={[28, -81]} /> */}
         {mapState.markerLocation ? <Marker position={mapState.markerLocation} /> : null}
       </GeoJSON>
       {tileLayerVisible
@@ -145,59 +161,4 @@ const MapInterface = ({userData, setUserData}) => {
   </div>);
 };
 
-const DeprecatedMapInterface = ({mapState, setMapState}) => {
-  const [selectedState, setSelectedState] = useState(0);
-  const [map, setMap] = useState(null);
-  const [reps, setReps] = useState({
-    senators: [],
-    representative: null
-  })
-
-  useEffect(() => {
-    if (!map)
-      return;
-    map._renderer.options.padding = 3;
-    const nationBounds = [[], []];
-    const coords = stateJSON.features[selectedState].geometry.coordinates[1]
-      ? stateJSON.features[selectedState].geometry.coordinates.flat(2)
-      : stateJSON.features[selectedState].geometry.coordinates[0];
-    const bounds = new LatLngBounds(LeafletGeoJSON.coordsToLatLngs(coords));
-    map.flyToBounds(bounds)
-    const stateName = stateJSON.features[selectedState].properties.STUSPS;
-    // getSenators(stateName).then((officials) => {
-    //   setReps({
-    //     ...reps,
-    //     senators: officials
-    //   });
-    // });
-  }, [selectedState]);
-
-  const onMapReady = (L) => {
-    setMap(L.target);
-  }
-  const onStateClick = (properties) => {
-    const state = properties.layer.feature.properties.NAME;
-  };
-  const onStateMouseOver = (properties) => {
-    const state = properties.layer.feature.properties.NAME;
-  };
-  const jsonStyle = () => {
-    return {
-      fill: false,
-      weight: 1
-    };
-  };
-  return (
-    <div className="w-[100vw] h-[72vh]">
-      <main className="h-full">
-        <MapContainer center={[40.052417, -98.595775]} zoom={4.2} scrollWheelZoom={false} className="h-full" style={{ backgroundColor: "white" }} whenReady={onMapReady} >
-          <GeoJSON data={stateJSON} eventHandlers={{ click: onStateClick, mouseover: onStateMouseOver }} style={jsonStyle}>
-            <Tooltip permanent={true} direction="center" position={[40.633931, -70.667909]}>Rhode Island</Tooltip>
-          </GeoJSON>
-        </MapContainer>
-      </main>
-    </div>
-  );
-
-};
 export default MapInterface;

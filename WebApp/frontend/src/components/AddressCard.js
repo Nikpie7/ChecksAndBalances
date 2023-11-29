@@ -49,7 +49,7 @@ const AddressCard = ({userData, setUserData}) => {
   return (
     <Card className="w-5/6">
       <h2 className="font-semibold text-2xl">Enter your street address</h2>
-      <input placeholder="123 Address Street" type="text" autocomplete="off" data-1p-ignore className="h-12 w-full border-2 rounded-lg p-3 mt-6" value={address} onChange={e => setAddress(e.target.value)} onFocus={() => onInputFocus(true)} onBlur={() => onInputFocus(false)} />
+      <input placeholder="123 Address Street" type="text" autoComplete="off" data-1p-ignore className="h-12 w-full border-2 rounded-lg p-3 mt-6" value={address} onChange={e => setAddress(e.target.value)} onFocus={() => onInputFocus(true)} onBlur={() => onInputFocus(false)} />
       {inputFocused ? <PlacePredictionList predictions={predictions} handleSelect={selectedAddress => setAddress(selectedAddress)} /> : null}
       <div className="flex justify-end">
         <button
