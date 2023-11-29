@@ -1,16 +1,17 @@
 /* eslint-disable prettier/prettier */
 import React, {react, useState} from 'react';
-import { Text, View, ScrollView } from 'react-native';
+import { Text, View, ScrollView, StyleSheet, Image } from 'react-native';
 import { useQuery, QueryClient, QueryClientProvider } from 'react-query';
 
 import dashboardService from '../../utils/dashboardService';
+import Background from '../../../../assets/images/background.png';
 import interestsCategories from './interestsCategories.json';
 import representativesList from './representativesList.json';
 // TODO import user's representatives
 
 // TODO: Remove later
-const USER_ID = {token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1NjY4Mjk1OWFmZGY5ODc5NDljY2NmZSIsImZpcnN0TmFtZSI6IlRlc3QyIiwibGFzdE5hbWUiOiJUZXN0MiIsInBhc3N3b3JkIjoiIVRlc3QxMjMiLCJlbWFpbCI6IlRlc3RlcjJAdGVzdC5jb20iLCJhZGRyZXNzIjoiNDAwMCBDZW50cmFsIEZsb3JpZGEgQmx2ZC4gT3JsYW5kbywgRkwgMzI4MTYiLCJpYXQiOjE3MDEyMzg1NTQsImV4cCI6MTcwMTI0MjE1NH0.O-EIuX7VJwNM_qvYFAC0SK1t884CRhW-NDKInkDphrg" };
 const ADDRESS = '4000 Central Florida Blvd. Orlando, FL 32816';
+const USER_ID = {token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1NjY4Mjk1OWFmZGY5ODc5NDljY2NmZSIsImZpcnN0TmFtZSI6IlRlc3QyIiwibGFzdE5hbWUiOiJUZXN0MiIsInBhc3N3b3JkIjoiIVRlc3QxMjMiLCJlbWFpbCI6IlRlc3RlcjJAdGVzdC5jb20iLCJhZGRyZXNzIjoiNDAwMCBDZW50cmFsIEZsb3JpZGEgQmx2ZC4gT3JsYW5kbywgRkwgMzI4MTYiLCJpYXQiOjE3MDEyNzYxNzQsImV4cCI6MTcwMTM2MjU3NH0.VXDPrxC2B5Rr6dM4j28Ying9hap75Cas0vehI629w84" };
 
 const queryClient = new QueryClient();
 
@@ -28,7 +29,7 @@ const RepTable = () => {
 
     if (reps === undefined) {
         return (
-            <Text>Unable to load your representative's bills</Text>
+            <Text>Unable to load your representative</Text>
         );
     }
 
@@ -46,12 +47,43 @@ const PoliticianName = (props) => {
     const title = props.title;
 
     return (
-      <View>
-        <Text>{title}:</Text>
-        <Text className="indent-4">{politician}</Text>
-      </View>
+        <View style={styles.view}>
+            <Text style={styles.seat}>{title}:</Text>
+            <Text style={styles.seat}>{politician}</Text>
+        </View>
     );
 
   };
+
+const styles = StyleSheet.create({
+    seat: {
+        fontSize: 20,
+        textAlign: 'center',
+        fontFamily: 'headline',
+        color: 'black',
+    },
+    politician: {
+        fontSize: 20,
+        textAlign: 'right',
+        fontFamily: 'headline',
+        color: 'black',
+        margin: 10,
+    },
+    view: {
+      backgroundColor: 'white',
+      borderColor: 'black',
+      borderWidth: 1,
+      borderTopEndRadius: 15,
+      borderBottomEndRadius: 15,
+      borderTopLeftRadius: 15,
+      borderBottomLeftRadius: 15,
+      justifyContent: 'center',
+      padding: 10,
+      paddingLeft: '20%',
+      paddingRight: '20%',
+      marginTop: 10,
+      width: '97%',
+    },
+});
 
   export default RepTable;

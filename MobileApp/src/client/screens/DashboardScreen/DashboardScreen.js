@@ -16,14 +16,56 @@ import pic from '../../../../assets/images/ProfileImage.png';
 import Icon from 'react-native-vector-icons/Ionicons';
 import * as Keychain from 'react-native-keychain';
 
+const initialBillModalData = {
+  id: "",
+  title: "",
+  billType: "",
+  billNumber: "",
+  congressNum: -1,
+  lastUpdated: "",
+  committee: "",
+  relatedInterest: "",
+  sponsor: "",
+  cosponsors: [],
+  summary: "",
+  accessVotes: {
+    democrat: -1,
+    republican: -1,
+    independent: -1,
+  },
+  subject: "",
+  billAmendments: [],
+  billActions: "",
+};
+
 function InterestsScreen() {
   const queryClient = new QueryClient();
+
+  const [billModalOpen, setBillModalOpen] = useState(false);
+  const [clickedBillData, setClickedBillData] = useState(initialBillModalData);
+
+  const handleOpenBillModal = () => {
+    setBillModalOpen(true);
+  };
+
+  const handleCloseBillModal = () => {
+    setBillModalOpen(false);
+  };
+
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
       {/* <BillModal /> */}
         <QueryClientProvider client={queryClient}>
-          <BillTable />
+          <Image source={Background} style={[styles.background]} resizeMode="cover"/>
+          <BillTable clickedBillData={clickedBillData}
+              setClickedBillData={setClickedBillData}
+              handleOpenBillModal={handleOpenBillModal}/>
         </QueryClientProvider>
+        <BillModal
+          isOpen={billModalOpen}
+          onClose={handleCloseBillModal}
+          billData={clickedBillData}
+        />
       {/* <Text fontSize={20}>All Interests!</Text> */}
     </View>
   );
@@ -31,13 +73,32 @@ function InterestsScreen() {
 
 function RepresentativesScreen() {
   const queryClient = new QueryClient();
+
+  const [billModalOpen, setBillModalOpen] = useState(false);
+  const [clickedBillData, setClickedBillData] = useState(initialBillModalData);
+
+  const handleOpenBillModal = () => {
+    setBillModalOpen(true);
+  };
+
+  const handleCloseBillModal = () => {
+    setBillModalOpen(false);
+  };
+
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
       {/* <BillModal /> */ }
         <QueryClientProvider client={queryClient}>
-          <RepBillTable/>
+          <Image source={Background} style={[styles.background]} resizeMode="cover"/>
+          <RepBillTable clickedBillData={clickedBillData}
+              setClickedBillData={setClickedBillData}
+              handleOpenBillModal={handleOpenBillModal}/>
         </QueryClientProvider>
-        <Text>Bills by representative</Text>
+        <BillModal
+          isOpen={billModalOpen}
+          onClose={handleCloseBillModal}
+          billData={clickedBillData}
+        />
     </View>
   );
 }
@@ -48,6 +109,7 @@ function MyRepresentativesScreen() {
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
       {/* <BillModal /> */}
         <QueryClientProvider client={queryClient}>
+          <Image source={Background} style={[styles.background]} resizeMode="cover"/>
           <RepTable />
         </QueryClientProvider>
       {/* <Text fontSize={20}>All Interests!</Text> */}
@@ -83,7 +145,6 @@ const DashboardScreen = () => {
   const [activeTab, setActiveTab] = useState("Home");
   const [displayBillModal, setDisplayBillModal] = useState(false);
   const [isLogoutModalVisible, setLogoutModalVisible] = useState(false);
-  // const [typeOfBill, setTypeOfBill] = useState('interests');
 
   const Tab = createBottomTabNavigator();
 
@@ -160,9 +221,9 @@ const DashboardScreen = () => {
 
       {/* Feed Section */}
         <Tab.Navigator>
-          <Tab.Screen name="Bills by Interest" component={InterestsScreen} />
-          <Tab.Screen name="Bills by Representative" component={RepresentativesScreen} />
-          <Tab.Screen name="My Representatives" component={MyRepresentativesScreen}/>
+          <Tab.Screen name="Bills by Interest" component={InterestsScreen} icon={<Icon name="home" size={24} />}/>
+          <Tab.Screen name="Bills by Representative" component={RepresentativesScreen} icon={<Icon name="home" size={24} />}/>
+          <Tab.Screen name="My Representatives" component={MyRepresentativesScreen} icon={<Icon name="home" size={24} />} />
         </Tab.Navigator>
       </SafeAreaView>
 
