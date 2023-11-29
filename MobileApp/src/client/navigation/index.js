@@ -19,10 +19,10 @@ const Navigation = () => {
                 <Stack.Screen name = "Loading" component={LoadingScreen}/>
                 <Stack.Screen name="SignIn" component={SignInScreen}/>
                 <Stack.Screen name="SignUp" component={SignUpScreen}/>
-                <Stack.Screen name="Dashboard" component={DashboardScreen}/>        
+                <Stack.Screen name="Dashboard" component={DashboardScreen}/>
                 <Stack.Screen name="Profile" component={UserProfileScreen}/>
                 <Stack.Screen name="Forgot" component={ForgotPassScreen}/>
-                <Stack.Screen name="Interests" component={InterestsScreen}/>    
+                <Stack.Screen name="Interests" component={InterestsScreen}/>
             </Stack.Navigator>
         </NavigationContainer>
     )

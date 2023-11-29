@@ -6,34 +6,51 @@ import { TabNavigator } from 'react-navigation';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Background from '../../../../assets/images/background.png';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import pic from '../../../../assets/images/ProfileImage.png';
+import BillTable from '../../components/BillTable/BillTable';
+import RepTable from '../../components/BillTable/RepTable';
 import { UserContext } from '../../components/UserContext/UserContext';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import BillModal from '../../components/BillModal/BillModal';
+import RepBillTable from '../../components/BillTable/RepBillTable';
+import pic from '../../../../assets/images/ProfileImage.png';
 import Icon from 'react-native-vector-icons/Ionicons';
 import * as Keychain from 'react-native-keychain';
 
 function InterestsScreen() {
+  const queryClient = new QueryClient();
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      {/* Add API endpoint here*/}
-      <Text fontSize={20}>All Interests!</Text>
-    </View>
-  );
-};
-
-function VotesScreen() {
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      {/* Add API endpoint here*/}
-      <Text>Votes!</Text>
+      {/* <BillModal /> */}
+        <QueryClientProvider client={queryClient}>
+          <BillTable />
+        </QueryClientProvider>
+      {/* <Text fontSize={20}>All Interests!</Text> */}
     </View>
   );
 }
 
-function AllBillsScreen() {
+function RepresentativesScreen() {
+  const queryClient = new QueryClient();
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      {/* Add API endpoint here*/}
-      <Text>All Bills!</Text>
+      {/* <BillModal /> */ }
+        <QueryClientProvider client={queryClient}>
+          <RepBillTable/>
+        </QueryClientProvider>
+        <Text>Bills by representative</Text>
+    </View>
+  );
+}
+
+function MyRepresentativesScreen() {
+  const queryClient = new QueryClient();
+  return (
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      {/* <BillModal /> */}
+        <QueryClientProvider client={queryClient}>
+          <RepTable />
+        </QueryClientProvider>
+      {/* <Text fontSize={20}>All Interests!</Text> */}
     </View>
   );
 }
@@ -54,100 +71,29 @@ const NavigationView = ({ onCloseDrawer, onLogOutPressed, onInterestsPressed }) 
         <Text>Log Out</Text>
       </TouchableOpacity>
     </View>
-    
+
   </View>
 );
 
 const DashboardScreen = () => {
   const { user } = useContext(UserContext);
   const drawer = useRef(null);
-  const [isLogoutModalVisible, setLogoutModalVisible] = useState(false);
 
   const navigation = useNavigation();
   const [activeTab, setActiveTab] = useState("Home");
+  const [displayBillModal, setDisplayBillModal] = useState(false);
+  const [isLogoutModalVisible, setLogoutModalVisible] = useState(false);
+  // const [typeOfBill, setTypeOfBill] = useState('interests');
 
-  const congress = 118;
   const Tab = createBottomTabNavigator();
-  
 
-  const handleOptionSelect = (option) => {
-    // Handle the selected option
-    console.log('Selected option:', option);
-
-    // Close the modal
-    toggleProfileModal();
-  };
+  // const toggleTypeOfBill = () => {
+  //   setTypeOfBill(!typeOfBill);
+  // }
 
   const handleSearch = () => {
     // TODO
     console.log('beans! Can\'t search quite yet but will be able to soon!');
-  };
-
-  const handleTabChange = (tab) => {
-    // Add logic to update the feed based on the selected tab
-    console.log('Switch to tab:', tab);
-  };
-
-  const getBillTitles = () => {
-    var bodyVariable = JSON.stringify({"congress": congress,"billType": billType, "billNumber": billNumber});
-        
-        console.log(bodyVariable);
-        //Validate the user
-        fetch('https://checksnbalances.us/api/getBillTitles', {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: bodyVariable,
-        })
-        .then(response => response.json())
-        .catch(error => {
-          console.error(error);
-          });
-  };
-
-  const getBillsByInterest = () => {
-    // TODO replace "Finance" with interest variable
-    var bodyVariable = JSON.stringify({'interest': 'Finance'});
-
-    console.log(bodyVariable);
-
-    fetch('https://checksnbalances.us/api/getBillTitles', {
-        method: 'POST',
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-        },
-        body: bodyVariable,
-    })
-    .then(response => response.json())
-    .catch(error => {
-      console.error(error);
-    });
-  };
-
-  const readInterests = () => {
-    var bodyVariable = JSON.stringify({"userID": userID});
-
-    console.log(bodyVariable);
-
-    fetch('https://checksnbalances.us/api/getBillTitles', {
-        method: 'POST',
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-        },
-        body: bodyVariable,
-    })
-    .then(response => response.json())
-    .catch(error => {
-      console.error(error);
-    });
-  };
-
-  const getUserID = () => {
-
   };
 
   const onProfilePressed = () => {
@@ -212,32 +158,12 @@ const DashboardScreen = () => {
           <TextInput placeholder="Search..." style={ styles.searchBar } /*Add onclick *//>
         </View>
 
-        {/* Feed Section */}
-          <Tab.Navigator screenOptions={({ route }) => ({
-          tabBarIcon: ({ focused, color, size }) => {
-            let iconName;
-
-            if (route.name === 'Interests') {
-              iconName = focused ? 'heart' : 'heart';
-            } else if (route.name === 'All Bills') {
-              iconName = focused ? 'document' : 'copy';
-            } else if (route.name === 'Representatives') {
-              iconName = focused ? 'body' : 'man';
-            }
-            
-            return <Icon name={iconName} size={size} color={color} />;
-          },
-            "tabBarActiveTintColor": "red",
-            "tabBarInactiveTintColor": "gray",
-            "tabBarLabelStyle": {
-              "fontSize": 16
-            },
-        })}
-      >
-            <Tab.Screen name="Interests" component={InterestsScreen}/>
-            <Tab.Screen name="All Bills" component={VotesScreen}/>
-            <Tab.Screen name="Representatives" component={AllBillsScreen}/>
-          </Tab.Navigator>
+      {/* Feed Section */}
+        <Tab.Navigator>
+          <Tab.Screen name="Bills by Interest" component={InterestsScreen} />
+          <Tab.Screen name="Bills by Representative" component={RepresentativesScreen} />
+          <Tab.Screen name="My Representatives" component={MyRepresentativesScreen}/>
+        </Tab.Navigator>
       </SafeAreaView>
 
       <RNModal visible={isLogoutModalVisible} animationType="fade" transparent={true} onRequestClose={() => setLogoutModalVisible(false)}>
@@ -402,28 +328,3 @@ const styles = StyleSheet.create({
 });
 
 export default DashboardScreen;
-
-
-
-
-// Implement profile functionality
-// First/last name API call
-// Implement hamburger bar functionality
-    // implement hamburger option 1 functionality
-    // implement hamburger option 2 functionality
-    // implement hamburger option 3 functionality
-// Search bar functionality
-
-// Interests tab styling
-// interests tab functionality
-    // Scroll, fetch and implement data
-
-// New tab styling
-// New tab functionality
-    // Scroll, fetch and implement data
-
-// All bills tab styling
-// All bills tab functionality
-    // Scroll, fetch and implement data
-
-// Scrollbar styling
