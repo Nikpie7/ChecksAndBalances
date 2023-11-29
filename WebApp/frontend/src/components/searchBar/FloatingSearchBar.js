@@ -15,25 +15,34 @@ const FloatingSearchBar = ({
 }) => {
   const [input, setInput] = useState("");
 
-  const {
-    data: userResults,
-    isLoading,
-    isError,
-  } = useQuery(["userSearchData", input], () =>
-    dashboardService.postSearchBillsBasic({ input: input })
-  );
+  // const {
+  //   data: userResults,
+  //   isLoading,
+  //   isError,
+  // } = useQuery(["userSearchData", input], () => {
+  //     console.log(input);
+  //     if (!input)
+  //       return [];
+  //     const results = dashboardService.postSearchBillsBasic({ input: input })
+  //     console.log(results);
+  //     return [];
+  //   }
+  // );
 
-  const handleChange = (value) => {
-    setInput(value);
+  const handleSubmit = async e => {
+    e.preventDefault();
+    // const value = e.target.value
+    // setInput(value);
+    const userResults = await dashboardService.postSearchBillsBasic({ input: input })
 
-    if (isLoading) return <LoadingWheel />;
-    if (isError) return <p>Error...</p>;
+    // if (isLoading) return <LoadingWheel />;
+    // if (isError) return <p>Error...</p>;
 
     if (userResults === undefined) return;
 
     if (userResults.length === 0) return;
-
-    setSearchResults(userResults.response);
+    console.log(userResults.data.response)
+    setSearchResults(userResults.data.response);
     onClose();
   };
 
@@ -41,7 +50,7 @@ const FloatingSearchBar = ({
     <div>
     <SearchBarModal isOpen={isOpen} onClose={onClose}>
       <div className="">
-        <form onSubmit={(e) => handleChange(e.target.value)}>
+        <form onSubmit={handleSubmit}>
           <label className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">
             Search Bills
           </label>
@@ -68,6 +77,8 @@ const FloatingSearchBar = ({
               id="default-search"
               className="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Search bills..."
+              value={input}
+              onChange={e => setInput(e.target.value)}
             />
             <button type="submit" class="text-white absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Search</button>
             

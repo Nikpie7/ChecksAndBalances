@@ -126,16 +126,16 @@ const postSearchBillsSponsors = (request) => {
     });
 };
 
-const postSearchBillsBasic = (request) => {
-  return axios
-    .post(`${baseUrl}/api/searchBillsBasic`, request)
-    .then((response) => {
-      console.log(response);
-      return response.data;
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+const postSearchBillsBasic = async (request) => {
+  console.log(request);
+  try {
+    const results = await axios.post(`${baseUrl}/api/searchBillsBasic`, request);
+    return results;
+  }
+  catch {
+    console.log('postSearchBillsBasic failed');
+    return null;
+  }
 };
 
 

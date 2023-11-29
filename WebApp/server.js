@@ -423,6 +423,7 @@ app.post('/api/mongoBill', async (req, res, next) =>
       const { input } = req.body;
       const db = client.db('POOSBigProject');
       
+      console.log(input);
       let response = await db.collection('Bills').find({ 
                               $or: [
                                 { BillNumber: { $regex: input, $options: "i"} } ,
@@ -438,7 +439,7 @@ app.post('/api/mongoBill', async (req, res, next) =>
 
       res.json({ response });
   } catch (error) {
-      res.status(500).json({ error: "Interests Not Found" });
+      res.status(400).json({ error: "Interests Not Found" });
   }
   });
 
