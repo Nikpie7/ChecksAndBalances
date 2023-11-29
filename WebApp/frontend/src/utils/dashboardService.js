@@ -8,7 +8,7 @@ const getReadInterests = (request) => {
   return axios
     .get(`${baseUrl}/api/readInterests`, {
       params: {
-        userId: request.userId,
+        token: request.token,
       },
     })
     .then((response) => {
@@ -114,6 +114,31 @@ const postGetReps = (request) => {
     });
 };
 
+const postSearchBillsSponsors = (request) => {
+  return axios
+    .post(`${baseUrl}/api/searchBillsSponsors`, request)
+    .then((response) => {
+      console.log(response);
+      return response.data;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+const postSearchBillsBasic = (request) => {
+  return axios
+    .post(`${baseUrl}/api/searchBillsBasic`, request)
+    .then((response) => {
+      console.log(response);
+      return response.data;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+
 export default {
   getReadInterests,
   getGetBillsByInterests,
@@ -121,5 +146,7 @@ export default {
   getGetBillCommittees,
   getGetBillSummaries,
   postSearchBillsByInterest,
-  postGetReps
+  postGetReps,
+  postSearchBillsSponsors,
+  postSearchBillsBasic
 };

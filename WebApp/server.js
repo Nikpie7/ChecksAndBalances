@@ -1088,7 +1088,7 @@ app.post('/api/login', async (req, res, next) => {
     var lastName = results[0].LastName;
     var address = results[0].Address;
   
-    var token = jwt.sign({ id, firstName, lastName, password, email, address }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    var token = jwt.sign({ id, firstName, lastName, password, email, address }, process.env.JWT_SECRET, { expiresIn: '24h' });
 
   } else {
     error = 'Invalid email or password.';
