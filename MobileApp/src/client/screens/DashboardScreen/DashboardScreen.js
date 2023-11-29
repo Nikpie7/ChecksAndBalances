@@ -41,31 +41,32 @@ const initialBillModalData = {
 function InterestsScreen() {
   const queryClient = new QueryClient();
 
-  const [billModalOpen, setBillModalOpen] = useState(false);
-  const [clickedBillData, setClickedBillData] = useState(initialBillModalData);
+  // const [billModalOpen, setBillModalOpen] = useState(false);
+  // const [clickedBillData, setClickedBillData] = useState(initialBillModalData);
 
-  const handleOpenBillModal = () => {
-    setBillModalOpen(true);
-  };
+  // const handleOpenBillModal = () => {
+  //   setBillModalOpen(true);
+  // };
 
-  const handleCloseBillModal = () => {
-    setBillModalOpen(false);
-  };
+  // const handleCloseBillModal = () => {
+  //   setBillModalOpen(false);
+  // };
 
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
       {/* <BillModal /> */}
         <QueryClientProvider client={queryClient}>
           <Image source={Background} style={[styles.background]} resizeMode="cover"/>
-          <BillTable clickedBillData={clickedBillData}
+          {/* <RepBillTable clickedBillData={clickedBillData}
               setClickedBillData={setClickedBillData}
-              handleOpenBillModal={handleOpenBillModal}/>
+              handleOpenBillModal={handleOpenBillModal}/> */}
+          <BillTable />
         </QueryClientProvider>
-        <BillModal
+        {/* <BillModal
           isOpen={billModalOpen}
           onClose={handleCloseBillModal}
           billData={clickedBillData}
-        />
+        /> */}
       {/* <Text fontSize={20}>All Interests!</Text> */}
     </View>
   );
@@ -74,31 +75,32 @@ function InterestsScreen() {
 function RepresentativesScreen() {
   const queryClient = new QueryClient();
 
-  const [billModalOpen, setBillModalOpen] = useState(false);
-  const [clickedBillData, setClickedBillData] = useState(initialBillModalData);
+  // const [billModalOpen, setBillModalOpen] = useState(false);
+  // const [clickedBillData, setClickedBillData] = useState(initialBillModalData);
 
-  const handleOpenBillModal = () => {
-    setBillModalOpen(true);
-  };
+  // const handleOpenBillModal = () => {
+  //   setBillModalOpen(true);
+  // };
 
-  const handleCloseBillModal = () => {
-    setBillModalOpen(false);
-  };
+  // const handleCloseBillModal = () => {
+  //   setBillModalOpen(false);
+  // };
 
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
       {/* <BillModal /> */ }
         <QueryClientProvider client={queryClient}>
           <Image source={Background} style={[styles.background]} resizeMode="cover"/>
-          <RepBillTable clickedBillData={clickedBillData}
+          {/* <RepBillTable clickedBillData={clickedBillData}
               setClickedBillData={setClickedBillData}
-              handleOpenBillModal={handleOpenBillModal}/>
+              handleOpenBillModal={handleOpenBillModal}/> */}
+          <RepBillTable />
         </QueryClientProvider>
-        <BillModal
+        {/* <BillModal
           isOpen={billModalOpen}
           onClose={handleCloseBillModal}
           billData={clickedBillData}
-        />
+        /> */}
     </View>
   );
 }

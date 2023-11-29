@@ -3,11 +3,12 @@ import { React, useState, useEffect, useRef } from 'react';
 import { View, Text } from 'react-native';
 import Modal from './Modal';
 import { useSelector } from 'react-redux';
-import { useQuery } from 'react-query';
+import { useQuery, QueryClient, QueryClientProvider } from 'react-query';
 import dashboardService from '../../utils/dashboardService';
 
 import LoadingWheel from '../LoadingWheel/LoadingWheel';
 
+const queryClient = new QueryClient();
 const BillModal = ({ isOpen, onClose, billData }) => {
   // const focusInputRef = useRef(null);
   // const [billState, setBillState] = useState(initialBillModalData);
@@ -26,22 +27,24 @@ const BillModal = ({ isOpen, onClose, billData }) => {
   return (
     <Modal hasCloseBtn={true} isOpen={isOpen} onClose={onClose}>
       <View>
-        <Title title={billData.Title} />
-        <TypeAndCommittee
-          type={billData.billType}
-          number={billData.BillNumber}
-          committee={billData.Committee}
-        />
-        <LastUpdated lastUpdated={billData.LastUpdated} />
-        <CongressNum congressNum={billData.CongressNum} />
-        <Summary
-          congressNum={billData.CongressNum}
-          type={billData.BillType}
-          number={billData.BillNumber}
-        />
-        <Sponsor sponsor={billData.Sponsor} />
-        <Cosponsors cosponsors={billData.Cosponsors} />
-        <RelatedInterest relatedInterest={billData.RelatedInterest} />
+        <Text>
+          <Title title={billData.Title} />
+          <TypeAndCommittee
+            type={billData.billType}
+            number={billData.BillNumber}
+            committee={billData.Committee}
+          />
+          <LastUpdated lastUpdated={billData.LastUpdated} />
+          <CongressNum congressNum={billData.CongressNum} />
+          <Summary
+            congressNum={billData.CongressNum}
+            type={billData.BillType}
+            number={billData.BillNumber}
+          />
+          <Sponsor sponsor={billData.Sponsor} />
+          <Cosponsors cosponsors={billData.Cosponsors} />
+          <RelatedInterest relatedInterest={billData.RelatedInterest} />
+        </Text>
       </View>
     </Modal>
   );
@@ -138,7 +141,7 @@ const Summary = (props) => {
       <View>
         <Text>Summary:</Text>
         {/* Format string into html object. */}
-        <View dangerouslySetInnerHTML={{ __html: summary.summaries[0].text }} />
+        <View><Text>{summary.summaries[0]}</Text></View>
       </View>
     );
   }

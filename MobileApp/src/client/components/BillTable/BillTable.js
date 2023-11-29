@@ -103,20 +103,20 @@ const BillList = (props) => {
     const bill = props.currBill;
     const { setClickedBillData, handleOpenBillModal } = useContext(MyContext);
 
-    const handleBillListClick = () => {
-      console.log('handling bill click');
-      handleOpenBillModal();
-      setClickedBillData(bill);
-      console.log('handled open bill modal :O');
-    };
+    // const handleBillListClick = () => {
+    //   console.log('handling bill click');
+    //   handleOpenBillModal();
+    //   setClickedBillData(bill);
+    //   console.log('handled open bill modal :O');
+    // };
 
     return (
-      <TouchableOpacity onPress={handleBillListClick}>
+      // <TouchableOpacity onPress={handleBillListClick}>
         <View style={ styles.billDiv }>
           <Text className="md:text-lg line-clamp-2 xl:line-clamp-1" style={ styles.titles }> {bill.Title}</Text>
       {/* <Text>{bill.BillType.toUpperCase()}.{bill.BillNumber}</Text> */}
         </View>
-      </TouchableOpacity>
+      // </TouchableOpacity>
     );
   };
 
