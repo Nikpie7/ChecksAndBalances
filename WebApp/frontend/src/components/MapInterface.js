@@ -16,8 +16,8 @@ import { useNavigate } from 'react-router-dom';
 
 const MapInterface = ({userData, setUserData}) => {
   const [map, setMap] = useState(null);
+  const [tileLayerVisible, setTileLayerVisible] = useState(false);
   const navigate = useNavigate();
-
   const [mapState, setMapState] = useState({});
 
   useEffect(() => {
@@ -30,7 +30,6 @@ const MapInterface = ({userData, setUserData}) => {
         className: "h-[75vh]",
         geoJSON: stateJSON,
         markerLocation: null,
-        tileLayerVisible: false,
         eventHandlers: {
           click: onStateClick,
           mouseover: onStateMouseOver
@@ -50,7 +49,6 @@ const MapInterface = ({userData, setUserData}) => {
         key: 'state',
         geoJSON: stateDistrictJSON,
         markerLocation: null,
-        tileLayerVisible: false,
         eventHandlers: {
           click: onDistrictClick,
           mouseover: onDistrictMouseOver
@@ -59,18 +57,14 @@ const MapInterface = ({userData, setUserData}) => {
     }
     else if (!userData.email) {
       console.log('Interest selection');
-      setTimeout(() => {
-        setMapState({
-          ...mapState,
-          geoJSON: districtJSON.features.find(feature => feature.properties.STATEFP == stateIndexToFP(userData.state) && feature.properties.CD118FP == userData.district),
-          tileLayerVisible: true
-        });
-      }, 1900);
+      setTimeout(() => setTileLayerVisible(true), 1900);
       newMapState = {
         ...mapState,
         key: 'district',
         markerLocation: userData.coords,
-        eventHandlers: {}
+        eventHandlers: {
+          zoomend: onZoomEnd
+        }
       };
     }
     setMapState(newMapState);
@@ -92,6 +86,9 @@ const MapInterface = ({userData, setUserData}) => {
 
   // };
 
+  const onZoomEnd = () => {
+    setTileLayerVisible(true);
+  };
   const onStateClick = properties => {
     const state = properties.layer.feature.properties.NAME;
     const stateId = stateJSON.features.findIndex(feature => feature.properties.NAME === state);
@@ -139,7 +136,7 @@ const MapInterface = ({userData, setUserData}) => {
         {/* <Marker position={[28, -81]} /> */}
         {mapState.markerLocation ? <Marker position={mapState.markerLocation} /> : null}
       </GeoJSON>
-      {mapState.tileLayerVisible
+      {tileLayerVisible
         ? <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

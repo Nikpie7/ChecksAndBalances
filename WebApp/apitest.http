@@ -104,4 +104,15 @@ GET http://localhost:5001/api/readInterests
 ###
 GET http://localhost:5001/api/geocode?address=213%20Meadow%20Wood%20Drive&state=Alabama
 ###
-GET http://localhost:5001/api/getDistrict?coords=%5B27%2C%20-82%5D
+GET http://localhost:5001/api/getDistrict?coords=%5B27%2C%20-82%5
+###
+POST http://localhost:5001/api/register
+content-type: application/json
+
+{
+    "email": "jsmith@gmail.com",
+    "password": "password",
+    "address": "4000 Central Florida Blvd, Orlando, FL",
+    "firstName": "John",
+    "lastName": "Smith",
+}D

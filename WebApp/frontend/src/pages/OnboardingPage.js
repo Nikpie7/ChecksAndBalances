@@ -10,6 +10,7 @@ import { AboutUsButton, LogInButton, HeroCard } from './HomeViewComponents.js'
 import logo from '../assets/headerLogo.png';
 import { RepInfo, SenatorInfo } from '../components/PoliticianInfo';
 import interestsJson from '../utils/interestsJson.js';
+import smallLogo from '../assets/smallLogo.png';
 
   // HeaderBar   DONE
 
@@ -93,7 +94,7 @@ const OnboardingPage = () => {
       setHeaderBarState({
         left: <BackButton onClick={() => navigate(paths[paths.findIndex(path => path === location.pathname) - 1])} />,
         center: <ViewTitle info={titleText} />,
-        right: null
+        right: <img title="Back to home page" className="h-[10vh] pr-4 hover:cursor-pointer" onClick={() => navigate('/')} src={smallLogo} />
       })
     setHeroCardVisible(location.pathname === paths[0]);
     setStateDropdownVisible(location.pathname === paths[1]);
