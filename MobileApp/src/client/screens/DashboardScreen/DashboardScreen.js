@@ -12,10 +12,12 @@ import Logo from '../../../../assets/images/logo.png';
 import Background from '../../../../assets/images/background.png';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import BillTable from '../../components/BillTable/BillTable';
+import RepTable from '../../components/BillTable/RepTable';
 import { UserContext } from '../../components/UserContext/UserContext';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useQuery, QueryClient, QueryClientProvider } from 'react-query';
 import BillModal from '../../components/BillModal/BillModal';
+import RepBillTable from '../../components/BillTable/RepBillTable';
 
 function InterestsScreen() {
   const queryClient = new QueryClient();
@@ -31,23 +33,27 @@ function InterestsScreen() {
 }
 
 function RepresentativesScreen() {
-  // const queryClient = new QueryClient();
+  const queryClient = new QueryClient();
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      {/* <BillModal />
+      {/* <BillModal /> */ }
         <QueryClientProvider client={queryClient}>
-          <BillTableReps/>
-        </QueryClientProvider> */}
+          <RepBillTable/>
+        </QueryClientProvider>
         <Text>Bills by representative</Text>
     </View>
   );
 }
 
 function MyRepresentativesScreen() {
+  const queryClient = new QueryClient();
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      {/* Add API endpoint here*/}
-      <Text>My Representatives</Text>
+      {/* <BillModal /> */}
+        <QueryClientProvider client={queryClient}>
+          <RepTable />
+        </QueryClientProvider>
+      {/* <Text fontSize={20}>All Interests!</Text> */}
     </View>
   );
 }
