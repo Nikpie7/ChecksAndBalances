@@ -68,11 +68,11 @@ const LoginCard = ({visible, setVisible}) => {
   };
   const handleFormSubmit = event => {
     event.preventDefault();
-    console.log(loginCreds);
     authService.postLogin(loginCreds)
-      .then(token => {
-        console.log(token);
-        sessionStorage.setItem('token', JSON.stringify(token));
+      .then(response => {
+        // console.log(response);
+        console.log(response.data.token);
+        sessionStorage.setItem('token', JSON.stringify(response.token));
         navigate('/Dashboard');
       })
       .catch(error => {
