@@ -69,7 +69,7 @@ const OnboardingPage = () => {
         setUserData({ state: null, district: null, coords: null, interests: interestsJson, email: '', username: '', password: '' });
         break;
       case paths[1]:
-        titleText = { header: 'Select a state', hover: 'Your state yes.' };
+        titleText = { header: 'Select a state', hover: 'Your two senators will be determined via your state.' };
         setUserData({ state: null, district: null, coords: null, interests: interestsJson, email: '', username: '', password: '' });
         break;
       case paths[2]:

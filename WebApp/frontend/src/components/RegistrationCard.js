@@ -37,6 +37,8 @@ const RegistrationCard = ({userData, className}) => {
   };
   const handleFormSubmit = event => {
     event.preventDefault();
+    loginCreds.address = userData.address;
+    loginCreds.interests = [...userData.interests];
     console.log(loginCreds);
     if (loginCreds.password.localeCompare(loginCreds.passwordConfirm) !== 0) {
       setErrorMessage('Passwords do not match');
@@ -51,10 +53,10 @@ const RegistrationCard = ({userData, className}) => {
       return;
     }
     delete loginCreds.passwordConfirm;
-    // FORMAT LOGINCREDS OBJECT
     authService.postRegister(loginCreds)
       .then(userData => {
-        navigate('/dashboard');
+        alert('Registration successful! A verification email has been sent, please verify your email before logging in.');
+        navigate('/');
       })
       .catch(error => setErrorMessage(error.toString()));
   }

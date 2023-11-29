@@ -56,7 +56,7 @@ const InterestsCard = () => {
       </div>
       <div className="flex justify-end">
         <button
-          className={`w-max text-lg font-semibold px-6 py-2 mt-4 rounded-lg focus:outline-none ${allowContinue ? 'text-white bg-blue-500 hover:bg-blue-600' : 'bg-white hover:cursor-not-allowed'}`}
+          className={`w-max px-6 py-2 mt-4 rounded-lg focus:outline-none ${allowContinue ? 'text-white bg-blue-500 hover:bg-blue-600 font-semibold ' : 'bg-white hover:cursor-not-allowed'}`}
           onClick={allowContinue ? handleSubmit : null}
         >
           {allowContinue ? 'Continue' : `Please select ${2 - numActiveInterests} more interest${2 - numActiveInterests === 1 ? '' : 's'}`}
@@ -72,7 +72,7 @@ const InterestItem = ({interest, toggled, toggleInterest}) => {
     : 'bg-gray-100';
   return (
     <span
-      className={`flex items-center font-semibold text-lg w-max h-min shadow-sm p-2 gap-2 rounded-lg cursor-pointer ${toggleStyle}`}
+      className={`flex items-center font-semibold text- w-max h-min shadow-sm p-2 gap-2 rounded-lg cursor-pointer ${toggleStyle}`}
       onClick={() => toggleInterest(interest.InterestName)}
     >
       {
